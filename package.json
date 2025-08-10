@@ -18,7 +18,6 @@
   },
   "dependencies": {
     "@esotericsoftware/spine-pixi-v8": "^4.2.88",
-    "gl-matrix": "^3.4.3",
     "matter-js": "^0.20.0",
     "pixi.js": "^8.11.0",
     "stats.js": "^0.17.0"
