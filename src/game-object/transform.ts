@@ -1,21 +1,21 @@
 export class LocalTransform {
-  x: number;
-  y: number;
-  pivotX: number;
-  pivotY: number;
-  scaleX: number;
-  scaleY: number;
-  rotation: number;
-  alpha: number;
+  x = 0;
+  y = 0;
+  pivotX = 0;
+  pivotY = 0;
+  scaleX = 1;
+  scaleY = 1;
+  rotation = 0;
+  alpha = 1;
 }
 
 export class GlobalTransform {
-  x: number;
-  y: number;
-  scaleX: number;
-  scaleY: number;
-  rotation: number;
-  alpha: number;
+  x = 0;
+  y = 0;
+  scaleX = 1;
+  scaleY = 1;
+  rotation = 0;
+  alpha = 1;
 
   update(parent: GlobalTransform, local: LocalTransform) {
     const rx = local.x * parent.scaleX;
