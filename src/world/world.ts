@@ -14,7 +14,7 @@ export type WorldOptions = {
 
 export class World extends GameObject {
   container = document.createElement('div');
-  #rendering = new WorldRendering();
+  _rendering = new WorldRendering();
   _physics = new WorldPhysics();
   #debug = new WorldDebug(this.container);
 
@@ -31,7 +31,7 @@ export class World extends GameObject {
 
     this._physics.update(dt);
     this._engineUpdate(dt, this.#pt);
-    this.#rendering.update();
+    this._rendering.update();
     this.#debug.update();
   }
 
@@ -42,7 +42,7 @@ export class World extends GameObject {
     const canvasWidth = this.#width ?? rect.width;
     const canvasHeight = this.#height ?? rect.height;
 
-    this.#rendering.setCanvasSize(rect, canvasWidth, canvasHeight);
+    this._rendering.setCanvasSize(rect, canvasWidth, canvasHeight);
 
     //TODO
   }
@@ -53,7 +53,7 @@ export class World extends GameObject {
   }
 
   async #init() {
-    await this.#rendering.init(this.container, this.#width, this.#height);
+    await this._rendering.init(this.container, this.#width, this.#height);
     this.#applySize();
 
     let prevTime = 0;
@@ -102,8 +102,8 @@ export class World extends GameObject {
     this.#init();
   }
 
-  get backgroundAlpha() { return this.#rendering.backgroundAlpha; }
-  set backgroundAlpha(v: number) { this.#rendering.backgroundAlpha = v; }
+  get backgroundAlpha() { return this._rendering.backgroundAlpha; }
+  set backgroundAlpha(v: number) { this._rendering.backgroundAlpha = v; }
   get gravity() { return this._physics.gravity; }
   set gravity(v: number) { this._physics.gravity = v; }
 }

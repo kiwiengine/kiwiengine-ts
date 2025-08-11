@@ -5,10 +5,14 @@ export class WorldRendering {
   #root = new Container();
   #backgroundAlpha = 1;
 
-  #centerX = 0;
-  #centerY = 0;
   #cameraX = 0;
   #cameraY = 0;
+
+  centerX = 0;
+  centerY = 0;
+  canvasScale = 1;
+  canvasLeft = 0;
+  canvasTop = 0;
 
   get backgroundAlpha() { return this.#backgroundAlpha; }
   set backgroundAlpha(v: number) {
@@ -35,23 +39,28 @@ export class WorldRendering {
   }
 
   #applyPosition() {
-    this.#root.x = this.#centerX - this.#cameraX;
-    this.#root.y = this.#centerY - this.#cameraY;
+    this.#root.x = this.centerX - this.#cameraX;
+    this.#root.y = this.centerY - this.#cameraY;
   }
 
   setCanvasSize(rect: DOMRect, width: number, height: number) {
-    this.#centerX = width / 2;
-    this.#centerY = height / 2;
+    this.centerX = width / 2;
+    this.centerY = height / 2;
     this.#applyPosition();
 
     if (!this.#renderer) return;
     this.#renderer.resize(width, height);
 
     const scale = Math.min(rect.width / width, rect.height / height);
+    this.canvasScale = scale;
+
     const displayW = width * scale;
     const displayH = height * scale;
+
     const left = (rect.width - displayW) / 2;
     const top = (rect.height - displayH) / 2;
+    this.canvasLeft = left;
+    this.canvasTop = top;
 
     const canvas = this.#renderer.canvas;
     canvas.style.width = `${displayW}px`;
