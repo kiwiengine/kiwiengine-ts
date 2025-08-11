@@ -3,7 +3,9 @@ import { Collider, GameObjectPhysics } from './game-object-physics';
 import { GameObjectRendering } from './game-object-rendering';
 import { GlobalTransform, LocalTransform } from './transform';
 
-export class GameObject extends EventEmitter<{}> {
+export class GameObject extends EventEmitter<{
+  update: (dt: number) => void,
+}> {
   #lt = new LocalTransform();
   _gt = new GlobalTransform();
 
@@ -47,14 +49,17 @@ export class GameObject extends EventEmitter<{}> {
 
   protected update(dt: number): void { }
 
-  _engineUpdate(dt: number) {
+  _engineUpdate(dt: number, pt: GlobalTransform) {
     this.update(dt);
+    this._gt.update(pt, this.#lt);
 
     this.#rendering.applyChanges(this.#lt);
     this.#physics.applyChanges(this);
 
+    this.emit('update', dt);
+
     for (const child of this.#children) {
-      child._engineUpdate(dt);
+      child._engineUpdate(dt, this._gt);
     }
   }
 

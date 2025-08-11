@@ -1,3 +1,5 @@
+export let debugMode = false;
+
 export function enableDebug() {
-  //TODO
+  debugMode = true;
 }

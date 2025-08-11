@@ -1,4 +1,5 @@
 import Matter, { IChamferableBodyDefinition } from 'matter-js';
+import { debugMode } from '../utils/debug';
 import { GameObject } from './game-object';
 
 type BaseCollider = { x?: number; y?: number; };
@@ -133,7 +134,7 @@ export class GameObjectPhysics {
   }
 
   #setDebugRenderStyle() {
-    if (!this.#matterBody) return;
+    if (!debugMode || !this.#matterBody) return;
 
     if (this.#isSensor) {
       this.#matterBody.render.fillStyle = 'rgba(255,255,0,0.1)';

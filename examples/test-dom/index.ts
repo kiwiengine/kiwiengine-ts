@@ -3,6 +3,8 @@ import { enableDebug, World, DomContainerObject } from '../../src';
 enableDebug();
 
 const world = new World({ width: 800, height: 600 });
+world.container.style.width = '100%';
+world.container.style.height = '100%';
 document.body.appendChild(world.container);
 
 const testEl = document.createElement('div');
