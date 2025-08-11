@@ -1,6 +1,7 @@
 import Matter, { IChamferableBodyDefinition } from 'matter-js';
 import { debugMode } from '../utils/debug';
 import { GameObject } from './game-object';
+import { World } from '../world/world';
 
 type BaseCollider = { x?: number; y?: number; };
 type RectangleCollider = BaseCollider & { type: 'rect'; width: number; height: number };
@@ -16,16 +17,16 @@ export class GameObjectPhysics {
   #velocityY = 0;
   #fixedRotation = false;
 
-  #matterWorld?: Matter.World;
+  #world?: World;
   #matterBody?: Matter.Body;
 
   setWorldFromParent(parent: GameObjectPhysics) {
-    this.#matterWorld = parent.#matterWorld;
+    this.#world = parent.#world;
   }
 
   #removeBody() {
-    if (!this.#matterWorld || !this.#matterBody) return;
-    Matter.World.remove(this.#matterWorld, this.#matterBody);
+    if (!this.#world || !this.#matterBody) return;
+    this.#world._physics.removeBody(this.#matterBody);
   }
 
   #lastScaleX = 1;
@@ -33,7 +34,7 @@ export class GameObjectPhysics {
   #initialInertia?: number;
 
   #createBody(go: GameObject) {
-    if (!this.#collider || !this.#matterWorld) return;
+    if (!this.#collider || !this.#world) return;
 
     const gt = go._gt;
     const bodyOpts: IChamferableBodyDefinition = {
@@ -59,7 +60,7 @@ export class GameObjectPhysics {
       Matter.Body.setAngularVelocity(this.#matterBody, 0);
     }
 
-    Matter.World.add(this.#matterWorld, this.#matterBody);
+    this.#world._physics.addBody(this.#matterBody);
     this.#setDebugRenderStyle();
   }
 
