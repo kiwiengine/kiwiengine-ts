@@ -15,4 +15,8 @@ export class WorldDebug {
       this.#stats = stats;
     }
   }
+
+  update() {
+    this.#stats?.update();
+  }
 }

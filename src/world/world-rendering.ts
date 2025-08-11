@@ -1,7 +1,8 @@
-import { autoDetectRenderer, Renderer } from "pixi.js";
+import { autoDetectRenderer, Container, Renderer } from "pixi.js";
 
 export class WorldRendering {
   #renderer?: Renderer;
+  #root = new Container();
   #backgroundAlpha = 1;
 
   get backgroundAlpha() { return this.#backgroundAlpha; }
@@ -22,5 +23,10 @@ export class WorldRendering {
     this.#renderer = renderer;
 
     //TODO
+  }
+
+  update() {
+    if (!this.#renderer) return;
+    this.#renderer.render(this.#root);
   }
 }

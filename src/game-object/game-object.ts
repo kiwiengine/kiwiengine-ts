@@ -1,13 +1,13 @@
 import { EventEmitter } from '@webtaku/event-emitter';
 import { Collider, GameObjectPhysics } from './game-object-physics';
 import { GameObjectRendering } from './game-object-rendering';
-import { GlobalTransform, LocalTransform } from './transform';
+import { WorldTransform, LocalTransform } from './transform';
 
 export class GameObject extends EventEmitter<{
   update: (dt: number) => void,
 }> {
-  #lt = new LocalTransform();
-  _gt = new GlobalTransform();
+  _lt = new LocalTransform();
+  _wt = new WorldTransform();
 
   #rendering = new GameObjectRendering();
   #physics = new GameObjectPhysics();
@@ -49,18 +49,20 @@ export class GameObject extends EventEmitter<{
 
   protected update(dt: number): void { }
 
-  _engineUpdate(dt: number, pt: GlobalTransform) {
+  _engineUpdate(dt: number, pt: WorldTransform) {
     this.update(dt);
-    this._gt.update(pt, this.#lt);
 
-    this.#rendering.applyChanges(this.#lt);
+    this._wt.update(pt, this._lt);
     this.#physics.applyChanges(this);
+    this.#rendering.applyChanges(this._lt);
+    this._lt.markClean();
 
     this.emit('update', dt);
 
     for (const child of this.#children) {
-      child._engineUpdate(dt, this._gt);
+      child._engineUpdate(dt, this._wt);
     }
+    this._wt.markClean();
   }
 
   constructor(opts?: GameObjectOptions) {
@@ -88,24 +90,24 @@ export class GameObject extends EventEmitter<{
     }
   }
 
-  get x() { return this.#lt.x.v; }
-  set x(v: number) { this.#lt.x.v = v; }
-  get y() { return this.#lt.y.v; }
-  set y(v: number) { this.#lt.y.v = v; }
-  get pivotX() { return this.#lt.pivotX.v; }
-  set pivotX(v: number) { this.#lt.pivotX.v = v; }
-  get pivotY() { return this.#lt.pivotY.v; }
-  set pivotY(v: number) { this.#lt.pivotY.v = v; }
-  get scale() { return this.#lt.scaleX.v; }
-  set scale(v: number) { this.#lt.scaleX.v = v; this.#lt.scaleY.v = v; }
-  get scaleX() { return this.#lt.scaleX.v; }
-  set scaleX(v: number) { this.#lt.scaleX.v = v; }
-  get scaleY() { return this.#lt.scaleY.v; }
-  set scaleY(v: number) { this.#lt.scaleY.v = v; }
-  get rotation() { return this.#lt.rotation.v; }
-  set rotation(v: number) { this.#lt.rotation.v = v; }
-  get alpha() { return this.#lt.alpha.v; }
-  set alpha(v: number) { this.#lt.alpha.v = v; }
+  get x() { return this._lt.x.v; }
+  set x(v: number) { this._lt.x.v = v; }
+  get y() { return this._lt.y.v; }
+  set y(v: number) { this._lt.y.v = v; }
+  get pivotX() { return this._lt.pivotX.v; }
+  set pivotX(v: number) { this._lt.pivotX.v = v; }
+  get pivotY() { return this._lt.pivotY.v; }
+  set pivotY(v: number) { this._lt.pivotY.v = v; }
+  get scale() { return this._lt.scaleX.v; }
+  set scale(v: number) { this._lt.scaleX.v = v; this._lt.scaleY.v = v; }
+  get scaleX() { return this._lt.scaleX.v; }
+  set scaleX(v: number) { this._lt.scaleX.v = v; }
+  get scaleY() { return this._lt.scaleY.v; }
+  set scaleY(v: number) { this._lt.scaleY.v = v; }
+  get rotation() { return this._lt.rotation.v; }
+  set rotation(v: number) { this._lt.rotation.v = v; }
+  get alpha() { return this._lt.alpha.v; }
+  set alpha(v: number) { this._lt.alpha.v = v; }
 
   get drawOrder() { return this.#rendering.drawOrder; }
   set drawOrder(v: number) { this.#rendering.drawOrder = v; }

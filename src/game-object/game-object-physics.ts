@@ -1,7 +1,8 @@
 import Matter, { IChamferableBodyDefinition } from 'matter-js';
 import { debugMode } from '../utils/debug';
-import { GameObject } from './game-object';
 import { World } from '../world/world';
+import { GameObject } from './game-object';
+import { worldToLocalWithNewWorld } from './transform';
 
 type BaseCollider = { x?: number; y?: number; };
 type RectangleCollider = BaseCollider & { type: 'rect'; width: number; height: number };
@@ -36,7 +37,7 @@ export class GameObjectPhysics {
   #createBody(go: GameObject) {
     if (!this.#collider || !this.#world) return;
 
-    const gt = go._gt;
+    const gt = go._wt;
     const bodyOpts: IChamferableBodyDefinition = {
       angle: gt.rotation.v,
       isStatic: this.#isStatic,
@@ -68,20 +69,33 @@ export class GameObjectPhysics {
     if (this.#collider && !this.#matterBody) this.#createBody(go);
     if (!this.#matterBody) return;
 
-    const gt = go._gt;
-    if (gt.x.dirty && gt.y.dirty) Matter.Body.setPosition(this.#matterBody, { x: gt.x.v, y: gt.y.v });
-    else if (gt.x.dirty) Matter.Body.setPosition(this.#matterBody, { x: gt.x.v, y: this.#matterBody.position.y });
-    else if (gt.y.dirty) Matter.Body.setPosition(this.#matterBody, { x: this.#matterBody.position.x, y: gt.y.v });
-
-    if (gt.scaleX.dirty || gt.scaleY.dirty) {
-      const scaleDiffX = gt.scaleX.v / this.#lastScaleX;
-      const scaleDiffY = gt.scaleY.v / this.#lastScaleY;
+    const wt = go._wt;
+    if (wt.x.dirty && wt.y.dirty) Matter.Body.setPosition(this.#matterBody, { x: wt.x.v, y: wt.y.v });
+    else if (wt.x.dirty) Matter.Body.setPosition(this.#matterBody, { x: wt.x.v, y: this.#matterBody.position.y });
+    else if (wt.y.dirty) Matter.Body.setPosition(this.#matterBody, { x: this.#matterBody.position.x, y: wt.y.v });
+    if (wt.scaleX.dirty || wt.scaleY.dirty) {
+      const scaleDiffX = wt.scaleX.v / this.#lastScaleX;
+      const scaleDiffY = wt.scaleY.v / this.#lastScaleY;
       Matter.Body.scale(this.#matterBody, scaleDiffX, scaleDiffY);
-      this.#lastScaleX = gt.scaleX.v;
-      this.#lastScaleY = gt.scaleY.v;
+      this.#lastScaleX = wt.scaleX.v;
+      this.#lastScaleY = wt.scaleY.v;
     }
+    if (wt.rotation.dirty) Matter.Body.setAngle(this.#matterBody, wt.rotation.v);
 
-    if (gt.rotation.dirty) Matter.Body.setAngle(this.#matterBody, gt.rotation.v);
+    const lt = go._lt;
+    if (!wt.x.dirty || !wt.y.dirty || !wt.rotation.dirty) {
+      const { x, y, rotation, newWorldX, newWorldY, newWorldRotation } =
+        worldToLocalWithNewWorld(
+          wt,
+          lt,
+          this.#matterBody.position.x,
+          this.#matterBody.position.y,
+          this.#matterBody.angle
+        );
+      if (!wt.x.dirty) { lt.x.v = x; wt.x.v = newWorldX; }
+      if (!wt.y.dirty) { lt.y.v = y; wt.y.v = newWorldY; }
+      if (!wt.rotation.dirty) { lt.rotation.v = rotation; wt.rotation.v = newWorldRotation; }
+    }
   }
 
   destroy() {
