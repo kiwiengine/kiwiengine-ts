@@ -1,7 +1,8 @@
 import { EventEmitter } from '@webtaku/event-emitter';
+import { World } from '../world/world';
 import { Collider, GameObjectPhysics } from './game-object-physics';
 import { GameObjectRendering } from './game-object-rendering';
-import { WorldTransform, LocalTransform } from './transform';
+import { LocalTransform, WorldTransform } from './transform';
 
 export class GameObject extends EventEmitter<{
   update: (dt: number) => void,
@@ -10,10 +11,14 @@ export class GameObject extends EventEmitter<{
   _wt = new WorldTransform();
 
   #rendering = new GameObjectRendering();
-  #physics = new GameObjectPhysics();
+  #physics = new GameObjectPhysics(this);
 
+  #world?: World;
   #parent?: GameObject;
   #children: GameObject[] = [];
+
+  protected _setWorld(world: World) { this.#world = world; }
+  _getWorld() { return this.#world; }
 
   add(...children: GameObject[]) {
     for (const child of children) {
@@ -22,7 +27,7 @@ export class GameObject extends EventEmitter<{
         if (idx !== -1) child.#parent.#children.splice(idx, 1);
         child.#parent.#rendering.removeChild(child.#rendering);
       }
-      child.#physics.setWorldFromParent(this.#physics);
+      if (this.#world) child._setWorld(this.#world);
       child.#parent = this;
 
       this.#children.push(child);
@@ -53,7 +58,7 @@ export class GameObject extends EventEmitter<{
     this.update(dt);
 
     this._wt.update(pt, this._lt);
-    this.#physics.applyChanges(this);
+    this.#physics.applyChanges();
     this.#rendering.applyChanges(this._lt);
     this._lt.markClean();
 

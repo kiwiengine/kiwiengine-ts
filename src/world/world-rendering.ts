@@ -11,7 +11,7 @@ export class WorldRendering {
     if (this.#renderer) this.#renderer.background.alpha = v;
   }
 
-  async init(width: number | undefined, height: number | undefined) {
+  async init(container: HTMLElement, width: number | undefined, height: number | undefined) {
     const renderer = await autoDetectRenderer({
       width,
       height,
@@ -22,7 +22,11 @@ export class WorldRendering {
     });
     this.#renderer = renderer;
 
-    //TODO
+    const canvas = renderer.canvas;
+    canvas.style.position = 'absolute';
+    canvas.style.touchAction = 'auto';
+    canvas.style.borderRadius = container.style.borderRadius;
+    container.appendChild(canvas);
   }
 
   update() {

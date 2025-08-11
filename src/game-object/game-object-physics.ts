@@ -1,6 +1,5 @@
 import Matter, { IChamferableBodyDefinition } from 'matter-js';
 import { debugMode } from '../utils/debug';
-import { World } from '../world/world';
 import { GameObject } from './game-object';
 import { worldToLocalWithNewWorld } from './transform';
 
@@ -18,26 +17,28 @@ export class GameObjectPhysics {
   #velocityY = 0;
   #fixedRotation = false;
 
-  #world?: World;
+  #go: GameObject;
   #matterBody?: Matter.Body;
 
-  setWorldFromParent(parent: GameObjectPhysics) {
-    this.#world = parent.#world;
+  constructor(go: GameObject) {
+    this.#go = go;
   }
 
   #removeBody() {
-    if (!this.#world || !this.#matterBody) return;
-    this.#world._physics.removeBody(this.#matterBody);
+    const world = this.#go._getWorld();
+    if (!world || !this.#matterBody) return;
+    world._physics.removeBody(this.#matterBody);
   }
 
   #lastScaleX = 1;
   #lastScaleY = 1;
   #initialInertia?: number;
 
-  #createBody(go: GameObject) {
-    if (!this.#collider || !this.#world) return;
+  #createBody() {
+    const world = this.#go._getWorld();
+    if (!this.#collider || !world) return;
 
-    const gt = go._wt;
+    const gt = this.#go._wt;
     const bodyOpts: IChamferableBodyDefinition = {
       angle: gt.rotation.v,
       isStatic: this.#isStatic,
@@ -50,7 +51,7 @@ export class GameObjectPhysics {
     else if (this.#collider.type === 'vert') this.#matterBody = Matter.Bodies.fromVertices(0, 0, [this.#collider.vertices], bodyOpts);
     else throw new Error('Invalid collider type');
 
-    this.#matterBody.plugin.owner = go;
+    this.#matterBody.plugin.owner = this.#go;
     this.#lastScaleX = gt.scaleX.v;
     this.#lastScaleY = gt.scaleY.v;
     Matter.Body.scale(this.#matterBody, gt.scaleX.v, gt.scaleY.v);
@@ -61,15 +62,15 @@ export class GameObjectPhysics {
       Matter.Body.setAngularVelocity(this.#matterBody, 0);
     }
 
-    this.#world._physics.addBody(this.#matterBody);
+    world._physics.addBody(this.#matterBody);
     this.#setDebugRenderStyle();
   }
 
-  applyChanges(go: GameObject) {
-    if (this.#collider && !this.#matterBody) this.#createBody(go);
+  applyChanges() {
+    if (this.#collider && !this.#matterBody) this.#createBody();
     if (!this.#matterBody) return;
 
-    const wt = go._wt;
+    const wt = this.#go._wt;
     if (wt.x.dirty && wt.y.dirty) Matter.Body.setPosition(this.#matterBody, { x: wt.x.v, y: wt.y.v });
     else if (wt.x.dirty) Matter.Body.setPosition(this.#matterBody, { x: wt.x.v, y: this.#matterBody.position.y });
     else if (wt.y.dirty) Matter.Body.setPosition(this.#matterBody, { x: this.#matterBody.position.x, y: wt.y.v });
@@ -82,7 +83,7 @@ export class GameObjectPhysics {
     }
     if (wt.rotation.dirty) Matter.Body.setAngle(this.#matterBody, wt.rotation.v);
 
-    const lt = go._lt;
+    const lt = this.#go._lt;
     if (!wt.x.dirty || !wt.y.dirty || !wt.rotation.dirty) {
       const { x, y, rotation, newWorldX, newWorldY, newWorldRotation } =
         worldToLocalWithNewWorld(

@@ -41,7 +41,7 @@ export class World extends GameObject {
   }
 
   async #init() {
-    await this.#rendering.init(this.#width, this.#height);
+    await this.#rendering.init(this.container, this.#width, this.#height);
 
     let prevTime = 0;
     let lagSeconds = 0;
@@ -79,6 +79,7 @@ export class World extends GameObject {
 
   constructor(opts?: WorldOptions) {
     super(opts);
+    this._setWorld(this);
     if (opts) {
       if (opts.width !== undefined) this.#width = opts.width;
       if (opts.height !== undefined) this.#height = opts.height;
