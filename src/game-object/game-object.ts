@@ -1,9 +1,9 @@
-import { EventContainer } from '@webtaku/event-container';
+import { EventEmitter } from '@webtaku/event-emitter';
 import { Collider, GameObjectPhysics } from './game-object-physics';
 import { GameObjectRendering } from './game-object-rendering';
 import { GlobalTransform, LocalTransform } from './transform';
 
-export class GameObject extends EventContainer {
+export class GameObject extends EventEmitter<{}> {
   #lt = new LocalTransform();
   _gt = new GlobalTransform();
 
