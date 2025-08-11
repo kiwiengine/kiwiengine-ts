@@ -14,6 +14,8 @@ export type WorldOptions = {
 
 export class World extends GameObject {
   container = document.createElement('div');
+  #containerResizeObserver: ResizeObserver;
+
   _rendering = new WorldRendering();
   _physics = new WorldPhysics();
   #debug = new WorldDebug(this.container);
@@ -33,10 +35,22 @@ export class World extends GameObject {
     this._engineUpdate(dt, this.#pt);
     this._rendering.update();
     this.#debug.update();
+
+    this._containerSizeDirty = false;
   }
+
+  #lastContainerW = 0;
+  #lastContainerH = 0;
+  _containerSizeDirty = false;
 
   #applySize() {
     const rect = this.container.getBoundingClientRect();
+
+    if (rect.width === this.#lastContainerW && rect.height === this.#lastContainerH) return;
+    this.#lastContainerW = rect.width;
+    this.#lastContainerH = rect.height;
+    this._containerSizeDirty = true;
+
     if (rect.width === 0 || rect.height === 0) return;
 
     const canvasWidth = this.#width ?? rect.width;
@@ -93,6 +107,10 @@ export class World extends GameObject {
   constructor(opts?: WorldOptions) {
     super(opts);
     this._setWorld(this);
+
+    this.#containerResizeObserver = new ResizeObserver(this.#applySize.bind(this));
+    this.#containerResizeObserver.observe(this.container);
+
     if (opts) {
       if (opts.width !== undefined) this.#width = opts.width;
       if (opts.height !== undefined) this.#height = opts.height;

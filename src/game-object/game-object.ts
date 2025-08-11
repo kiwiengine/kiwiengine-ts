@@ -54,12 +54,14 @@ export class GameObject extends EventEmitter<{
 
   protected update(dt: number): void { }
 
+  protected _afterRender() { }
   _engineUpdate(dt: number, pt: WorldTransform) {
     this.update(dt);
 
     this._wt.update(pt, this._lt);
     this.#physics.applyChanges();
     this.#rendering.applyChanges(this._lt);
+    this._afterRender();
     this._lt.markClean();
 
     this.emit('update', dt);

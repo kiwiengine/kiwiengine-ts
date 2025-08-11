@@ -38,15 +38,21 @@ export class DomContainerObject extends GameObject {
     }
   }
 
-  _engineUpdate(dt: number, pt: WorldTransform) {
-    super._engineUpdate(dt, pt);
-
+  _afterRender() {
     const world = this._getWorld();
     if (world && this.#el) {
-      const R = world._rendering;
-      const S = R.canvasScale;
+      if (
+        world._containerSizeDirty ||
+        this._wt.x.dirty ||
+        this._wt.y.dirty ||
+        this._wt.scaleX.dirty ||
+        this._wt.scaleY.dirty ||
+        this._wt.rotation.dirty
+      ) {
+        const R = world._rendering;
+        const S = R.canvasScale;
 
-      this.#el.style.transform = `
+        this.#el.style.transform = `
         translate(
           calc(-50% + ${this._wt.x.v * S + R.canvasLeft + R.centerX * S}px),
           calc(-50% + ${this._wt.y.v * S + R.canvasTop + R.centerY * S}px)
@@ -54,7 +60,8 @@ export class DomContainerObject extends GameObject {
         scale(${this._wt.scaleX.v * S}, ${this._wt.scaleY.v * S})
         rotate(${this._wt.rotation.v}rad)
       `;
-      this.#el.style.opacity = this._wt.alpha.v.toString();
+      }
+      if (this._wt.alpha.dirty) this.#el.style.opacity = this._wt.alpha.v.toString();
     }
   }
 }
