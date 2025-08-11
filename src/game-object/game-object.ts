@@ -50,7 +50,7 @@ export class GameObject extends EventContainer {
   _engineUpdate(dt: number) {
     this.update(dt);
 
-    this.#rendering.applyChanges(this._gt);
+    this.#rendering.applyChanges(this.#lt);
     this.#physics.applyChanges(this._gt);
 
     for (const child of this.#children) {
@@ -83,24 +83,24 @@ export class GameObject extends EventContainer {
     }
   }
 
-  get x() { return this.#lt.x; }
-  set x(v: number) { this.#lt.x = v; }
-  get y() { return this.#lt.y; }
-  set y(v: number) { this.#lt.y = v; }
-  get pivotX() { return this.#lt.pivotX; }
-  set pivotX(v: number) { this.#lt.pivotX = v; }
-  get pivotY() { return this.#lt.pivotY; }
-  set pivotY(v: number) { this.#lt.pivotY = v; }
-  get scale() { return this.#lt.scaleX; }
-  set scale(v: number) { this.#lt.scaleX = v; this.#lt.scaleY = v; }
-  get scaleX() { return this.#lt.scaleX; }
-  set scaleX(v: number) { this.#lt.scaleX = v; }
-  get scaleY() { return this.#lt.scaleY; }
-  set scaleY(v: number) { this.#lt.scaleY = v; }
-  get rotation() { return this.#lt.rotation; }
-  set rotation(v: number) { this.#lt.rotation = v; }
-  get alpha() { return this.#lt.alpha; }
-  set alpha(v: number) { this.#lt.alpha = v; }
+  get x() { return this.#lt.x.v; }
+  set x(v: number) { this.#lt.x.v = v; }
+  get y() { return this.#lt.y.v; }
+  set y(v: number) { this.#lt.y.v = v; }
+  get pivotX() { return this.#lt.pivotX.v; }
+  set pivotX(v: number) { this.#lt.pivotX.v = v; }
+  get pivotY() { return this.#lt.pivotY.v; }
+  set pivotY(v: number) { this.#lt.pivotY.v = v; }
+  get scale() { return this.#lt.scaleX.v; }
+  set scale(v: number) { this.#lt.scaleX.v = v; this.#lt.scaleY.v = v; }
+  get scaleX() { return this.#lt.scaleX.v; }
+  set scaleX(v: number) { this.#lt.scaleX.v = v; }
+  get scaleY() { return this.#lt.scaleY.v; }
+  set scaleY(v: number) { this.#lt.scaleY.v = v; }
+  get rotation() { return this.#lt.rotation.v; }
+  set rotation(v: number) { this.#lt.rotation.v = v; }
+  get alpha() { return this.#lt.alpha.v; }
+  set alpha(v: number) { this.#lt.alpha.v = v; }
 
   get drawOrder() { return this.#rendering.drawOrder; }
   set drawOrder(v: number) { this.#rendering.drawOrder = v; }

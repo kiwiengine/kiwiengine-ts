@@ -1,20 +1,9 @@
-export class LocalTransform {
-  x = 0;
-  y = 0;
-  pivotX = 0;
-  pivotY = 0;
-  scaleX = 1;
-  scaleY = 1;
-  rotation = 0;
-  alpha = 1;
-}
-
 class DirtyNumber {
-  #value: number;
+  #v: number;
   #dirty: boolean;
 
   constructor(v: number) {
-    this.#value = v;
+    this.#v = v;
     this.#dirty = false;
   }
 
@@ -22,14 +11,25 @@ class DirtyNumber {
     return this.#dirty;
   }
 
-  get value(): number {
-    return this.#value;
+  get v(): number {
+    return this.#v;
   }
 
-  set value(v: number) {
-    if (this.#value !== v) this.#dirty = true;
-    this.#value = v;
+  set v(v: number) {
+    if (this.#v !== v) this.#dirty = true;
+    this.#v = v;
   }
+}
+
+export class LocalTransform {
+  x = new DirtyNumber(0);
+  y = new DirtyNumber(0);
+  pivotX = new DirtyNumber(0);
+  pivotY = new DirtyNumber(0);
+  scaleX = new DirtyNumber(1);
+  scaleY = new DirtyNumber(1);
+  rotation = new DirtyNumber(0);
+  alpha = new DirtyNumber(1);
 }
 
 export class GlobalTransform {
@@ -41,23 +41,23 @@ export class GlobalTransform {
   alpha = new DirtyNumber(1);
 
   update(parent: GlobalTransform, local: LocalTransform) {
-    const rx = local.x * parent.scaleX.value;
-    const ry = local.y * parent.scaleY.value;
-    const pCos = Math.cos(parent.rotation.value);
-    const pSin = Math.sin(parent.rotation.value);
+    const rx = local.x.v * parent.scaleX.v;
+    const ry = local.y.v * parent.scaleY.v;
+    const pCos = Math.cos(parent.rotation.v);
+    const pSin = Math.sin(parent.rotation.v);
 
-    this.scaleX.value = parent.scaleX.value * local.scaleX;
-    this.scaleY.value = parent.scaleY.value * local.scaleY;
+    this.scaleX.v = parent.scaleX.v * local.scaleX.v;
+    this.scaleY.v = parent.scaleY.v * local.scaleY.v;
 
-    const pivotX = local.pivotX * this.scaleX.value;
-    const pivotY = local.pivotY * this.scaleY.value;
-    const cos = Math.cos(local.rotation);
-    const sin = Math.sin(local.rotation);
+    const pivotX = local.pivotX.v * this.scaleX.v;
+    const pivotY = local.pivotY.v * this.scaleY.v;
+    const cos = Math.cos(local.rotation.v);
+    const sin = Math.sin(local.rotation.v);
 
-    this.x.value = parent.x.value + (rx * pCos - ry * pSin) - (pivotX * cos - pivotY * sin);
-    this.y.value = parent.y.value + (rx * pSin + ry * pCos) - (pivotX * sin + pivotY * cos);
+    this.x.v = parent.x.v + (rx * pCos - ry * pSin) - (pivotX * cos - pivotY * sin);
+    this.y.v = parent.y.v + (rx * pSin + ry * pCos) - (pivotX * sin + pivotY * cos);
 
-    this.rotation.value = parent.rotation.value + local.rotation;
-    this.alpha.value = parent.alpha.value * local.alpha;
+    this.rotation.v = parent.rotation.v + local.rotation.v;
+    this.alpha.v = parent.alpha.v * local.alpha.v;
   }
 }
