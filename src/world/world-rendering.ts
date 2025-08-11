@@ -5,6 +5,11 @@ export class WorldRendering {
   #root = new Container();
   #backgroundAlpha = 1;
 
+  #centerX = 0;
+  #centerY = 0;
+  #cameraX = 0;
+  #cameraY = 0;
+
   get backgroundAlpha() { return this.#backgroundAlpha; }
   set backgroundAlpha(v: number) {
     this.#backgroundAlpha = v;
@@ -29,8 +34,38 @@ export class WorldRendering {
     container.appendChild(canvas);
   }
 
-  update() {
-    if (!this.#renderer) return;
-    this.#renderer.render(this.#root);
+  #applyPosition() {
+    this.#root.x = this.#centerX - this.#cameraX;
+    this.#root.y = this.#centerY - this.#cameraY;
   }
+
+  setCanvasSize(rect: DOMRect, width: number, height: number) {
+    this.#centerX = width / 2;
+    this.#centerY = height / 2;
+    this.#applyPosition();
+
+    if (!this.#renderer) return;
+    this.#renderer.resize(width, height);
+
+    const scale = Math.min(rect.width / width, rect.height / height);
+    const displayW = width * scale;
+    const displayH = height * scale;
+    const left = (rect.width - displayW) / 2;
+    const top = (rect.height - displayH) / 2;
+
+    const canvas = this.#renderer.canvas;
+    canvas.style.width = `${displayW}px`;
+    canvas.style.height = `${displayH}px`;
+    canvas.style.left = `${left}px`;
+    canvas.style.top = `${top}px`;
+  }
+
+  update() {
+    this.#renderer?.render(this.#root);
+  }
+
+  get cameraX() { return this.#cameraX; }
+  set cameraX(value: number) { this.#cameraX = value; this.#applyPosition(); }
+  get cameraY() { return this.#cameraY; }
+  set cameraY(value: number) { this.#cameraY = value; this.#applyPosition(); }
 }

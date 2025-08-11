@@ -35,6 +35,18 @@ export class World extends GameObject {
     this.#debug.update();
   }
 
+  #applySize() {
+    const rect = this.container.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
+
+    const canvasWidth = this.#width ?? rect.width;
+    const canvasHeight = this.#height ?? rect.height;
+
+    this.#rendering.setCanvasSize(rect, canvasWidth, canvasHeight);
+
+    //TODO
+  }
+
   #destroy() {
     //TODO
     this.#destroyed = true;
@@ -42,6 +54,7 @@ export class World extends GameObject {
 
   async #init() {
     await this.#rendering.init(this.container, this.#width, this.#height);
+    this.#applySize();
 
     let prevTime = 0;
     let lagSeconds = 0;
