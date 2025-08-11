@@ -5,7 +5,7 @@ import { GlobalTransform, LocalTransform } from './transform';
 
 export class GameObject extends EventContainer {
   #lt = new LocalTransform();
-  protected _gt = new GlobalTransform();
+  _gt = new GlobalTransform();
 
   #rendering = new GameObjectRendering();
   #physics = new GameObjectPhysics();
@@ -51,7 +51,7 @@ export class GameObject extends EventContainer {
     this.update(dt);
 
     this.#rendering.applyChanges(this.#lt);
-    this.#physics.applyChanges(this._gt);
+    this.#physics.applyChanges(this);
 
     for (const child of this.#children) {
       child._engineUpdate(dt);
