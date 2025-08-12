@@ -12,7 +12,7 @@ export class GameObject<E extends EventMap = EventMap> extends EventEmitter<E & 
   _lt = new LocalTransform();
   _wt = new WorldTransform();
 
-  #rendering = new GameObjectRendering();
+  _rendering = new GameObjectRendering();
   #physics = new GameObjectPhysics(this);
 
   #world?: World;
@@ -29,13 +29,13 @@ export class GameObject<E extends EventMap = EventMap> extends EventEmitter<E & 
       if (child.#parent) {
         const idx = child.#parent.#children.indexOf(child);
         if (idx !== -1) child.#parent.#children.splice(idx, 1);
-        child.#parent.#rendering.removeChild(child.#rendering);
+        child.#parent._rendering.removeChild(child._rendering);
       }
       if (this.#world) child._setWorld(this.#world);
       child.#parent = this;
 
       this.#children.push(child);
-      this.#rendering.addChild(child.#rendering);
+      this._rendering.addChild(child._rendering);
     }
   }
 
@@ -52,7 +52,7 @@ export class GameObject<E extends EventMap = EventMap> extends EventEmitter<E & 
     }
     this.#children.length = 0;
 
-    this.#rendering.destroy();
+    this._rendering.destroy();
     this.#physics.destroy();
   }
 
@@ -64,7 +64,7 @@ export class GameObject<E extends EventMap = EventMap> extends EventEmitter<E & 
 
     this._wt.update(pt, this._lt);
     this.#physics.applyChanges();
-    this.#rendering.applyChanges(this._lt);
+    this._rendering.applyChanges(this._lt);
     this._afterRender();
     this._lt.markClean();
 
@@ -120,10 +120,10 @@ export class GameObject<E extends EventMap = EventMap> extends EventEmitter<E & 
   get alpha() { return this._lt.alpha.v; }
   set alpha(v: number) { this._lt.alpha.v = v; }
 
-  get drawOrder() { return this.#rendering.drawOrder; }
-  set drawOrder(v: number) { this.#rendering.drawOrder = v; }
-  get yBasedDrawOrder() { return this.#rendering.yBasedDrawOrder; }
-  set yBasedDrawOrder(v: boolean) { this.#rendering.yBasedDrawOrder = v; }
+  get drawOrder() { return this._rendering.drawOrder; }
+  set drawOrder(v: number) { this._rendering.drawOrder = v; }
+  get yBasedDrawOrder() { return this._rendering.yBasedDrawOrder; }
+  set yBasedDrawOrder(v: boolean) { this._rendering.yBasedDrawOrder = v; }
 
   get collider() { return this.#physics.collider; }
   set collider(v: Collider | undefined) { this.#physics.collider = v; }
@@ -138,7 +138,7 @@ export class GameObject<E extends EventMap = EventMap> extends EventEmitter<E & 
   get fixedRotation() { return this.#physics.fixedRotation; }
   set fixedRotation(v: boolean) { this.#physics.fixedRotation = v; }
 
-  _addPixiChild(child: Container) { this.#rendering.addPixiChild(child); }
+  _addPixiChild(child: Container) { this._rendering._container.addChild(child); }
 
   #image?: string;
   get image() { return this.#image; }

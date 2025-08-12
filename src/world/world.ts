@@ -1,5 +1,3 @@
-import { Sprite } from 'pixi.js';
-import { textureLoader } from '../asset/loaders/texture';
 import { GameObject, GameObjectOptions } from '../game-object/game-object';
 import { WorldTransform } from '../game-object/transform';
 import { debugMode } from '../utils/debug';
@@ -21,9 +19,9 @@ export class World extends GameObject<{
   container = document.createElement('div');
   #containerResizeObserver: ResizeObserver;
 
-  _rendering = new WorldRendering();
-  _physics = new WorldPhysics();
-  #debug = new WorldDebug(this.container);
+  _worldRendering = new WorldRendering();
+  _worldPhysics = new WorldPhysics();
+  #worldDebug = new WorldDebug(this.container);
 
   #width?: number;
   #height?: number;
@@ -39,10 +37,10 @@ export class World extends GameObject<{
         this.#applySize();
       }
 
-      this._physics.update(dt);
+      this._worldPhysics.update(dt);
       this._engineUpdate(dt, this.#pt);
-      this._rendering.update();
-      this.#debug.update();
+      this._worldRendering.update();
+      this.#worldDebug.update();
 
       this._containerSizeDirty = false;
     }
@@ -70,23 +68,23 @@ export class World extends GameObject<{
     const canvasWidth = this.#width ?? rect.width;
     const canvasHeight = this.#height ?? rect.height;
 
-    this._rendering.setRendererSize(rect, canvasWidth, canvasHeight);
-    //TODO this.#debug.setDebugRendererSize(rect, canvasWidth, canvasHeight);
+    this._worldRendering.setRendererSize(rect, canvasWidth, canvasHeight);
+    this.#worldDebug.setMatterDebugRendererSize(rect, canvasWidth, canvasHeight, this.cameraX, this.cameraY);
 
     this.emit('resize', this.width, this.height);
   }
 
   #destroy() {
     this.#containerResizeObserver.disconnect();
-    this._rendering.destroy();
-    this._physics.destroy();
-    this.#debug.destroy();
+    this._worldRendering.destroy();
+    this._worldPhysics.destroy();
+    this.#worldDebug.destroy();
 
     this.#destroyed = true;
   }
 
   async #init() {
-    await this._rendering.init(this.container, this.#width, this.#height);
+    await this._worldRendering.init(this.container, this.#width, this.#height);
     this.#applySize();
 
     let prevTime = 0;
@@ -126,11 +124,14 @@ export class World extends GameObject<{
   constructor(opts?: WorldOptions) {
     super(opts);
     this._setWorld(this);
+    this._worldRendering.addPixiChildToRoot(this._rendering._container);
 
     this.#containerResizeObserver = new ResizeObserver(this.#applySize.bind(this));
     this.#containerResizeObserver.observe(this.container);
 
-    this._physics.on('collisionStart', (a, b) => this.emit('collisionStart', a, b));
+    this._worldRendering.on('positionChanged', () => this.#worldDebug.setMatterDebugRendererCamera(this.cameraX, this.cameraY));
+    this._worldPhysics.on('engineCreated', (engine) => this.#worldDebug.createMatterDebugRenderer(engine, this.width, this.height));
+    this._worldPhysics.on('collisionStart', (a, b) => this.emit('collisionStart', a, b));
 
     if (opts) {
       if (opts.width !== undefined) this.#width = opts.width;
@@ -142,45 +143,25 @@ export class World extends GameObject<{
     this.#init();
   }
 
-  get width() { return this.#width ?? this._rendering.renderWidth; }
+  get width() { return this.#width ?? this._worldRendering.renderWidth; }
   set width(v: number) { this.#width = v; this.#applySize(); }
-  get height() { return this.#height ?? this._rendering.renderHeight; }
+  get height() { return this.#height ?? this._worldRendering.renderHeight; }
   set height(v: number) { this.#height = v; this.#applySize(); }
 
-  get backgroundAlpha() { return this._rendering.backgroundAlpha; }
-  set backgroundAlpha(v: number) { this._rendering.backgroundAlpha = v; }
-  get gravity() { return this._physics.gravity; }
-  set gravity(v: number) { this._physics.gravity = v; }
+  get backgroundAlpha() { return this._worldRendering.backgroundAlpha; }
+  set backgroundAlpha(v: number) { this._worldRendering.backgroundAlpha = v; }
+  get gravity() { return this._worldPhysics.gravity; }
+  set gravity(v: number) { this._worldPhysics.gravity = v; }
 
-  get cameraX() { return this._rendering.cameraX; }
-  set cameraX(v: number) { this._rendering.cameraX = v; }
-  get cameraY() { return this._rendering.cameraY; }
-  set cameraY(v: number) { this._rendering.cameraY = v; }
+  get cameraX() { return this._worldRendering.cameraX; }
+  set cameraX(v: number) { this._worldRendering.cameraX = v; }
+  get cameraY() { return this._worldRendering.cameraY; }
+  set cameraY(v: number) { this._worldRendering.cameraY = v; }
 
   #backgroundImage?: string;
-  #backgroundSprite?: Sprite;
   get backgroundImage() { return this.#backgroundImage; }
   set backgroundImage(image: string | undefined) {
     this.#backgroundImage = image;
-    if (image) {
-      if (!textureLoader.checkLoaded(image)) {
-        console.info(`Background image not preloaded. Loading now: ${image}`);
-      }
-      textureLoader.load(image).then((texture) => {
-        if (texture) {
-          this.#backgroundSprite?.destroy();
-          this.#backgroundSprite = new Sprite({
-            x: this.cameraX,
-            y: this.cameraY,
-            texture,
-            anchor: { x: 0.5, y: 0.5 },
-            width: this.width,
-            height: this.height,
-            zIndex: -999999,
-          });
-          this._rendering.addPixiChildToRoot(this.#backgroundSprite);
-        }
-      });
-    }
+    this._worldRendering.setBackgroundImage(image);
   }
 }

@@ -49,7 +49,7 @@ export class DomContainerObject<E extends EventMap = EventMap> extends GameObjec
         this._wt.scaleY.dirty ||
         this._wt.rotation.dirty
       ) {
-        const R = world._rendering;
+        const R = world._worldRendering;
         const S = R.renderScale;
 
         this.#el.style.transform = `

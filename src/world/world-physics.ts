@@ -3,6 +3,7 @@ import Matter from 'matter-js';
 import { GameObject } from '../game-object/game-object';
 
 export class WorldPhysics extends EventEmitter<{
+  engineCreated: (engine: Matter.Engine) => void;
   collisionStart: (a: GameObject, b: GameObject) => void;
 }> {
   #engine?: Matter.Engine;
@@ -24,6 +25,8 @@ export class WorldPhysics extends EventEmitter<{
         this.emit('collisionStart', bodyA.plugin.owner, bodyB.plugin.owner);
       });
     });
+
+    this.emit('engineCreated', this.#engine);
   }
 
   addBody(body: Matter.Body) {

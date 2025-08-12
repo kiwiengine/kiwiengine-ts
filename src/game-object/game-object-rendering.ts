@@ -2,24 +2,23 @@ import { Container } from 'pixi.js';
 import { LocalTransform } from './transform';
 
 export class GameObjectRendering {
-  #container = new Container({ sortableChildren: true });
+  _container = new Container({ sortableChildren: true });
   #drawOrder = 0;
   #yBasedDrawOrder = false;
 
-  addChild(child: GameObjectRendering) { this.#container.addChild(child.#container); }
-  addPixiChild(child: Container) { this.#container.addChild(child); }
-  removeChild(child: GameObjectRendering) { this.#container.removeChild(child.#container); }
-  destroy() { this.#container.destroy({ children: true }); }
+  addChild(child: GameObjectRendering) { this._container.addChild(child._container); }
+  removeChild(child: GameObjectRendering) { this._container.removeChild(child._container); }
+  destroy() { this._container.destroy({ children: true }); }
 
   applyChanges(lt: LocalTransform) {
-    if (lt.x.dirty) this.#container.x = lt.x.v;
-    if (lt.y.dirty) this.#container.y = lt.y.v;
-    if (lt.pivotX.dirty) this.#container.pivot.x = lt.pivotX.v;
-    if (lt.pivotY.dirty) this.#container.pivot.y = lt.pivotY.v;
-    if (lt.scaleX.dirty) this.#container.scale.x = lt.scaleX.v;
-    if (lt.scaleY.dirty) this.#container.scale.y = lt.scaleY.v;
-    if (lt.rotation.dirty) this.#container.rotation = lt.rotation.v;
-    if (lt.alpha.dirty) this.#container.alpha = lt.alpha.v;
+    if (lt.x.dirty) this._container.x = lt.x.v;
+    if (lt.y.dirty) this._container.y = lt.y.v;
+    if (lt.pivotX.dirty) this._container.pivot.x = lt.pivotX.v;
+    if (lt.pivotY.dirty) this._container.pivot.y = lt.pivotY.v;
+    if (lt.scaleX.dirty) this._container.scale.x = lt.scaleX.v;
+    if (lt.scaleY.dirty) this._container.scale.y = lt.scaleY.v;
+    if (lt.rotation.dirty) this._container.rotation = lt.rotation.v;
+    if (lt.alpha.dirty) this._container.alpha = lt.alpha.v;
   }
 
   get drawOrder() { return this.#drawOrder; }

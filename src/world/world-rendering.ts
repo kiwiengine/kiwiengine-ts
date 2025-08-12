@@ -1,6 +1,9 @@
-import { autoDetectRenderer, Container, Renderer } from "pixi.js";
+import { autoDetectRenderer, Container, EventEmitter, Renderer, Sprite } from "pixi.js";
+import { textureLoader } from '../asset/loaders/texture';
 
-export class WorldRendering {
+export class WorldRendering extends EventEmitter<{
+  positionChanged: () => void;
+}> {
   #renderer?: Renderer;
   #root = new Container();
   #backgroundAlpha = 1;
@@ -45,6 +48,13 @@ export class WorldRendering {
   #applyPosition() {
     this.#root.x = this.centerX - this.#cameraX;
     this.#root.y = this.centerY - this.#cameraY;
+
+    if (this.#backgroundSprite) {
+      this.#backgroundSprite.x = this.#cameraX;
+      this.#backgroundSprite.y = this.#cameraY;
+    }
+
+    this.emit('positionChanged');
   }
 
   #lastRect?: DOMRect;
@@ -99,5 +109,29 @@ export class WorldRendering {
   destroy() {
     this.#renderer?.destroy();
     this.#renderer = undefined;
+  }
+
+  #backgroundSprite?: Sprite;
+  setBackgroundImage(image: string | undefined) {
+    if (image) {
+      if (!textureLoader.checkLoaded(image)) {
+        console.info(`Background image not preloaded. Loading now: ${image}`);
+      }
+      textureLoader.load(image).then((texture) => {
+        if (texture) {
+          this.#backgroundSprite?.destroy();
+          this.#backgroundSprite = new Sprite({
+            x: this.#cameraX,
+            y: this.#cameraY,
+            texture,
+            anchor: { x: 0.5, y: 0.5 },
+            width: this.renderWidth,
+            height: this.renderHeight,
+            zIndex: -999999,
+          });
+          this.#root.addChild(this.#backgroundSprite);
+        }
+      });
+    }
   }
 }

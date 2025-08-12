@@ -27,7 +27,7 @@ export class GameObjectPhysics {
   #removeBody() {
     const world = this.#go._getWorld();
     if (!world || !this.#matterBody) return;
-    world._physics.removeBody(this.#matterBody);
+    world._worldPhysics.removeBody(this.#matterBody);
   }
 
   #lastScaleX = 1;
@@ -62,7 +62,7 @@ export class GameObjectPhysics {
       Matter.Body.setAngularVelocity(this.#matterBody, 0);
     }
 
-    world._physics.addBody(this.#matterBody);
+    world._worldPhysics.addBody(this.#matterBody);
     this.#setDebugRenderStyle();
   }
 
