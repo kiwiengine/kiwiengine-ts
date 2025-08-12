@@ -16,7 +16,7 @@ export type WorldOptions = {
 
 export class World extends GameObject<{
   resize: (width: number, height: number) => void;
-  collisionstart: (a: GameObject, b: GameObject) => void;
+  collisionStart: (a: GameObject, b: GameObject) => void;
 }> {
   container = document.createElement('div');
   #containerResizeObserver: ResizeObserver;
@@ -33,15 +33,24 @@ export class World extends GameObject<{
 
   #pt = new WorldTransform();
   #update(dt: number) {
-    if (this.container.isConnected) this.#hasEverBeenConnected = true;
-    else if (this.#hasEverBeenConnected) { this.#destroy(); return; }
+    if (this.container.isConnected) {
+      if (!this.#hasEverBeenConnected) {
+        this.#hasEverBeenConnected = true;
+        this.#applySize();
+      }
 
-    this._physics.update(dt);
-    this._engineUpdate(dt, this.#pt);
-    this._rendering.update();
-    this.#debug.update();
+      this._physics.update(dt);
+      this._engineUpdate(dt, this.#pt);
+      this._rendering.update();
+      this.#debug.update();
 
-    this._containerSizeDirty = false;
+      this._containerSizeDirty = false;
+    }
+
+    else if (this.#hasEverBeenConnected) {
+      this.#destroy();
+      return;
+    }
   }
 
   #lastContainerW = 0;
@@ -68,7 +77,11 @@ export class World extends GameObject<{
   }
 
   #destroy() {
-    //TODO
+    this.#containerResizeObserver.disconnect();
+    this._rendering.destroy();
+    this._physics.destroy();
+    this.#debug.destroy();
+
     this.#destroyed = true;
   }
 
@@ -117,9 +130,7 @@ export class World extends GameObject<{
     this.#containerResizeObserver = new ResizeObserver(this.#applySize.bind(this));
     this.#containerResizeObserver.observe(this.container);
 
-    this._physics.on('collisionstart', (a, b) => {
-      this.emit('collisionstart', a, b);
-    });
+    this._physics.on('collisionStart', (a, b) => this.emit('collisionStart', a, b));
 
     if (opts) {
       if (opts.width !== undefined) this.#width = opts.width;
@@ -127,6 +138,7 @@ export class World extends GameObject<{
       if (opts.backgroundAlpha !== undefined) this.backgroundAlpha = opts.backgroundAlpha;
       if (opts.gravity !== undefined) this.gravity = opts.gravity;
     }
+
     this.#init();
   }
 

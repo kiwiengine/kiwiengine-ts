@@ -3,7 +3,7 @@ import Matter from 'matter-js';
 import { GameObject } from '../game-object/game-object';
 
 export class WorldPhysics extends EventEmitter<{
-  collisionstart: (a: GameObject, b: GameObject) => void;
+  collisionStart: (a: GameObject, b: GameObject) => void;
 }> {
   #engine?: Matter.Engine;
   #gravity = 0;
@@ -21,7 +21,7 @@ export class WorldPhysics extends EventEmitter<{
     Matter.Events.on(this.#engine, 'collisionStart', (event) => {
       event.pairs.forEach((pair) => {
         const { bodyA, bodyB } = pair;
-        this.emit('collisionstart', bodyA.plugin.owner, bodyB.plugin.owner);
+        this.emit('collisionStart', bodyA.plugin.owner, bodyB.plugin.owner);
       });
     });
   }
@@ -40,5 +40,10 @@ export class WorldPhysics extends EventEmitter<{
     if (!this.#engine) return;
     const matterDt = dt * 1000;
     Matter.Engine.update(this.#engine, matterDt > 16.666 ? 16.666 : matterDt);
+  }
+
+  destroy() {
+    if (this.#engine) Matter.Engine.clear(this.#engine);
+    this.#engine = undefined;
   }
 }

@@ -38,6 +38,8 @@ export class WorldRendering {
     canvas.style.touchAction = 'auto';
     canvas.style.borderRadius = container.style.borderRadius;
     container.appendChild(canvas);
+
+    if (this.#lastRect) this.setRendererSize(this.#lastRect, this.#lastWidth, this.#lastHeight);
   }
 
   #applyPosition() {
@@ -45,7 +47,15 @@ export class WorldRendering {
     this.#root.y = this.centerY - this.#cameraY;
   }
 
+  #lastRect?: DOMRect;
+  #lastWidth = 0;
+  #lastHeight = 0;
+
   setRendererSize(rect: DOMRect, width: number, height: number) {
+    this.#lastRect = rect;
+    this.#lastWidth = width;
+    this.#lastHeight = height;
+
     this.centerX = width / 2;
     this.centerY = height / 2;
     this.#applyPosition();
@@ -84,5 +94,10 @@ export class WorldRendering {
 
   addPixiChildToRoot(child: Container) {
     this.#root.addChild(child);
+  }
+
+  destroy() {
+    this.#renderer?.destroy();
+    this.#renderer = undefined;
   }
 }
