@@ -1,0 +1,1 @@
+{"version":3,"file":"binary.d.ts","sourceRoot":"","sources":["../../../../src/asset/loaders/binary.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,UAAU,CAAC;AAElC,cAAM,YAAa,SAAQ,MAAM,CAAC,UAAU,CAAC;cAClB,KAAK,CAAC,GAAG,EAAE,MAAM;CA0B3C;AAED,eAAO,MAAM,YAAY,cAAqB,CAAC"}

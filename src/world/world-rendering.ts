@@ -19,6 +19,13 @@ export class WorldRendering extends EventEmitter<{
   canvasLeft = 0;
   canvasTop = 0;
 
+  #backgroundColor = 0x304C79;
+  get backgroundColor() { return this.#backgroundColor; }
+  set backgroundColor(v: number) {
+    this.#backgroundColor = v;
+    if (this.#renderer) this.#renderer.background.color = v;
+  }
+
   get backgroundAlpha() { return this.#backgroundAlpha; }
   set backgroundAlpha(v: number) {
     this.#backgroundAlpha = v;
@@ -29,7 +36,7 @@ export class WorldRendering extends EventEmitter<{
     const renderer = await autoDetectRenderer({
       width,
       height,
-      backgroundColor: 0x304C79,
+      backgroundColor: this.#backgroundColor,
       backgroundAlpha: this.#backgroundAlpha,
       eventMode: 'none',
       resolution: window.devicePixelRatio,

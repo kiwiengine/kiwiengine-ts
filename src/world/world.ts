@@ -8,6 +8,7 @@ import { WorldRendering } from "./world-rendering";
 export type WorldOptions = {
   width?: number;
   height?: number;
+  backgroundColor?: number;
   backgroundAlpha?: number;
   gravity?: number;
 } & GameObjectOptions;
@@ -136,6 +137,7 @@ export class World extends GameObject<{
     if (opts) {
       if (opts.width !== undefined) this.#width = opts.width;
       if (opts.height !== undefined) this.#height = opts.height;
+      if (opts.backgroundColor !== undefined) this.backgroundColor = opts.backgroundColor;
       if (opts.backgroundAlpha !== undefined) this.backgroundAlpha = opts.backgroundAlpha;
       if (opts.gravity !== undefined) this.gravity = opts.gravity;
     }
@@ -148,6 +150,8 @@ export class World extends GameObject<{
   get height() { return this.#height ?? this._worldRendering.renderHeight; }
   set height(v: number) { this.#height = v; this.#applySize(); }
 
+  get backgroundColor() { return this._worldRendering.backgroundColor; }
+  set backgroundColor(v: number) { this._worldRendering.backgroundColor = v; }
   get backgroundAlpha() { return this._worldRendering.backgroundAlpha; }
   set backgroundAlpha(v: number) { this._worldRendering.backgroundAlpha = v; }
   get gravity() { return this._worldPhysics.gravity; }
