@@ -1,7 +1,7 @@
 import Matter, { IChamferableBodyDefinition } from 'matter-js';
 import { debugMode } from '../utils/debug';
 import { GameObject } from './game-object';
-import { localToWorld, worldToLocalWithNewWorld } from './transform';
+import { localOffsetToWorld, worldToLocalWithNewWorld } from './transform';
 
 type BaseCollider = { x?: number; y?: number; };
 type RectangleCollider = BaseCollider & { type: 'rect'; width: number; height: number };
@@ -39,7 +39,9 @@ export class GameObjectPhysics {
     if (!this.#collider || !world) return;
 
     const wt = this.#go._wt;
-    const { x, y } = localToWorld(wt, this.#collider?.x ?? 0, this.#collider?.y ?? 0);
+    const { x: ox, y: oy } = localOffsetToWorld(wt, this.#collider?.x ?? 0, this.#collider?.y ?? 0);
+    const x = wt.x.v + ox;
+    const y = wt.y.v + oy;
 
     const bodyOpts: IChamferableBodyDefinition = {
       angle: wt.rotation.v,
@@ -73,11 +75,12 @@ export class GameObjectPhysics {
     if (!this.#matterBody) return;
 
     const wt = this.#go._wt;
-    if (wt.x.dirty || wt.y.dirty) {
-      const { x, y } = localToWorld(wt, this.#collider?.x ?? 0, this.#collider?.y ?? 0);
-      if (wt.x.dirty && wt.y.dirty) Matter.Body.setPosition(this.#matterBody, { x, y });
-      else if (wt.x.dirty) Matter.Body.setPosition(this.#matterBody, { x, y: this.#matterBody.position.y });
-      else if (wt.y.dirty) Matter.Body.setPosition(this.#matterBody, { x: this.#matterBody.position.x, y });
+    const { x: ox, y: oy } = localOffsetToWorld(wt, this.#collider?.x ?? 0, this.#collider?.y ?? 0);
+
+    if (wt.x.dirty || wt.scaleX.dirty || wt.y.dirty || wt.scaleY.dirty) {
+      if ((wt.x.dirty || wt.scaleX.dirty) && (wt.y.dirty || wt.scaleY.dirty)) Matter.Body.setPosition(this.#matterBody, { x: wt.x.v + ox, y: wt.y.v + oy });
+      else if (wt.x.dirty || wt.scaleX.dirty) Matter.Body.setPosition(this.#matterBody, { x: wt.x.v + ox, y: this.#matterBody.position.y });
+      else if (wt.y.dirty || wt.scaleY.dirty) Matter.Body.setPosition(this.#matterBody, { x: this.#matterBody.position.x, y: wt.y.v + oy });
     }
     if (wt.scaleX.dirty || wt.scaleY.dirty) {
       const scaleDiffX = wt.scaleX.v / this.#lastScaleX;
@@ -94,8 +97,8 @@ export class GameObjectPhysics {
         worldToLocalWithNewWorld(
           wt,
           lt,
-          this.#matterBody.position.x,
-          this.#matterBody.position.y,
+          this.#matterBody.position.x - ox,
+          this.#matterBody.position.y - oy,
           this.#matterBody.angle
         );
       if (!wt.x.dirty) { lt.x.v = x; wt.x.v = newWorldX; }

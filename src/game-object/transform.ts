@@ -86,18 +86,18 @@ export class WorldTransform {
   }
 }
 
-export function localToWorld(
+export function localOffsetToWorld(
   world: WorldTransform,
-  px: number,
-  py: number
+  ox: number,
+  oy: number
 ): { x: number; y: number } {
   const cos = Math.cos(world.rotation.v);
   const sin = Math.sin(world.rotation.v);
-  const sx = px * world.scaleX.v;
-  const sy = py * world.scaleY.v;
+  const sx = ox * world.scaleX.v;
+  const sy = oy * world.scaleY.v;
 
-  const x = world.x.v + (sx * cos - sy * sin);
-  const y = world.y.v + (sx * sin + sy * cos);
+  const x = sx * cos - sy * sin;
+  const y = sx * sin + sy * cos;
   return { x, y };
 }
 
