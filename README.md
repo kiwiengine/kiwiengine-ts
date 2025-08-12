@@ -1,5 +1,4 @@
-# Kiwi Engine <img src="https://raw.githubusercontent.com/remojansen/logo.ts/master/ts.png" alt="TypeScript Logo" width="40" height="40" />
-
+# Kiwi Engine
 TypeScript 기반 2D 웹 게임 엔진입니다.
 
 ## 왜 키위인가?

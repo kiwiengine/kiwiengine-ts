@@ -13,21 +13,21 @@
       "ScriptHost"
     ],
     "declaration": true,
-    "declarationDir": "dist/types",
+    "declarationDir": "lib/types",
     "declarationMap": true,
     "composite": true,
     "moduleResolution": "node",
     "skipLibCheck": true,
     "strict": true,
     "rootDir": "./src",
-    "outDir": "dist"
+    "outDir": "lib"
   },
   "include": [
     "./src",
   ],
   "exclude": [
     "node_modules",
-    "**/dist/**",
+    "**/lib/**",
     "examples"
   ],
 }

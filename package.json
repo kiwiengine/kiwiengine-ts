@@ -1,11 +1,8 @@
 {
   "name": "kiwiengine",
   "version": "0.0.1",
-  "types": "./dist/types/index.d.ts",
-  "main": "./dist/index.js",
-  "files": [
-    "dist/"
-  ],
+  "types": "./lib/types/index.d.ts",
+  "main": "./lib/index.js",
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/matter-js": "^0.19.8",
