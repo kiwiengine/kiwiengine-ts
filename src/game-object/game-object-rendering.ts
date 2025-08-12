@@ -7,6 +7,7 @@ export class GameObjectRendering {
   #yBasedDrawOrder = false;
 
   addChild(child: GameObjectRendering) { this.#container.addChild(child.#container); }
+  addPixiChild(child: Container) { this.#container.addChild(child); }
   removeChild(child: GameObjectRendering) { this.#container.removeChild(child.#container); }
   destroy() { this.#container.destroy({ children: true }); }
 

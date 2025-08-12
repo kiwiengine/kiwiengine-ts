@@ -1,11 +1,13 @@
-import { EventEmitter } from '@webtaku/event-emitter';
+import { EventEmitter, EventMap } from '@webtaku/event-emitter';
+import { Container, Sprite } from 'pixi.js';
+import { textureLoader } from '../asset/loaders/texture';
 import { World } from '../world/world';
 import { Collider, GameObjectPhysics } from './game-object-physics';
 import { GameObjectRendering } from './game-object-rendering';
 import { LocalTransform, WorldTransform } from './transform';
 
-export class GameObject extends EventEmitter<{
-  update: (dt: number) => void,
+export class GameObject<E extends EventMap = EventMap> extends EventEmitter<E & {
+  update: (dt: number) => void
 }> {
   _lt = new LocalTransform();
   _wt = new WorldTransform();
@@ -16,6 +18,8 @@ export class GameObject extends EventEmitter<{
   #world?: World;
   #parent?: GameObject;
   #children: GameObject[] = [];
+
+  data: Record<string, any> = {};
 
   protected _setWorld(world: World) { this.#world = world; }
   _getWorld() { return this.#world; }
@@ -64,7 +68,7 @@ export class GameObject extends EventEmitter<{
     this._afterRender();
     this._lt.markClean();
 
-    this.emit('update', dt);
+    (this as any).emit('update', dt);
 
     for (const child of this.#children) {
       child._engineUpdate(dt, this._wt);
@@ -133,6 +137,25 @@ export class GameObject extends EventEmitter<{
   set velocityY(v: number) { this.#physics.velocityY = v; }
   get fixedRotation() { return this.#physics.fixedRotation; }
   set fixedRotation(v: boolean) { this.#physics.fixedRotation = v; }
+
+  _addPixiChild(child: Container) { this.#rendering.addPixiChild(child); }
+
+  #image?: string;
+  get image() { return this.#image; }
+  set image(value: string | undefined) {
+    if (value) {
+      if (!textureLoader.checkLoaded(value)) {
+        console.info(`Image not preloaded. Loading now: ${value}`);
+      }
+      textureLoader.load(value).then((texture) => {
+        if (texture) this._addPixiChild(new Sprite({
+          texture,
+          anchor: { x: 0.5, y: 0.5 },
+          zIndex: -999999,
+        }));
+      });
+    }
+  }
 }
 
 export type GameObjectOptions = {

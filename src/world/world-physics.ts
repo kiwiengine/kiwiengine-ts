@@ -1,6 +1,10 @@
+import { EventEmitter } from '@webtaku/event-emitter';
 import Matter from 'matter-js';
+import { GameObject } from '../game-object/game-object';
 
-export class WorldPhysics {
+export class WorldPhysics extends EventEmitter<{
+  collisionstart: (a: GameObject, b: GameObject) => void;
+}> {
   #engine?: Matter.Engine;
   #gravity = 0;
 
@@ -13,6 +17,13 @@ export class WorldPhysics {
   #createEngine() {
     this.#engine = Matter.Engine.create();
     this.#engine.gravity.y = this.#gravity;
+
+    Matter.Events.on(this.#engine, 'collisionStart', (event) => {
+      event.pairs.forEach((pair) => {
+        const { bodyA, bodyB } = pair;
+        this.emit('collisionstart', bodyA.plugin.owner, bodyB.plugin.owner);
+      });
+    });
   }
 
   addBody(body: Matter.Body) {

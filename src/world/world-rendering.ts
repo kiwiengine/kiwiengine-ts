@@ -10,7 +10,9 @@ export class WorldRendering {
 
   centerX = 0;
   centerY = 0;
-  canvasScale = 1;
+  renderWidth = 0;
+  renderHeight = 0;
+  renderScale = 1;
   canvasLeft = 0;
   canvasTop = 0;
 
@@ -43,16 +45,18 @@ export class WorldRendering {
     this.#root.y = this.centerY - this.#cameraY;
   }
 
-  setCanvasSize(rect: DOMRect, width: number, height: number) {
+  setRendererSize(rect: DOMRect, width: number, height: number) {
     this.centerX = width / 2;
     this.centerY = height / 2;
     this.#applyPosition();
 
     if (!this.#renderer) return;
     this.#renderer.resize(width, height);
+    this.renderWidth = width;
+    this.renderHeight = height;
 
     const scale = Math.min(rect.width / width, rect.height / height);
-    this.canvasScale = scale;
+    this.renderScale = scale;
 
     const displayW = width * scale;
     const displayH = height * scale;
@@ -77,4 +81,8 @@ export class WorldRendering {
   set cameraX(value: number) { this.#cameraX = value; this.#applyPosition(); }
   get cameraY() { return this.#cameraY; }
   set cameraY(value: number) { this.#cameraY = value; this.#applyPosition(); }
+
+  addPixiChildToRoot(child: Container) {
+    this.#root.addChild(child);
+  }
 }

@@ -1,4 +1,10 @@
+import { AnimatedSpriteObject } from '../game-object-ext/animated-sprite';
 import { DomContainerObject } from '../game-object-ext/dom-container';
+import { RectangleObject } from '../game-object-ext/rect';
+import { SpineObject } from '../game-object-ext/spine';
+import { SpriteObject } from '../game-object-ext/sprite';
+import { TextObject } from '../game-object-ext/text';
+import { TilingSpriteObject } from '../game-object-ext/tiling-sprite';
 import { GameObject } from '../game-object/game-object';
 
 const GameObjectClassMap = {
@@ -33,9 +39,8 @@ function go<T extends Name>(
   const go = new GameObjectClassMap[(name || 'go') as keyof GameObjectNameMap]();
 
   for (const arg of args) {
-    if (arg instanceof GameObject) {
-      go.appendChild(arg);
-    } else if (arg) {
+    if (arg instanceof GameObject) go.add(arg);
+    else if (arg) {
       for (const key in arg) {
         (go as any)[key] = arg[key];
       }

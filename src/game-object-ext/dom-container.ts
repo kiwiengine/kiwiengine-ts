@@ -1,12 +1,12 @@
+import { EventMap } from '@webtaku/event-emitter';
 import { GameObject, GameObjectOptions } from "../game-object/game-object";
-import { WorldTransform } from '../game-object/transform';
 import { World } from '../world/world';
 
 type DomContainerObjectOptions = {
   el?: HTMLElement;
 } & GameObjectOptions;
 
-export class DomContainerObject extends GameObject {
+export class DomContainerObject<E extends EventMap = EventMap> extends GameObject<E> {
   #el?: HTMLElement;
 
   constructor(opts?: DomContainerObjectOptions) {
@@ -50,7 +50,7 @@ export class DomContainerObject extends GameObject {
         this._wt.rotation.dirty
       ) {
         const R = world._rendering;
-        const S = R.canvasScale;
+        const S = R.renderScale;
 
         this.#el.style.transform = `
         translate(
