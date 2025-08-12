@@ -3,7 +3,6 @@ import { LocalTransform } from './transform';
 
 export class GameObjectRendering {
   _container = new Container({ sortableChildren: true });
-  #drawOrder = 0;
   #yBasedDrawOrder = false;
 
   addChild(child: GameObjectRendering) { this._container.addChild(child._container); }
@@ -21,8 +20,8 @@ export class GameObjectRendering {
     if (lt.alpha.dirty) this._container.alpha = lt.alpha.v;
   }
 
-  get drawOrder() { return this.#drawOrder; }
-  set drawOrder(v: number) { this.#drawOrder = v; }
+  get drawOrder() { return this._container.zIndex; }
+  set drawOrder(v: number) { this._container.zIndex = v; }
   get yBasedDrawOrder() { return this.#yBasedDrawOrder; }
   set yBasedDrawOrder(v: boolean) { this.#yBasedDrawOrder = v; }
 }

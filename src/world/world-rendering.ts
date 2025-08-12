@@ -70,8 +70,6 @@ export class WorldRendering extends EventEmitter<{
     this.centerY = height / 2;
     this.#applyPosition();
 
-    if (!this.#renderer) return;
-    this.#renderer.resize(width, height);
     this.renderWidth = width;
     this.renderHeight = height;
 
@@ -85,6 +83,9 @@ export class WorldRendering extends EventEmitter<{
     const top = (rect.height - displayH) / 2;
     this.canvasLeft = left;
     this.canvasTop = top;
+
+    if (!this.#renderer) return;
+    this.#renderer.resize(width, height);
 
     const canvas = this.#renderer.canvas;
     canvas.style.width = `${displayW}px`;

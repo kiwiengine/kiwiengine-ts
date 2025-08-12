@@ -86,6 +86,21 @@ export class WorldTransform {
   }
 }
 
+export function localToWorld(
+  world: WorldTransform,
+  px: number,
+  py: number
+): { x: number; y: number } {
+  const cos = Math.cos(world.rotation.v);
+  const sin = Math.sin(world.rotation.v);
+  const sx = px * world.scaleX.v;
+  const sy = py * world.scaleY.v;
+
+  const x = world.x.v + (sx * cos - sy * sin);
+  const y = world.y.v + (sx * sin + sy * cos);
+  return { x, y };
+}
+
 export function worldToLocalWithNewWorld(
   world: WorldTransform,
   local: LocalTransform,

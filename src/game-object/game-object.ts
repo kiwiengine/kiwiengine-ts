@@ -21,7 +21,12 @@ export class GameObject<E extends EventMap = EventMap> extends EventEmitter<E & 
 
   data: Record<string, any> = {};
 
-  protected _setWorld(world: World) { this.#world = world; }
+  protected _setWorld(world: World) {
+    this.#world = world;
+    for (const child of this.#children) {
+      child._setWorld(world);
+    }
+  }
   _getWorld() { return this.#world; }
 
   add(...children: GameObject[]) {

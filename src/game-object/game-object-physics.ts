@@ -1,7 +1,7 @@
 import Matter, { IChamferableBodyDefinition } from 'matter-js';
 import { debugMode } from '../utils/debug';
 import { GameObject } from './game-object';
-import { worldToLocalWithNewWorld } from './transform';
+import { localToWorld, worldToLocalWithNewWorld } from './transform';
 
 type BaseCollider = { x?: number; y?: number; };
 type RectangleCollider = BaseCollider & { type: 'rect'; width: number; height: number };
@@ -38,23 +38,25 @@ export class GameObjectPhysics {
     const world = this.#go._getWorld();
     if (!this.#collider || !world) return;
 
-    const gt = this.#go._wt;
+    const wt = this.#go._wt;
+    const { x, y } = localToWorld(wt, this.#collider?.x ?? 0, this.#collider?.y ?? 0);
+
     const bodyOpts: IChamferableBodyDefinition = {
-      angle: gt.rotation.v,
+      angle: wt.rotation.v,
       isStatic: this.#isStatic,
       isSensor: this.#isSensor,
       velocity: { x: this.#velocityX, y: this.#velocityY },
     };
 
-    if (this.#collider.type === 'rect') this.#matterBody = Matter.Bodies.rectangle(0, 0, this.#collider.width, this.#collider.height, bodyOpts);
-    else if (this.#collider.type === 'circle') this.#matterBody = Matter.Bodies.circle(0, 0, this.#collider.radius, bodyOpts);
-    else if (this.#collider.type === 'vert') this.#matterBody = Matter.Bodies.fromVertices(0, 0, [this.#collider.vertices], bodyOpts);
+    if (this.#collider.type === 'rect') this.#matterBody = Matter.Bodies.rectangle(x, y, this.#collider.width, this.#collider.height, bodyOpts);
+    else if (this.#collider.type === 'circle') this.#matterBody = Matter.Bodies.circle(x, y, this.#collider.radius, bodyOpts);
+    else if (this.#collider.type === 'vert') this.#matterBody = Matter.Bodies.fromVertices(x, y, [this.#collider.vertices], bodyOpts);
     else throw new Error('Invalid collider type');
 
     this.#matterBody.plugin.owner = this.#go;
-    this.#lastScaleX = gt.scaleX.v;
-    this.#lastScaleY = gt.scaleY.v;
-    Matter.Body.scale(this.#matterBody, gt.scaleX.v, gt.scaleY.v);
+    this.#lastScaleX = wt.scaleX.v;
+    this.#lastScaleY = wt.scaleY.v;
+    Matter.Body.scale(this.#matterBody, wt.scaleX.v, wt.scaleY.v);
 
     this.#initialInertia = this.#matterBody.inertia;
     if (this.#fixedRotation) {
@@ -71,9 +73,12 @@ export class GameObjectPhysics {
     if (!this.#matterBody) return;
 
     const wt = this.#go._wt;
-    if (wt.x.dirty && wt.y.dirty) Matter.Body.setPosition(this.#matterBody, { x: wt.x.v, y: wt.y.v });
-    else if (wt.x.dirty) Matter.Body.setPosition(this.#matterBody, { x: wt.x.v, y: this.#matterBody.position.y });
-    else if (wt.y.dirty) Matter.Body.setPosition(this.#matterBody, { x: this.#matterBody.position.x, y: wt.y.v });
+    if (wt.x.dirty || wt.y.dirty) {
+      const { x, y } = localToWorld(wt, this.#collider?.x ?? 0, this.#collider?.y ?? 0);
+      if (wt.x.dirty && wt.y.dirty) Matter.Body.setPosition(this.#matterBody, { x, y });
+      else if (wt.x.dirty) Matter.Body.setPosition(this.#matterBody, { x, y: this.#matterBody.position.y });
+      else if (wt.y.dirty) Matter.Body.setPosition(this.#matterBody, { x: this.#matterBody.position.x, y });
+    }
     if (wt.scaleX.dirty || wt.scaleY.dirty) {
       const scaleDiffX = wt.scaleX.v / this.#lastScaleX;
       const scaleDiffY = wt.scaleY.v / this.#lastScaleY;
@@ -109,27 +114,39 @@ export class GameObjectPhysics {
     this.#collider = value;
   }
 
-  get isStatic() { return this.#isStatic; }
+  get isStatic() {
+    if (this.#matterBody) return this.#matterBody.isStatic;
+    else return this.#isStatic;
+  }
   set isStatic(value: boolean) {
     this.#isStatic = value;
     if (this.#matterBody) Matter.Body.setStatic(this.#matterBody, value);
     this.#setDebugRenderStyle();
   }
 
-  get isSensor() { return this.#isSensor; }
+  get isSensor() {
+    if (this.#matterBody) return this.#matterBody.isSensor;
+    else return this.#isSensor;
+  }
   set isSensor(value: boolean) {
     this.#isSensor = value;
     if (this.#matterBody) this.#matterBody.isSensor = value;
     this.#setDebugRenderStyle();
   }
 
-  get velocityX() { return this.#velocityX; }
+  get velocityX() {
+    if (this.#matterBody) return this.#matterBody.velocity.x;
+    else return this.#velocityX;
+  }
   set velocityX(value: number) {
     this.#velocityX = value;
     if (this.#matterBody) Matter.Body.setVelocity(this.#matterBody, { x: value, y: this.#velocityY });
   }
 
-  get velocityY() { return this.#velocityY; }
+  get velocityY() {
+    if (this.#matterBody) return this.#matterBody.velocity.y;
+    else return this.#velocityY;
+  }
   set velocityY(value: number) {
     this.#velocityY = value;
     if (this.#matterBody) Matter.Body.setVelocity(this.#matterBody, { x: this.#velocityX, y: value });
