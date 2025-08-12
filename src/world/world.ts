@@ -57,8 +57,7 @@ export class World extends GameObject {
     const canvasHeight = this.#height ?? rect.height;
 
     this._rendering.setCanvasSize(rect, canvasWidth, canvasHeight);
-
-    //TODO
+    //TODO this.#debug.setDebugRendererSize(rect, canvasWidth, canvasHeight);
   }
 
   #destroy() {
