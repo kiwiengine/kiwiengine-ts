@@ -76,5 +76,6 @@ export type GameObjectOptions = {
     velocityX?: number;
     velocityY?: number;
     fixedRotation?: boolean;
+    image?: string;
 };
 //# sourceMappingURL=game-object.d.ts.map

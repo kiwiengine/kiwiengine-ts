@@ -103,6 +103,8 @@ export class GameObject<E extends EventMap = EventMap> extends EventEmitter<E & 
       if (opts.velocityX !== undefined) this.velocityX = opts.velocityX;
       if (opts.velocityY !== undefined) this.velocityY = opts.velocityY;
       if (opts.fixedRotation !== undefined) this.fixedRotation = opts.fixedRotation;
+
+      if (opts.image !== undefined) this.image = opts.image;
     }
   }
 
@@ -183,4 +185,6 @@ export type GameObjectOptions = {
   velocityX?: number;
   velocityY?: number;
   fixedRotation?: boolean;
+
+  image?: string;
 };

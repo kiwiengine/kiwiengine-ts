@@ -11,7 +11,7 @@ export class GameObjectRendering {
 
   applyChanges(lt: LocalTransform) {
     if (lt.x.dirty) this._container.x = lt.x.v;
-    if (lt.y.dirty) this._container.y = lt.y.v;
+    if (lt.y.dirty) { this._container.y = lt.y.v; if (this.#yBasedDrawOrder) this.drawOrder = lt.y.v; }
     if (lt.pivotX.dirty) this._container.pivot.x = lt.pivotX.v;
     if (lt.pivotY.dirty) this._container.pivot.y = lt.pivotY.v;
     if (lt.scaleX.dirty) this._container.scale.x = lt.scaleX.v;
@@ -23,5 +23,5 @@ export class GameObjectRendering {
   get drawOrder() { return this._container.zIndex; }
   set drawOrder(v: number) { this._container.zIndex = v; }
   get yBasedDrawOrder() { return this.#yBasedDrawOrder; }
-  set yBasedDrawOrder(v: boolean) { this.#yBasedDrawOrder = v; }
+  set yBasedDrawOrder(v: boolean) { this.#yBasedDrawOrder = v; if (v) this.drawOrder = this._container.y; }
 }
