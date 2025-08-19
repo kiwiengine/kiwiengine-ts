@@ -10,7 +10,10 @@ type SpineOptions = {
     animation?: string;
     loop?: boolean;
 } & GameObjectOptions;
-declare class SpineObject<E extends EventMap = EventMap> extends GameObject<E> {
+declare class SpineObject<E extends EventMap = EventMap> extends GameObject<E & {
+    load: () => void;
+    animationend: (animation: string) => void;
+}> {
     #private;
     constructor(opts?: SpineOptions);
     get atlas(): string | undefined;

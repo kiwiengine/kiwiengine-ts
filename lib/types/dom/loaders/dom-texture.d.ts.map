@@ -1,0 +1,1 @@
+{"version":3,"file":"dom-texture.d.ts","sourceRoot":"","sources":["../../../../src/dom/loaders/dom-texture.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,4BAA4B,CAAC;AAEpD,cAAM,gBAAiB,SAAQ,MAAM,CAAC,gBAAgB,CAAC;cAC5B,KAAK,CAAC,GAAG,EAAE,MAAM;cAmCvB,QAAQ,CAAC,GAAG,EAAE,MAAM,EAAE,OAAO,EAAE,gBAAgB;CAGnE;AAED,eAAO,MAAM,gBAAgB,kBAAyB,CAAC"}

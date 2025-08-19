@@ -4,7 +4,6 @@ export declare class GameObjectRendering {
     #private;
     _container: Container<import("pixi.js").ContainerChild>;
     addChild(child: GameObjectRendering): void;
-    removeChild(child: GameObjectRendering): void;
     destroy(): void;
     applyChanges(lt: LocalTransform): void;
     get drawOrder(): number;

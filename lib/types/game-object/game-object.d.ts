@@ -17,7 +17,7 @@ export declare class GameObject<E extends EventMap = EventMap> extends EventEmit
     add(...children: GameObject[]): void;
     remove(): void;
     protected update(dt: number): void;
-    protected _afterRender(): void;
+    protected _afterRender(dt: number): void;
     _engineUpdate(dt: number, pt: WorldTransform): void;
     constructor(opts?: GameObjectOptions);
     get x(): number;

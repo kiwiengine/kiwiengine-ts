@@ -10,7 +10,7 @@ export declare class DomContainerObject<E extends EventMap = EventMap> extends G
     protected _setWorld(world: World): void;
     get el(): HTMLElement | undefined;
     set el(el: HTMLElement | undefined);
-    _afterRender(): void;
+    protected _afterRender(dt: number): void;
 }
 export {};
 //# sourceMappingURL=dom-container.d.ts.map

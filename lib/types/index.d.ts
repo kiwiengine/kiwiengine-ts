@@ -1,5 +1,8 @@
 export { musicPlayer, sfxPlayer } from './asset/audio';
 export { AssetSource, preload } from './asset/preload';
+export { DomAnimatedSpriteObject } from './dom/dom-animated-sprite';
+export { DomGameObject } from './dom/dom-game-object';
+export { domPreload } from './dom/loaders/dom-preload';
 export { AnimatedSpriteObject } from './game-object-ext/animated-sprite';
 export { DomContainerObject } from './game-object-ext/dom-container';
 export { RectangleObject } from './game-object-ext/rect';
