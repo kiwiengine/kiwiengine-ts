@@ -38,7 +38,7 @@ export class DomContainerObject<E extends EventMap = EventMap> extends GameObjec
     }
   }
 
-  _afterRender() {
+  protected _afterRender(dt: number) {
     const world = this._getWorld();
     if (world && this.#el) {
       if (

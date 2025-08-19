@@ -6,7 +6,6 @@ export class GameObjectRendering {
   #yBasedDrawOrder = false;
 
   addChild(child: GameObjectRendering) { this._container.addChild(child._container); }
-  removeChild(child: GameObjectRendering) { this._container.removeChild(child._container); }
   destroy() { this._container.destroy({ children: true }); }
 
   applyChanges(lt: LocalTransform) {

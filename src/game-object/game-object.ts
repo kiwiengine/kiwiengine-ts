@@ -34,7 +34,6 @@ export class GameObject<E extends EventMap = EventMap> extends EventEmitter<E & 
       if (child.#parent) {
         const idx = child.#parent.#children.indexOf(child);
         if (idx !== -1) child.#parent.#children.splice(idx, 1);
-        child.#parent._rendering.removeChild(child._rendering);
       }
       if (this.#world) child._setWorld(this.#world);
       child.#parent = this;
@@ -63,14 +62,14 @@ export class GameObject<E extends EventMap = EventMap> extends EventEmitter<E & 
 
   protected update(dt: number): void { }
 
-  protected _afterRender() { }
+  protected _afterRender(dt: number) { }
   _engineUpdate(dt: number, pt: WorldTransform) {
     this.update(dt);
 
     this._wt.update(pt, this._lt);
     this.#physics.applyChanges();
     this._rendering.applyChanges(this._lt);
-    this._afterRender();
+    this._afterRender(dt);
     this._lt.markClean();
 
     (this as any).emit('update', dt);

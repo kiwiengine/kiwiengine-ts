@@ -22,7 +22,7 @@ class AnimatedSpriteObject<E extends EventMap = EventMap> extends GameObject<E &
   #atlas?: SpritesheetData;
   #animation?: string;
   #fps?: number;
-  #loop?: boolean;
+  #loop = true;
 
   constructor(opts?: AnimatedSpriteOptions) {
     super(opts);
@@ -46,7 +46,7 @@ class AnimatedSpriteObject<E extends EventMap = EventMap> extends GameObject<E &
       }
       const sprite = new AnimatedSprite(this.#sheet.animations[this.#animation]);
       sprite.anchor.set(0.5, 0.5);
-      sprite.loop = this.#loop ?? true;
+      sprite.loop = this.#loop;
       sprite.animationSpeed = (this.#fps ?? 0) / 60;
       sprite.play();
       this._addPixiChild(sprite);
@@ -76,10 +76,7 @@ class AnimatedSpriteObject<E extends EventMap = EventMap> extends GameObject<E &
     this.#updateAnimation();
   }
 
-  get src() {
-    return this.#src;
-  }
-
+  get src() { return this.#src; }
   set src(src: string | undefined) {
     if (this.#src !== src) {
       this.#src = src;
@@ -87,10 +84,7 @@ class AnimatedSpriteObject<E extends EventMap = EventMap> extends GameObject<E &
     }
   }
 
-  get atlas() {
-    return this.#atlas;
-  }
-
+  get atlas() { return this.#atlas; }
   set atlas(atlas: SpritesheetData | undefined) {
     if (this.#atlas !== atlas) {
       this.#atlas = atlas;
@@ -98,10 +92,7 @@ class AnimatedSpriteObject<E extends EventMap = EventMap> extends GameObject<E &
     }
   }
 
-  get animation() {
-    return this.#animation;
-  }
-
+  get animation() { return this.#animation; }
   set animation(animation: string | undefined) {
     if (this.#animation !== animation) {
       this.#animation = animation;
@@ -109,10 +100,7 @@ class AnimatedSpriteObject<E extends EventMap = EventMap> extends GameObject<E &
     }
   }
 
-  get fps() {
-    return this.#fps;
-  }
-
+  get fps() { return this.#fps; }
   set fps(fps: number | undefined) {
     if (this.#fps !== fps) {
       this.#fps = fps;
@@ -120,14 +108,11 @@ class AnimatedSpriteObject<E extends EventMap = EventMap> extends GameObject<E &
     }
   }
 
-  get loop() {
-    return this.#loop;
-  }
-
-  set loop(loop: boolean | undefined) {
+  get loop() { return this.#loop; }
+  set loop(loop: boolean) {
     if (this.#loop !== loop) {
       this.#loop = loop;
-      if (this.#sprite) this.#sprite.loop = loop === true;
+      if (this.#sprite) this.#sprite.loop = loop;
     }
   }
 

@@ -1,15 +1,26 @@
 import { SpritesheetData } from 'pixi.js';
 import { audioLoader } from './loaders/audio';
+import { binaryLoader } from './loaders/binary';
 import { fontFamilyLoader } from './loaders/font';
 import { getCachedId, spritesheetLoader } from './loaders/spritesheet';
+import { textLoader } from './loaders/text';
 import { textureLoader } from './loaders/texture';
 
-type AssetSource = string | {
+export type AssetSource = string | {
   src: string;
   atlas: SpritesheetData;
 };
 
-function isImage(path: string): boolean {
+export function isText(path: string): boolean {
+  return path.endsWith('.json') ||
+    path.endsWith('.atlas');
+}
+
+export function isBinary(path: string): boolean {
+  return path.endsWith('.skel');
+}
+
+export function isImage(path: string): boolean {
   return path.endsWith('.png') ||
     path.endsWith('.jpg') ||
     path.endsWith('.jpeg') ||
@@ -17,23 +28,27 @@ function isImage(path: string): boolean {
     path.endsWith('.webp');
 }
 
-function isAudio(path: string): boolean {
+export function isAudio(path: string): boolean {
   return path.endsWith('.mp3') ||
     path.endsWith('.wav') ||
     path.endsWith('.ogg');
 }
 
-function isFontFamily(fontFamily: string): boolean {
+export function isFontFamily(fontFamily: string): boolean {
   return !fontFamily.includes('.');
 }
 
-async function preload(assets: AssetSource[], progressCallback: (progress: number) => void) {
+export async function preload(assets: AssetSource[], progressCallback?: (progress: number) => void) {
   const total = assets.length;
   let loaded = 0;
 
   await Promise.all(assets.map(async (asset) => {
     if (typeof asset === 'string') {
-      if (isImage(asset)) {
+      if (isText(asset)) {
+        await textLoader.load(asset);
+      } else if (isBinary(asset)) {
+        await binaryLoader.load(asset);
+      } else if (isImage(asset)) {
         await textureLoader.load(asset);
       } else if (isAudio(asset)) {
         await audioLoader.load(asset);
@@ -55,7 +70,11 @@ async function preload(assets: AssetSource[], progressCallback: (progress: numbe
   return () => {
     assets.forEach((asset) => {
       if (typeof asset === 'string') {
-        if (isImage(asset)) {
+        if (isText(asset)) {
+          textLoader.release(asset);
+        } else if (isBinary(asset)) {
+          binaryLoader.release(asset);
+        } else if (isImage(asset)) {
           textureLoader.release(asset);
         } else if (isAudio(asset)) {
           audioLoader.release(asset);
@@ -72,5 +91,3 @@ async function preload(assets: AssetSource[], progressCallback: (progress: numbe
     });
   };
 }
-
-export { AssetSource, preload };

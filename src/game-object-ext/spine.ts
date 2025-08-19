@@ -17,7 +17,10 @@ type SpineOptions = {
   loop?: boolean;
 } & GameObjectOptions;
 
-class SpineObject<E extends EventMap = EventMap> extends GameObject<E> {
+class SpineObject<E extends EventMap = EventMap> extends GameObject<E & {
+  load: () => void;
+  animationend: (animation: string) => void;
+}> {
   #spine?: Spine;
 
   #atlas?: string;
@@ -117,12 +120,19 @@ class SpineObject<E extends EventMap = EventMap> extends GameObject<E> {
         }
 
         this.#spine = new Spine(skeletonData);
+        this.#spine.state.addListener({
+          complete: (entry) =>
+            (this as any).emit('animationend', entry.animation?.name ?? ""),
+        });
+
         this.#applyAnimation();
         this.#applySkins();
 
         this._addPixiChild(this.#spine);
       }
     }
+
+    (this as any).emit('load');
   }
 
   #applyAnimation() {
