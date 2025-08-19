@@ -1,75 +1,107 @@
 import { SpritesheetData } from 'pixi.js';
 import { audioLoader } from './loaders/audio';
 import { binaryLoader } from './loaders/binary';
+import { bitmapFontLoader } from './loaders/bitmap-font';
 import { fontFamilyLoader } from './loaders/font';
 import { getCachedId, spritesheetLoader } from './loaders/spritesheet';
 import { textLoader } from './loaders/text';
 import { textureLoader } from './loaders/texture';
 
-export type AssetSource = string | {
-  src: string;
-  atlas: SpritesheetData;
+export type SpritesheetSource = { src: string; atlas: SpritesheetData };
+export type BitmapFontSource = { fnt: string; src: string };
+export type AssetSource = string | SpritesheetSource | BitmapFontSource;
+
+const hasExt = (path: string, ...exts: readonly string[]): boolean => {
+  const lower = path.toLowerCase();
+  return exts.some((e) => lower.endsWith(e));
 };
 
 export function isText(path: string): boolean {
-  return path.endsWith('.json') ||
-    path.endsWith('.atlas');
+  return hasExt(path, '.json', '.atlas');
 }
 
 export function isBinary(path: string): boolean {
-  return path.endsWith('.skel');
+  return hasExt(path, '.skel');
 }
 
 export function isImage(path: string): boolean {
-  return path.endsWith('.png') ||
-    path.endsWith('.jpg') ||
-    path.endsWith('.jpeg') ||
-    path.endsWith('.gif') ||
-    path.endsWith('.webp');
+  return hasExt(path, '.png', '.jpg', '.jpeg', '.gif', '.webp');
 }
 
 export function isAudio(path: string): boolean {
-  return path.endsWith('.mp3') ||
-    path.endsWith('.wav') ||
-    path.endsWith('.ogg');
+  return hasExt(path, '.mp3', '.wav', '.ogg');
 }
 
 export function isFontFamily(fontFamily: string): boolean {
+  // e.g. 'Inter' or 'Arial', not 'Inter.ttf'
   return !fontFamily.includes('.');
 }
 
-export async function preload(assets: AssetSource[], progressCallback?: (progress: number) => void) {
+export function isSpritesheet(asset: AssetSource): asset is SpritesheetSource {
+  return typeof asset === 'object' && asset !== null && 'src' in asset && 'atlas' in asset;
+}
+
+export function isBitmapFont(asset: AssetSource): asset is BitmapFontSource {
+  return typeof asset === 'object' && asset !== null && 'fnt' in asset;
+}
+
+export function isStringAsset(asset: AssetSource): asset is string {
+  return typeof asset === 'string';
+}
+
+export async function preload(
+  assets: readonly AssetSource[],
+  progressCallback?: (progress01: number) => void,
+): Promise<() => void> {
   const total = assets.length;
   let loaded = 0;
 
-  await Promise.all(assets.map(async (asset) => {
-    if (typeof asset === 'string') {
-      if (isText(asset)) {
-        await textLoader.load(asset);
-      } else if (isBinary(asset)) {
-        await binaryLoader.load(asset);
-      } else if (isImage(asset)) {
-        await textureLoader.load(asset);
-      } else if (isAudio(asset)) {
-        await audioLoader.load(asset);
-      } else if (isFontFamily(asset)) {
-        await fontFamilyLoader.load(asset);
-      } else {
-        console.error(`Unknown asset type: ${asset}`);
-      }
-    }
-    else {
-      const id = getCachedId(asset.src, asset.atlas);
-      await spritesheetLoader.load(id, asset.src, asset.atlas);
-    }
+  // Edge case: nothing to do
+  if (total === 0) {
+    progressCallback?.(1);
+    return () => void 0;
+  }
 
-    loaded++;
+  const updateProgress = () => {
+    loaded += 1;
     progressCallback?.(loaded / total);
-  }));
+  };
 
+  await Promise.all(
+    assets.map(async (asset) => {
+      try {
+        if (isStringAsset(asset)) {
+          if (isText(asset)) {
+            await textLoader.load(asset);
+          } else if (isBinary(asset)) {
+            await binaryLoader.load(asset);
+          } else if (isImage(asset)) {
+            await textureLoader.load(asset);
+          } else if (isAudio(asset)) {
+            await audioLoader.load(asset);
+          } else if (isFontFamily(asset)) {
+            await fontFamilyLoader.load(asset);
+          } else {
+            console.error(`Unknown asset type: ${asset}`);
+          }
+        } else if (isSpritesheet(asset)) {
+          const id = getCachedId(asset.src, asset.atlas);
+          await spritesheetLoader.load(id, asset.src, asset.atlas);
+        } else if (isBitmapFont(asset)) {
+          await bitmapFontLoader.load(asset.fnt, asset.src);
+        } else {
+          console.error('Unsupported asset variant encountered');
+        }
+      } finally {
+        updateProgress();
+      }
+    }),
+  );
+
+  // Return disposer to release all loaded assets
   return () => {
-    assets.forEach((asset) => {
-      if (typeof asset === 'string') {
+    for (const asset of assets) {
+      if (isStringAsset(asset)) {
         if (isText(asset)) {
           textLoader.release(asset);
         } else if (isBinary(asset)) {
@@ -83,11 +115,12 @@ export async function preload(assets: AssetSource[], progressCallback?: (progres
         } else {
           console.error(`Unknown asset type: ${asset}`);
         }
-      }
-      else {
+      } else if (isSpritesheet(asset)) {
         const id = getCachedId(asset.src, asset.atlas);
         spritesheetLoader.release(id);
+      } else if (isBitmapFont(asset)) {
+        bitmapFontLoader.release(asset.fnt);
       }
-    });
+    }
   };
 }
