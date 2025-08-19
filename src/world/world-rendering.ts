@@ -1,11 +1,13 @@
 import { autoDetectRenderer, Container, EventEmitter, Renderer, Sprite } from "pixi.js";
 import { textureLoader } from '../asset/loaders/texture';
+import { GameObject } from '../game-object/game-object';
 
 export class WorldRendering extends EventEmitter<{
   positionChanged: () => void;
 }> {
   #renderer?: Renderer;
-  #root = new Container();
+  #root = new Container({ sortableChildren: true });
+  #layers = new Map<string, Container>();
   #backgroundAlpha = 1;
 
   #cameraX = 0;
@@ -50,6 +52,32 @@ export class WorldRendering extends EventEmitter<{
     container.appendChild(canvas);
 
     if (this.#lastRect) this.setRendererSize(this.#lastRect, this.#lastWidth, this.#lastHeight);
+  }
+
+  addLayer(name: string, drawOrder: number) {
+    if (this.#layers.has(name)) throw new Error(`Layer ${name} already exists.`);
+    const layer = new Container({ sortableChildren: true, zIndex: drawOrder });
+    this.#layers.set(name, layer);
+    this.#root.addChild(layer);
+  }
+
+  changeLayerDrawOrder(name: string, drawOrder: number) {
+    const layer = this.#layers.get(name);
+    if (!layer) return;
+    layer.zIndex = drawOrder;
+  }
+
+  removeLayer(name: string) {
+    const layer = this.#layers.get(name);
+    if (!layer) return;
+    this.#root.removeChild(layer);
+    this.#layers.delete(name);
+  }
+
+  addToLayer(child: GameObject, layer: string) {
+    const layerContainer = this.#layers.get(layer);
+    if (!layerContainer) throw new Error(`Layer ${layer} does not exist.`);
+    layerContainer.addChild(child._rendering._container);
   }
 
   #applyPosition() {

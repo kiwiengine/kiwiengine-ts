@@ -39,7 +39,12 @@ export class GameObject<E extends EventMap = EventMap> extends EventEmitter<E & 
       child.#parent = this;
 
       this.#children.push(child);
-      this._rendering.addChild(child._rendering);
+
+      if (child.layer) {
+        this.#world?._addToLayer(child, child.layer);
+      } else {
+        this._rendering.addChild(child._rendering);
+      }
     }
   }
 
@@ -103,6 +108,7 @@ export class GameObject<E extends EventMap = EventMap> extends EventEmitter<E & 
       if (opts.velocityY !== undefined) this.velocityY = opts.velocityY;
       if (opts.fixedRotation !== undefined) this.fixedRotation = opts.fixedRotation;
 
+      if (opts.layer !== undefined) this.layer = opts.layer;
       if (opts.image !== undefined) this.image = opts.image;
     }
   }
@@ -146,6 +152,18 @@ export class GameObject<E extends EventMap = EventMap> extends EventEmitter<E & 
 
   _addPixiChild(child: Container) { this._rendering._container.addChild(child); }
 
+  #layer?: string;
+  get layer() { return this.#layer; }
+  set layer(value: string | undefined) {
+    this.#layer = value;
+
+    if (value) {
+      this.#world?._addToLayer(this, value);
+    } else {
+      this.#parent?._rendering.addChild(this._rendering);
+    }
+  }
+
   #image?: string;
   get image() { return this.#image; }
   set image(value: string | undefined) {
@@ -185,5 +203,6 @@ export type GameObjectOptions = {
   velocityY?: number;
   fixedRotation?: boolean;
 
+  layer?: string;
   image?: string;
 };

@@ -7,6 +7,10 @@ export type WorldOptions = {
     backgroundColor?: number;
     backgroundAlpha?: number;
     gravity?: number;
+    layers?: {
+        name: string;
+        drawOrder: number;
+    }[];
 } & GameObjectOptions;
 export declare class World extends GameObject<{
     resize: (width: number, height: number) => void;
@@ -32,6 +36,7 @@ export declare class World extends GameObject<{
     set cameraX(v: number);
     get cameraY(): number;
     set cameraY(v: number);
+    _addToLayer(child: GameObject, layer: string): void;
     get backgroundImage(): string | undefined;
     set backgroundImage(image: string | undefined);
 }

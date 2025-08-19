@@ -55,6 +55,8 @@ export declare class GameObject<E extends EventMap = EventMap> extends EventEmit
     get fixedRotation(): boolean;
     set fixedRotation(v: boolean);
     _addPixiChild(child: Container): void;
+    get layer(): string | undefined;
+    set layer(value: string | undefined);
     get image(): string | undefined;
     set image(value: string | undefined);
 }
@@ -76,6 +78,7 @@ export type GameObjectOptions = {
     velocityX?: number;
     velocityY?: number;
     fixedRotation?: boolean;
+    layer?: string;
     image?: string;
 };
 //# sourceMappingURL=game-object.d.ts.map

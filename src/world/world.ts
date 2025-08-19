@@ -11,6 +11,7 @@ export type WorldOptions = {
   backgroundColor?: number;
   backgroundAlpha?: number;
   gravity?: number;
+  layers?: { name: string; drawOrder: number }[];
 } & GameObjectOptions;
 
 export class World extends GameObject<{
@@ -140,6 +141,12 @@ export class World extends GameObject<{
       if (opts.backgroundColor !== undefined) this.backgroundColor = opts.backgroundColor;
       if (opts.backgroundAlpha !== undefined) this.backgroundAlpha = opts.backgroundAlpha;
       if (opts.gravity !== undefined) this.gravity = opts.gravity;
+
+      if (opts.layers) {
+        for (const layer of opts.layers) {
+          this._worldRendering.addLayer(layer.name, layer.drawOrder);
+        }
+      }
     }
 
     this.#init();
@@ -161,6 +168,10 @@ export class World extends GameObject<{
   set cameraX(v: number) { this._worldRendering.cameraX = v; }
   get cameraY() { return this._worldRendering.cameraY; }
   set cameraY(v: number) { this._worldRendering.cameraY = v; }
+
+  _addToLayer(child: GameObject, layer: string) {
+    this._worldRendering.addToLayer(child, layer);
+  }
 
   #backgroundImage?: string;
   get backgroundImage() { return this.#backgroundImage; }

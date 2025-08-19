@@ -1,4 +1,5 @@
 import { Container, EventEmitter } from "pixi.js";
+import { GameObject } from '../game-object/game-object';
 export declare class WorldRendering extends EventEmitter<{
     positionChanged: () => void;
 }> {
@@ -15,6 +16,10 @@ export declare class WorldRendering extends EventEmitter<{
     get backgroundAlpha(): number;
     set backgroundAlpha(v: number);
     init(container: HTMLElement, width: number | undefined, height: number | undefined): Promise<void>;
+    addLayer(name: string, drawOrder: number): void;
+    changeLayerDrawOrder(name: string, drawOrder: number): void;
+    removeLayer(name: string): void;
+    addToLayer(child: GameObject, layer: string): void;
     setRendererSize(rect: DOMRect, width: number, height: number): void;
     update(): void;
     get cameraX(): number;
