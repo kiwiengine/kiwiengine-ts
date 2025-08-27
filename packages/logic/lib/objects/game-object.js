@@ -1,36 +1,51 @@
 import { ObjectType, ROOT } from '@kiwiengine/core';
 export class GameObject {
     #options;
-    #children = [];
     _id;
     _tree;
+    #parent;
+    #children = [];
     constructor(options) {
         this.#options = options;
     }
-    set tree(tree) {
-        if (this._tree)
-            throw new Error('GameObject is already in a tree');
-        const id = tree.create();
-        tree.setObjectType(id, this.#options.type);
-        this._id = id;
-        this._tree = tree;
+    #attach(parentId, tree) {
+        this.#detach();
         for (const child of this.#children) {
-            if (!child._tree)
-                child.tree = tree;
-            tree.insert(id, child._id);
+            child.id = tree.addChild(parentId);
         }
+    }
+    #detach() {
+        if (!this._tree || this._id === undefined)
+            return;
+        this._tree.remove(this._id);
+        this._tree = undefined;
+        this._id = undefined;
     }
     add(...children) {
         for (const child of children) {
-            if (this._tree && this._id !== undefined) {
-                if (!child._tree)
-                    child.tree = this._tree;
-                this._tree.insert(this._id, child._id);
+            if (child.#parent) {
+                const idx = child.#parent.#children.indexOf(child);
+                if (idx !== -1)
+                    child.#parent.#children.splice(idx, 1);
             }
+            child.#parent = this;
             this.#children.push(child);
+            if (this._tree)
+                child.#attach(this, this._tree);
         }
     }
     destroy() {
+        if (this.#parent) {
+            const idx = this.#parent.#children.indexOf(this);
+            if (idx !== -1)
+                this.#parent.#children.splice(idx, 1);
+            this.#parent = undefined;
+        }
+        for (const child of this.#children) {
+            child.#parent = undefined;
+            child.destroy();
+        }
+        this.#children.length = 0;
         if (!this._tree || this._id === undefined)
             throw new Error('GameObject is not in a tree');
         this._tree.remove(this._id);

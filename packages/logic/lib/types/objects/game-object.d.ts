@@ -7,7 +7,6 @@ export declare class GameObject {
     protected _id?: number;
     protected _tree?: ObjectStateTree;
     constructor(options: GameObjectOptions);
-    set tree(tree: ObjectStateTree);
     add(...children: GameObject[]): void;
     destroy(): void;
 }

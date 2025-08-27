@@ -26,7 +26,11 @@ export class SABTree {
         const fvalueBytes = SABFloat32ValueArray.bytesRequired(capacity, fvalueCount);
         return queueBytes + linksBytes + bvalueBytes + uvalueBytes + fvalueBytes;
     }
-    create() { return this.#pool.alloc(); }
+    addChild(p) {
+        const id = this.#pool.alloc();
+        this.#links.insert(p, c);
+        return id;
+    }
     remove(i) {
         this.#links.remove(i);
         this.#pool.free(i);

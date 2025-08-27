@@ -45,14 +45,17 @@ export class SABTree {
     return queueBytes + linksBytes + bvalueBytes + uvalueBytes + fvalueBytes
   }
 
-  create(): number { return this.#pool.alloc() }
+  addChild(p: number): number {
+    const id = this.#pool.alloc()
+    this.#links.insert(p, id)
+    return id
+  }
 
   remove(i: number) {
     this.#links.remove(i)
     this.#pool.free(i)
   }
 
-  insert(p: number, c: number) { this.#links.insert(p, c) }
   insertAt(p: number, c: number, index: number) { this.#links.insertAt(p, c, index) }
 
   setBValue(i: number, j: number, v: boolean) { this.#bvalues.set(i, j, v) }
