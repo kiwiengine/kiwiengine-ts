@@ -1,9 +1,9 @@
-export declare class SABUint32Queue {
+export declare class SABNodePool {
     #private;
     constructor(sab: SharedArrayBuffer, byteOffset: number, capacity: number);
     static bytesRequired(capacity: number): number;
     get byteLength(): number;
-    enqueue(v: number): void;
-    dequeue(): number;
+    alloc(): number;
+    free(idx: number): void;
 }
-//# sourceMappingURL=queue.d.ts.map
+//# sourceMappingURL=node-pool.d.ts.map

@@ -1,3 +1,2 @@
-export { createRenderer } from './createRenderer';
-export { createWebWorkerRenderer } from './createWebWorkerRenderer';
+export { createRenderer, createWebWorkerRenderer } from './renderer';
 //# sourceMappingURL=index.d.ts.map

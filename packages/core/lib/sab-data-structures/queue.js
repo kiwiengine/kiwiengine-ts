@@ -3,9 +3,9 @@ export class SABUint32Queue {
     #ctrl;
     #data;
     #capacity;
-    constructor(sab, capacity) {
-        this.#ctrl = new Uint32Array(sab, 0, CTRL_SIZE);
-        this.#data = new Uint32Array(sab, CTRL_SIZE * Uint32Array.BYTES_PER_ELEMENT, capacity);
+    constructor(sab, byteOffset, capacity) {
+        this.#ctrl = new Uint32Array(sab, byteOffset, CTRL_SIZE);
+        this.#data = new Uint32Array(sab, byteOffset + CTRL_SIZE * Uint32Array.BYTES_PER_ELEMENT, capacity);
         this.#capacity = capacity;
     }
     static bytesRequired(capacity) {
@@ -14,10 +14,10 @@ export class SABUint32Queue {
     get byteLength() {
         return this.#ctrl.byteLength + this.#data.byteLength;
     }
-    enqueue(value) {
+    enqueue(v) {
         let tail = this.#ctrl[1];
         const idx = tail % this.#capacity;
-        this.#data[idx] = value;
+        this.#data[idx] = v;
         tail = (tail + 1);
         this.#ctrl[1] = tail;
     }

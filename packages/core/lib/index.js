@@ -1,4 +1,3 @@
-export { createInitialObjectStateBuffer } from './object-state';
-export { createTicker } from './createTicker';
 export { SABTree } from './sab-data-structures/tree';
+export { createTicker } from './ticker';
 //# sourceMappingURL=index.js.map
