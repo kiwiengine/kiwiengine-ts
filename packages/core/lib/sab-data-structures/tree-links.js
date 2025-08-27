@@ -16,6 +16,7 @@ export class SABTreeLinks {
     }
     get byteLength() { return this.#meta.byteLength; }
     #offset(i) { return i * NODE_WORDS; }
+    #parent(i) { return this.#meta[this.#offset(i) + PARENT]; }
     #first(i) { return this.#meta[this.#offset(i) + FIRST]; }
     #last(i) { return this.#meta[this.#offset(i) + LAST]; }
     #next(i) { return this.#meta[this.#offset(i) + NEXT]; }
@@ -98,6 +99,27 @@ export class SABTreeLinks {
             this.insert(p, c);
         else
             this.#insertBeforeSibling(p, cur, c);
+    }
+    forEach(visitor) {
+        let u = ROOT;
+        while (true) {
+            visitor(u);
+            const f = this.#first(u);
+            if (f !== NONE) {
+                u = f;
+                continue;
+            }
+            while (true) {
+                if (u === ROOT)
+                    return;
+                const n = this.#next(u);
+                if (n !== NONE) {
+                    u = n;
+                    break;
+                }
+                u = this.#parent(u);
+            }
+        }
     }
 }
 //# sourceMappingURL=tree-links.js.map

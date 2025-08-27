@@ -1,27 +1,41 @@
-import { autoDetectRenderer, Container, DOMAdapter, ICanvas, WebWorkerAdapter } from 'pixi.js'
+import { ObjectStateTree } from '@kiwiengine/core'
+import { autoDetectRenderer, Container, DOMAdapter, ICanvas, Renderer as PixiRenderer, WebWorkerAdapter } from 'pixi.js'
 
-export type CreateRendererParameters = {
-  canvas: ICanvas
-}
+export class Renderer {
+  readonly #canvas: ICanvas
+  readonly #objectStateTree: ObjectStateTree
 
-export type Renderer = {
-  root: Container
-  render: () => void
-}
+  readonly #root = new Container()
+  #pixiRenderer?: PixiRenderer
 
-export async function createRenderer(parameters: CreateRendererParameters): Promise<Renderer> {
-  const root = new Container()
-  const pixiRenderer = await autoDetectRenderer({
-    canvas: parameters.canvas,
-  })
+  constructor(
+    canvas: ICanvas,
+    objectStateTree: ObjectStateTree,
+  ) {
+    this.#canvas = canvas
+    this.#objectStateTree = objectStateTree
+    this.#init()
+  }
 
-  return {
-    root,
-    render: () => { pixiRenderer.render(root) }
+  async #init() {
+    this.#pixiRenderer = await autoDetectRenderer({
+      canvas: this.#canvas,
+    })
+  }
+
+  render() {
+    if (this.#pixiRenderer) {
+      this.#objectStateTree.forEach((i) => {
+        //TODO
+      })
+      this.#pixiRenderer.render(this.#root)
+    }
   }
 }
 
-export async function createWebWorkerRenderer(parameters: CreateRendererParameters): Promise<Renderer> {
-  DOMAdapter.set(WebWorkerAdapter)
-  return await createRenderer(parameters)
+export class WebWorkerRenderer extends Renderer {
+  constructor(canvas: ICanvas, objectStateTree: ObjectStateTree) {
+    DOMAdapter.set(WebWorkerAdapter)
+    super(canvas, objectStateTree)
+  }
 }

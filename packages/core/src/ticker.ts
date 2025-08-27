@@ -1,53 +1,49 @@
-export type CreateTickerParameters = {
-  fixedFps?: number | undefined
-  onTick: (deltaTime: number) => void
-}
+export class Ticker {
+  #fixedFps?: number
+  #frameId = 0;
 
-export type Ticker = {
-  setFixedFps: (fps: number | undefined) => void
-  destroy: () => void
-}
+  constructor(onTick: (deltaTime: number) => void, fixedFps?: number) {
+    this.#fixedFps = fixedFps !== undefined && fixedFps > 0 ? fixedFps : undefined
 
-export function createTicker(parameters: CreateTickerParameters): Ticker {
-  const { fixedFps: fps, onTick } = parameters
+    let lastTime = performance.now()
+    let lagSeconds = 0
 
-  let fixedFps = fps !== undefined && fps > 0 ? fps : undefined
-  let frameId = 0
-  let lastTime = performance.now()
-  let lagSeconds = 0
+    const tick = (timestamp: number) => {
+      this.#frameId = requestAnimationFrame(tick)
+      const deltaTime = (timestamp - lastTime) / 1000
+      if (deltaTime <= 0) return
+      lastTime = timestamp
 
-  const tick = (timestamp: number) => {
-    frameId = requestAnimationFrame(tick)
-    const deltaTime = (timestamp - lastTime) / 1000
-    if (deltaTime <= 0) return
-    lastTime = timestamp
+      if (this.#fixedFps !== undefined) {
+        const fixedStep = 1 / this.#fixedFps
+        lagSeconds += deltaTime
 
-    if (fixedFps !== undefined) {
-      const fixedStep = 1 / fixedFps
-      lagSeconds += deltaTime
-
-      if (lagSeconds >= fixedStep) {
-        onTick(fixedStep)
-        if (lagSeconds >= fixedStep * 2) {
-          onTick(deltaTime)
-          lagSeconds = 0
-        } else {
-          lagSeconds -= fixedStep
+        if (lagSeconds >= fixedStep) {
+          onTick(fixedStep)
+          if (lagSeconds >= fixedStep * 2) {
+            onTick(deltaTime)
+            lagSeconds = 0
+          } else {
+            lagSeconds -= fixedStep
+          }
         }
+      } else {
+        onTick(deltaTime)
       }
-    } else {
-      onTick(deltaTime)
     }
+
+    this.#frameId = requestAnimationFrame(tick)
   }
 
-  frameId = requestAnimationFrame(tick)
+  setFixedFps(fps: number) {
+    this.#fixedFps = fps > 0 ? fps : undefined
+  }
 
-  return {
-    setFixedFps: (fps: number | undefined) => {
-      fixedFps = fps !== undefined && fps > 0 ? fps : undefined
-    },
-    destroy: () => {
-      cancelAnimationFrame(frameId)
-    }
+  disableFixedFps() {
+    this.#fixedFps = undefined
+  }
+
+  destroy() {
+    cancelAnimationFrame(this.#frameId)
   }
 }

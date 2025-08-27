@@ -1,2 +1,2 @@
-export { createRenderer, createWebWorkerRenderer } from './renderer'
+export { Renderer, WebWorkerRenderer } from './renderer'
 

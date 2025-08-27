@@ -1,12 +1,12 @@
 export class SABFloat32ValueArray {
     #values;
     #stride;
-    constructor(sab, byteOffset, valueCount, capacity) {
+    constructor(sab, byteOffset, capacity, valueCount) {
         this.#stride = valueCount;
-        this.#values = new Float32Array(sab, byteOffset, valueCount * capacity);
+        this.#values = new Float32Array(sab, byteOffset, capacity * valueCount);
     }
-    static bytesRequired(valueCount, capacity) {
-        return valueCount * capacity * Float32Array.BYTES_PER_ELEMENT;
+    static bytesRequired(capacity, valueCount) {
+        return capacity * valueCount * Float32Array.BYTES_PER_ELEMENT;
     }
     get byteLength() { return this.#values.byteLength; }
     #offset(i) { return i * this.#stride; }

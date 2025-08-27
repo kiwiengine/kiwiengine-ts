@@ -1,1 +1,1 @@
-{"version":3,"file":"index.js","sourceRoot":"","sources":["../src/index.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,cAAc,EAAE,uBAAuB,EAAE,MAAM,YAAY,CAAA","sourcesContent":["export { createRenderer, createWebWorkerRenderer } from './renderer'\n\n"]}
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../src/index.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,iBAAiB,EAAE,MAAM,YAAY,CAAA","sourcesContent":["export { Renderer, WebWorkerRenderer } from './renderer'\n\n"]}

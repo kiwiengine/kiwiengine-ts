@@ -5,15 +5,15 @@ export class SABFloat32ValueArray {
   constructor(
     sab: SharedArrayBuffer,
     byteOffset: number,
-    valueCount: number,
     capacity: number,
+    valueCount: number,
   ) {
     this.#stride = valueCount
-    this.#values = new Float32Array(sab, byteOffset, valueCount * capacity)
+    this.#values = new Float32Array(sab, byteOffset, capacity * valueCount)
   }
 
-  static bytesRequired(valueCount: number, capacity: number): number {
-    return valueCount * capacity * Float32Array.BYTES_PER_ELEMENT
+  static bytesRequired(capacity: number, valueCount: number): number {
+    return capacity * valueCount * Float32Array.BYTES_PER_ELEMENT
   }
 
   get byteLength() { return this.#values.byteLength }

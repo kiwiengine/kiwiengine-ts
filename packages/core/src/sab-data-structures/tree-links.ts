@@ -23,6 +23,7 @@ export class SABTreeLinks {
   get byteLength() { return this.#meta.byteLength }
 
   #offset(i: number) { return i * NODE_WORDS }
+  #parent(i: number) { return this.#meta[this.#offset(i) + PARENT] }
   #first(i: number) { return this.#meta[this.#offset(i) + FIRST] }
   #last(i: number) { return this.#meta[this.#offset(i) + LAST] }
   #next(i: number) { return this.#meta[this.#offset(i) + NEXT] }
@@ -99,5 +100,22 @@ export class SABTreeLinks {
 
     if (cur === NONE) this.insert(p, c)
     else this.#insertBeforeSibling(p, cur, c)
+  }
+
+  forEach(visitor: (node: number) => void): void {
+    let u: number = ROOT
+    while (true) {
+      visitor(u)
+
+      const f = this.#first(u)
+      if (f !== NONE) { u = f; continue }
+
+      while (true) {
+        if (u === ROOT) return
+        const n = this.#next(u)
+        if (n !== NONE) { u = n; break }
+        u = this.#parent(u)
+      }
+    }
   }
 }

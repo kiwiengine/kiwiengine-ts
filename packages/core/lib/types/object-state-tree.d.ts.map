@@ -1,1 +1,1 @@
-{"version":3,"file":"object-state-tree.d.ts","sourceRoot":"","sources":["../../src/object-state-tree.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,4BAA4B,CAAA;AAIpD,wBAAgB,8BAA8B,CAAC,QAAQ,EAAE,MAAM,GAAG,iBAAiB,CAElF;AAED,qBAAa,eAAgB,SAAQ,OAAO;gBAC9B,GAAG,EAAE,iBAAiB,EAAE,QAAQ,EAAE,MAAM;CAGrD"}
+{"version":3,"file":"object-state-tree.d.ts","sourceRoot":"","sources":["../../src/object-state-tree.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,4BAA4B,CAAA;AAKpD,wBAAgB,8BAA8B,IAAI,iBAAiB,CAElE;AAED,qBAAa,eAAgB,SAAQ,OAAO;gBAC9B,GAAG,EAAE,iBAAiB;CAGnC"}
