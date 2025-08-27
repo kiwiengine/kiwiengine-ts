@@ -1,12 +1,13 @@
-import { ObjectStateTree } from '@kiwiengine/core'
+import { ObjectStateTree, ROOT } from '@kiwiengine/core'
 import { autoDetectRenderer, Container, DOMAdapter, ICanvas, Renderer as PixiRenderer, WebWorkerAdapter } from 'pixi.js'
 
 export class Renderer {
   readonly #canvas: ICanvas
   readonly #objectStateTree: ObjectStateTree
 
-  readonly #root = new Container()
   #pixiRenderer?: PixiRenderer
+  readonly #root = new Container({ sortableChildren: true })
+  readonly #containers = new Map<string, Container>()
 
   constructor(
     canvas: ICanvas,
@@ -25,8 +26,21 @@ export class Renderer {
 
   render() {
     if (this.#pixiRenderer) {
+      let zIndex = 0
       this.#objectStateTree.forEach((i) => {
-        //TODO
+        if (i === ROOT) return
+
+        const id = i.toString()
+        const container = this.#containers.get(id)
+        if (container) {
+          container.zIndex = zIndex
+        } else {
+          const container = new Container()
+          this.#containers.set(id, container)
+          this.#root.addChild(container)
+          container.zIndex = zIndex
+        }
+        zIndex++
       })
       this.#pixiRenderer.render(this.#root)
     }

@@ -1,9 +1,11 @@
+import { ROOT } from '@kiwiengine/core';
 import { autoDetectRenderer, Container, DOMAdapter, WebWorkerAdapter } from 'pixi.js';
 export class Renderer {
     #canvas;
     #objectStateTree;
-    #root = new Container();
     #pixiRenderer;
+    #root = new Container({ sortableChildren: true });
+    #containers = new Map();
     constructor(canvas, objectStateTree) {
         this.#canvas = canvas;
         this.#objectStateTree = objectStateTree;
@@ -16,8 +18,22 @@ export class Renderer {
     }
     render() {
         if (this.#pixiRenderer) {
+            let zIndex = 0;
             this.#objectStateTree.forEach((i) => {
-                //TODO
+                if (i === ROOT)
+                    return;
+                const id = i.toString();
+                const container = this.#containers.get(id);
+                if (container) {
+                    container.zIndex = zIndex;
+                }
+                else {
+                    const container = new Container();
+                    this.#containers.set(id, container);
+                    this.#root.addChild(container);
+                    container.zIndex = zIndex;
+                }
+                zIndex++;
             });
             this.#pixiRenderer.render(this.#root);
         }

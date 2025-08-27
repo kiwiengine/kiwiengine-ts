@@ -10,6 +10,7 @@ export class SABTreeLinks {
     #meta;
     constructor(sab, byteOffset, capacity) {
         this.#meta = new Uint32Array(sab, byteOffset, capacity * NODE_WORDS);
+        this.#meta.fill(NONE);
     }
     static bytesRequired(capacity) {
         return capacity * NODE_WORDS * Uint32Array.BYTES_PER_ELEMENT;
@@ -119,6 +120,89 @@ export class SABTreeLinks {
                 }
                 u = this.#parent(u);
             }
+        }
+    }
+    sortChildren(p, getValue) {
+        let n = 0;
+        let head = this.#first(p);
+        while (head !== NONE) {
+            n++;
+            head = this.#next(head);
+        }
+        if (n <= 1)
+            return;
+        let runSize = 1;
+        while (runSize < n) {
+            let mergedHead = NONE;
+            let mergedTail = NONE;
+            let cur = this.#first(p);
+            while (cur !== NONE) {
+                let left = cur;
+                let i = 1;
+                while (i < runSize && this.#next(cur) !== NONE) {
+                    cur = this.#next(cur);
+                    i++;
+                }
+                let right = this.#next(cur);
+                const afterRightStart = right;
+                this.#meta[this.#offset(cur) + NEXT] = NONE;
+                if (right !== NONE)
+                    this.#meta[this.#offset(right) + PREV] = NONE;
+                let nextStart = afterRightStart;
+                i = 0;
+                while (i < runSize && nextStart !== NONE) {
+                    nextStart = this.#next(nextStart);
+                    i++;
+                }
+                if (nextStart !== NONE) {
+                    const prev = this.#meta[this.#offset(nextStart) + PREV];
+                    if (prev !== NONE)
+                        this.#meta[this.#offset(prev) + NEXT] = NONE;
+                    this.#meta[this.#offset(nextStart) + PREV] = NONE;
+                }
+                cur = nextStart;
+                let merged = NONE;
+                let mergedT = NONE;
+                let a = left;
+                let b = right;
+                while (a !== NONE || b !== NONE) {
+                    let takeFromA = false;
+                    if (b === NONE)
+                        takeFromA = true;
+                    else if (a === NONE)
+                        takeFromA = false;
+                    else {
+                        const ka = getValue(a);
+                        const kb = getValue(b);
+                        takeFromA = (ka <= kb);
+                    }
+                    const node = takeFromA ? a : b;
+                    if (takeFromA)
+                        a = this.#next(a);
+                    else
+                        b = this.#next(b);
+                    const no = this.#offset(node);
+                    this.#meta[no + PREV] = mergedT;
+                    this.#meta[no + NEXT] = NONE;
+                    this.#meta[no + PARENT] = p;
+                    if (merged === NONE)
+                        merged = node;
+                    else
+                        this.#meta[this.#offset(mergedT) + NEXT] = node;
+                    mergedT = node;
+                }
+                if (mergedHead === NONE)
+                    mergedHead = merged;
+                else {
+                    this.#meta[this.#offset(mergedTail) + NEXT] = merged;
+                    this.#meta[this.#offset(merged) + PREV] = mergedTail;
+                }
+                mergedTail = mergedT;
+            }
+            const po = this.#offset(p);
+            this.#meta[po + FIRST] = mergedHead;
+            this.#meta[po + LAST] = mergedTail;
+            runSize <<= 1;
         }
     }
 }

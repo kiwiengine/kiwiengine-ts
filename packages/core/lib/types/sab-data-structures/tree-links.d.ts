@@ -8,5 +8,6 @@ export declare class SABTreeLinks {
     insert(p: number, c: number): void;
     insertAt(p: number, c: number, index: number): void;
     forEach(visitor: (node: number) => void): void;
+    sortChildren(p: number, getValue: (node: number) => number): void;
 }
 //# sourceMappingURL=tree-links.d.ts.map
