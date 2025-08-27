@@ -2,6 +2,7 @@ export declare class SABTree {
     #private;
     constructor(sab: SharedArrayBuffer, capacity: number, bvalueCount: number, uvalueCount: number, fvalueCount: number);
     static bytesRequired(capacity: number, bvalueCount: number, uvalueCount: number, fvalueCount: number): number;
+    create(): number;
     remove(i: number): void;
     insert(p: number, c: number): void;
     insertAt(p: number, c: number, index: number): void;

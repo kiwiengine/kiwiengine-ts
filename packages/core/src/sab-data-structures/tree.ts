@@ -45,6 +45,8 @@ export class SABTree {
     return queueBytes + linksBytes + bvalueBytes + uvalueBytes + fvalueBytes
   }
 
+  create(): number { return this.#pool.alloc() }
+
   remove(i: number) {
     this.#links.remove(i)
     this.#pool.free(i)
