@@ -1,0 +1,1 @@
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../src/index.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,cAAc,EAAE,MAAM,kBAAkB,CAAA;AACjD,OAAO,EAAE,uBAAuB,EAAE,MAAM,2BAA2B,CAAA","sourcesContent":["export { createRenderer } from './createRenderer'\nexport { createWebWorkerRenderer } from './createWebWorkerRenderer'\n\n"]}

@@ -1,1 +1,0 @@
-{"version":3,"file":"font.d.ts","sourceRoot":"","sources":["../../../../src/asset/loaders/font.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,MAAM,EAAE,MAAM,UAAU,CAAC;AAElC,cAAM,gBAAiB,SAAQ,MAAM,CAAC,OAAO,CAAC;cACnB,KAAK,CAAC,QAAQ,EAAE,MAAM;CAqBhD;AAED,eAAO,MAAM,gBAAgB,kBAAyB,CAAC"}
