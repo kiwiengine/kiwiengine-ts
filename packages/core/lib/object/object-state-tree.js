@@ -1,4 +1,4 @@
-import { SABTree } from './sab-data-structures/tree';
+import { SABTree } from '../sab-data-structures/tree';
 const OBJ_CAPACITY = 1_000_000;
 const OBJ_BVALUE_COUNT = 0;
 const OBJ_UVALUE_COUNT = 2;

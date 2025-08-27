@@ -11,4 +11,4 @@ export declare class ObjectStateTree extends SABTree {
     getAssetId(i: number): number;
     setAssetId(i: number, v: number): void;
 }
-//# sourceMappingURL=object-state-tree.d.ts.map
+//# sourceMappingURL=state-tree.d.ts.map

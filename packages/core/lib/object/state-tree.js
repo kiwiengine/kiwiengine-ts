@@ -1,4 +1,4 @@
-import { SABTree } from './sab-data-structures/tree';
+import { SABTree } from '../sab-data-structures/tree';
 const OBJ_CAPACITY = 1_000_000;
 const OBJ_BVALUE_COUNT = 0;
 const OBJ_UVALUE_COUNT = 2;
@@ -26,4 +26,4 @@ export class ObjectStateTree extends SABTree {
     getAssetId(i) { return this.getUValue(i, ASSET_ID_IDX); }
     setAssetId(i, v) { this.setUValue(i, ASSET_ID_IDX, v); }
 }
-//# sourceMappingURL=object-state-tree.js.map
+//# sourceMappingURL=state-tree.js.map
