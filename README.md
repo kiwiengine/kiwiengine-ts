@@ -1,15 +1,21 @@
-# 키위엔진
-키위엔진은 TypeScript 기반 2D 웹 게임 엔진입니다.
+# Kiwi Engine
 
-## 특이사항
-### 좌표계
-일반적으로 다른 2D 엔진들은 화면 좌측 상단을 `0, 0`으로 하는데 반해, 키위엔진의 `0, 0`은 화면 중간입니다. 이는 브라우저 화면이 주로 가변적인 웹의 특성 때문입니다. 화면의 가운데를 `0, 0`으로 해야, 오브젝트나 UI를 구성하기가 쉬워집니다.
+Kiwi Engine is a TypeScript-based 2D web game engine.
 
-### 캔버스 크기
-캔버스의 크기는 캔버스의 부모 엘리먼트의 크기와 같게 설정됩니다. 부모 엘리먼트 크기가 변경되면 캔버스의 크기도 변경됩니다. 부모 엘리먼트가 `body`이고 `body`가 윈도우 크기와 같다면, 캔버스 크기도 윈도우 크기와 동일하게 설정되며 윈도우 크기바 변경될 때 캔버스의 크기도 변경됩니다.
+## Features
 
-## 라이센스
+### Coordinate System
+
+Unlike most other 2D engines that use the top-left corner of the screen as `0, 0`, Kiwi Engine sets `0, 0` at the center of the screen. This is due to the nature of the web, where browser screens are often dynamic. By placing `0, 0` at the center, it becomes easier to organize objects and UI elements.
+
+### Canvas Size
+
+The size of the canvas is set to match the size of its parent element. If the parent element’s size changes, the canvas size changes accordingly. When the parent element is `body` and `body` matches the size of the window, the canvas will also match the window size, and it will resize automatically when the window size changes.
+
+## License
+
 MIT
 
-## 작성자
-제이쓴
+## Author
+
+Jason
