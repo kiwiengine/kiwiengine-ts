@@ -6,11 +6,15 @@ export abstract class GameNode<E extends EventMap> extends EventEmitter<E> {
   #parent?: GameNode<EventMap>
   #children: GameNode<EventMap>[] = [];
 
-  #setRenderer(renderer: Renderer) {
+  protected set renderer(renderer: Renderer | undefined) {
     this.#renderer = renderer
     for (const child of this.#children) {
-      child.#setRenderer(renderer)
+      child.renderer = renderer
     }
+  }
+
+  protected get renderer() {
+    return this.#renderer
   }
 
   add(...children: GameNode<EventMap>[]) {
@@ -27,7 +31,7 @@ export abstract class GameNode<E extends EventMap> extends EventEmitter<E> {
       this.#children.push(child)
 
       // 렌더러 설정
-      if (this.#renderer) child.#setRenderer(this.#renderer)
+      if (this.#renderer) child.renderer = this.#renderer
     }
   }
 

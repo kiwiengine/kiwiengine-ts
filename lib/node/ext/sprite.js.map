@@ -1,0 +1,1 @@
+{"version":3,"file":"sprite.js","sourceRoot":"","sources":["../../../src/node/ext/sprite.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,UAAU,EAAE,MAAM,qBAAqB,CAAA;AAEhD,MAAM,OAAO,UAAW,SAAQ,UAAoB;CACnD","sourcesContent":["import { EventMap } from '@webtaku/event-emitter'\nimport { GameObject } from '../core/game-object'\n\nexport class SpriteNode extends GameObject<EventMap> {\n}\n"]}
