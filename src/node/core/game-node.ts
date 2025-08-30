@@ -48,4 +48,10 @@ export abstract class GameNode<E extends EventMap> extends EventEmitter<E> {
     }
     this.#children.length = 0
   }
+
+  protected update(deltaTime: number) {
+    for (const child of this.#children) {
+      child.update(deltaTime)
+    }
+  }
 }
