@@ -2,7 +2,6 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    'scene-graph-physics-test': './scene-graph-physics-test/index.ts'
   },
   output: {
     filename: '[name]/dist/game.js',
