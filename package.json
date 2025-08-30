@@ -3,6 +3,12 @@
   "version": "0.0.1-alpha",
   "types": "./lib/types/index.d.ts",
   "main": "./lib/index.js",
+  "dependencies": {
+    "@esotericsoftware/spine-pixi-v8": "^4.2.88",
+    "matter-js": "^0.20.0",
+    "pixi.js": "^8.11.0",
+    "stats.js": "^0.17.0"
+  },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/matter-js": "^0.19.8",
@@ -12,12 +18,6 @@
     "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
-  },
-  "dependencies": {
-    "@esotericsoftware/spine-pixi-v8": "^4.2.88",
-    "matter-js": "^0.20.0",
-    "pixi.js": "^8.11.0",
-    "stats.js": "^0.17.0"
   },
   "packageManager": "yarn@1.22.22"
 }
