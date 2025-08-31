@@ -7,6 +7,6 @@ export declare class DomContainerNode extends GameObject<EventMap> {
     constructor(x: number, y: number, el: HTMLElement, options?: DomContainerNodeOptions);
     protected set renderer(renderer: Renderer | undefined);
     protected get renderer(): Renderer | undefined;
-    protected update(deltaTime: number): void;
+    protected update(dt: number): void;
 }
 //# sourceMappingURL=dom-container.d.ts.map

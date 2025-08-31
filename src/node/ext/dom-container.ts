@@ -45,8 +45,8 @@ export class DomContainerNode extends GameObject<EventMap> {
     return super.renderer
   }
 
-  protected update(deltaTime: number): void {
-    super.update(deltaTime)
+  protected update(dt: number): void {
+    super.update(dt)
 
     const renderer = this.renderer
     if (renderer && (renderer._isSizeDirty || this.globalTransform.dirty)) {

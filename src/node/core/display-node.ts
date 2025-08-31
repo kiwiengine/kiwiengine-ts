@@ -51,8 +51,8 @@ export abstract class DisplayNode<E extends EventMap> extends TransformableNode<
     super.remove()
   }
 
-  protected update(deltaTime: number): void {
-    super.update(deltaTime)
+  protected update(dt: number): void {
+    super.update(dt)
 
     const pc = this._pixiContainer
     const renderer = this.renderer

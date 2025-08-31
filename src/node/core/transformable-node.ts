@@ -10,8 +10,8 @@ export abstract class TransformableNode<E extends EventMap> extends GameNode<E> 
   protected localTransform = new LocalTransform()
   protected globalTransform = new GlobalTransform()
 
-  protected update(deltaTime: number) {
-    super.update(deltaTime)
+  protected update(dt: number) {
+    super.update(dt)
 
     const parent = this.parent
     if (parent && isTransformableNode(parent)) {

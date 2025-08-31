@@ -9,6 +9,6 @@ export declare abstract class GameNode<E extends EventMap = EventMap> extends Ev
     protected get parent(): GameNode | undefined;
     add(...children: GameNode[]): void;
     remove(): void;
-    protected update(deltaTime: number): void;
+    protected update(dt: number): void;
 }
 //# sourceMappingURL=game-node.d.ts.map

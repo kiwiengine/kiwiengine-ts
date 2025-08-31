@@ -3,6 +3,7 @@ import { HasPixiContainer } from '../node/core/has-pixi-container'
 import { PixiContainerNode } from '../node/core/pixi-container-node'
 import { RendererContainerManager } from './container-manager'
 import { Layer } from './layer'
+import { Ticker } from './ticker'
 
 export type RendererOptions = {
   logicalWidth?: number
@@ -13,6 +14,7 @@ export type RendererOptions = {
 
 export class Renderer extends PixiContainerNode {
   #containerManager: RendererContainerManager
+  #ticker = new Ticker((dt) => this.update(dt))
 
   #logicalWidth?: number
   #logicalHeight?: number
@@ -64,6 +66,10 @@ export class Renderer extends PixiContainerNode {
     this.container.appendChild(canvas)
 
     this.#pixiRenderer = pr
+  }
+
+  #update(dt: number) {
+    //TODO
   }
 
   _addToLayer(node: HasPixiContainer, layerName: string) {

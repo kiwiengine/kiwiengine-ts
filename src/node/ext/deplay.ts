@@ -11,10 +11,10 @@ export class DelayNode extends GameNode {
     this.#callback = callback
   }
 
-  protected update(deltaTime: number) {
-    super.update(deltaTime)
+  protected update(dt: number) {
+    super.update(dt)
 
-    this.#accumulated += deltaTime
+    this.#accumulated += dt
     if (this.#accumulated >= this.#delay) {
       this.#callback()
       this.remove()
