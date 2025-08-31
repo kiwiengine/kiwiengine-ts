@@ -1,7 +1,10 @@
-const path = require('path');
+const path = require('path')
 
 module.exports = {
   entry: {
+    'dom-test': './dom-test/index.ts',
+    'flappy-cat': './flappy-cat/index.ts',
+    'simple-battle': './simple-battle/index.ts',
   },
   output: {
     filename: '[name]/dist/game.js',
@@ -27,4 +30,4 @@ module.exports = {
     },
     open: true
   }
-};
+}
