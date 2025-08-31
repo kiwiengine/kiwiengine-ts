@@ -1,17 +1,27 @@
 import { EventMap } from '@webtaku/event-emitter'
-import { TransformableNode } from './transformable-node'
 import { Container } from 'pixi.js'
+import { GameNode } from './game-node'
+import { HasPixiContainer } from './has-pixi-container'
+import { TransformableNode } from './transformable-node'
 
-export abstract class DisplayNode<E extends EventMap> extends TransformableNode<E> {
-  #container: Container
+export abstract class DisplayNode<E extends EventMap> extends TransformableNode<E> implements HasPixiContainer {
+  pixiContainer: Container
 
-  constructor(container: Container) {
+  constructor(pixiContainer: Container) {
     super()
-    this.#container = container
+    this.pixiContainer = pixiContainer
   }
 
-  remove() {
-    this.#container.destroy({ children: true })
+  override add(...children: (GameNode<EventMap> & HasPixiContainer)[]): void {
+    super.add(...children)
+
+    for (const child of children) {
+      this.pixiContainer.addChild(child.pixiContainer)
+    }
+  }
+
+  override remove() {
+    this.pixiContainer.destroy({ children: true })
     super.remove()
   }
 }
