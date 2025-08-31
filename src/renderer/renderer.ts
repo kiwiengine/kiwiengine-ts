@@ -15,7 +15,7 @@ export type RendererOptions = {
 
 export class Renderer extends PixiContainerNode {
   #containerManager: RendererContainerManager
-  #ticker = new Ticker((dt) => this.update(dt))
+  #ticker = new Ticker((dt) => this.#render(dt))
 
   #logicalWidth?: number
   #logicalHeight?: number
