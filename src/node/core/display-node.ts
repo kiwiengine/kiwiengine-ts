@@ -51,7 +51,7 @@ export abstract class DisplayNode<E extends EventMap> extends TransformableNode<
     super.remove()
   }
 
-  protected update(dt: number): void {
+  protected override update(dt: number): void {
     super.update(dt)
 
     const pc = this._pixiContainer

@@ -11,7 +11,7 @@ export class DelayNode extends GameNode {
     this.#callback = callback
   }
 
-  protected update(dt: number) {
+  protected override update(dt: number) {
     super.update(dt)
 
     this.#accumulated += dt

@@ -6,6 +6,9 @@ import { Camera } from './camera'
 import { RendererContainerManager } from './container-manager'
 import { Layer } from './layer'
 import { Ticker } from './ticker'
+import { FpsDisplay } from './fps-display'
+import { debugMode } from '../debug'
+import { GlobalTransform } from '../node/core/transform'
 
 export type RendererOptions = {
   logicalWidth?: number
@@ -18,6 +21,7 @@ export class Renderer extends PixiContainerNode {
   #containerManager: RendererContainerManager
   #ticker = new Ticker((dt) => this.#render(dt))
   camera = new Camera()
+  fpsDisplay?: FpsDisplay
 
   #logicalWidth?: number
   #logicalHeight?: number
@@ -26,6 +30,7 @@ export class Renderer extends PixiContainerNode {
   #pixiRenderer?: PixiRenderer
   #layers: { [name: string]: Layer } = {}
   _isSizeDirty = false
+  protected globalTransform = new GlobalTransform()
 
   canvasLeft = 0
   canvasTop = 0
@@ -35,6 +40,11 @@ export class Renderer extends PixiContainerNode {
 
   constructor(public container: HTMLElement, options?: RendererOptions) {
     super()
+    this.renderer = this
+    this.globalTransform.x.v = 0
+    this.globalTransform.y.v = 0
+    this.globalTransform.resetDirty()
+
     this.#containerManager = new RendererContainerManager(container)
     this.#containerManager.on('resize', (width, height) => this.#updateSize(width, height))
 
@@ -53,6 +63,10 @@ export class Renderer extends PixiContainerNode {
           this.#layers[layerOption.name] = layer
         }
       }
+    }
+
+    if (debugMode) {
+      this.fpsDisplay = new FpsDisplay(container)
     }
 
     this.init()
@@ -123,6 +137,7 @@ export class Renderer extends PixiContainerNode {
     }
     this._isSizeDirty = false
     this.#pixiRenderer?.render(this._pixiContainer)
+    this.fpsDisplay?.update()
   }
 
   _addToLayer(node: HasPixiContainer, layerName: string) {
@@ -135,6 +150,7 @@ export class Renderer extends PixiContainerNode {
     this.#containerManager.remove()
     this.#ticker.remove()
     this.#pixiRenderer?.destroy()
+    this.fpsDisplay?.remove()
     super.remove()
   }
 }

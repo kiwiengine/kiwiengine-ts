@@ -2,6 +2,8 @@ import { ColorSource } from 'pixi.js';
 import { HasPixiContainer } from '../node/core/has-pixi-container';
 import { PixiContainerNode } from '../node/core/pixi-container-node';
 import { Camera } from './camera';
+import { FpsDisplay } from './fps-display';
+import { GlobalTransform } from '../node/core/transform';
 export type RendererOptions = {
     logicalWidth?: number;
     logicalHeight?: number;
@@ -15,7 +17,9 @@ export declare class Renderer extends PixiContainerNode {
     #private;
     container: HTMLElement;
     camera: Camera;
+    fpsDisplay?: FpsDisplay;
     _isSizeDirty: boolean;
+    protected globalTransform: GlobalTransform;
     canvasLeft: number;
     canvasTop: number;
     viewportScale: number;

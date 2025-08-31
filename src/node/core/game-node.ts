@@ -1,7 +1,9 @@
 import { EventEmitter, EventMap } from '@webtaku/event-emitter'
 import { Renderer } from '../../renderer/renderer'
 
-export abstract class GameNode<E extends EventMap = EventMap> extends EventEmitter<E> {
+export abstract class GameNode<E extends EventMap = EventMap> extends EventEmitter<E & {
+  update: (dt: number) => void
+}> {
   #renderer?: Renderer
   #parent?: GameNode
   protected children: GameNode[] = [];
@@ -65,5 +67,6 @@ export abstract class GameNode<E extends EventMap = EventMap> extends EventEmitt
     for (const child of this.children) {
       child.update(dt)
     }
+    (this as any).emit('update', dt)
   }
 }
