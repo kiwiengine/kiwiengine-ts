@@ -2,6 +2,7 @@ import { EventMap } from '@webtaku/event-emitter'
 import { Container } from 'pixi.js'
 import { GameNode } from './game-node'
 import { HasPixiContainer } from './has-pixi-container'
+import { isHasPixiContainer } from './pixi-container-node'
 import { TransformableNode } from './transformable-node'
 
 export type DisplayNodeOptions = {
@@ -16,12 +17,12 @@ export abstract class DisplayNode<E extends EventMap> extends TransformableNode<
     this.pixiContainer = pixiContainer
   }
 
-  override add(...children: GameNode[]): void {
+  override add(...children: GameNode[]) {
     super.add(...children)
 
     for (const child of children) {
-      if ('pixiContainer' in child) {
-        this.pixiContainer.addChild((child as HasPixiContainer).pixiContainer)
+      if (isHasPixiContainer(child)) {
+        this.pixiContainer.addChild(child.pixiContainer)
       }
     }
   }
