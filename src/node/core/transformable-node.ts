@@ -2,7 +2,7 @@ import { EventMap } from '@webtaku/event-emitter'
 import { GameNode } from './game-node'
 import { GlobalTransform, LocalTransform } from './transform'
 
-function isTransformableNode(v: unknown): v is TransformableNode<EventMap> {
+export function isTransformableNode(v: unknown): v is TransformableNode<EventMap> {
   return (v as any).globalTransform !== undefined
 }
 

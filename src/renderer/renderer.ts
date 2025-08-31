@@ -1,6 +1,7 @@
 import { autoDetectRenderer, ColorSource, Renderer as PixiRenderer } from 'pixi.js'
 import { HasPixiContainer } from '../node/core/has-pixi-container'
 import { PixiContainerNode } from '../node/core/pixi-container-node'
+import { isTransformableNode } from '../node/core/transformable-node'
 import { RendererContainerManager } from './container-manager'
 import { Layer } from './layer'
 import { Ticker } from './ticker'
@@ -33,6 +34,7 @@ export class Renderer extends PixiContainerNode {
   constructor(public container: HTMLElement, options?: RendererOptions) {
     super()
     this.#containerManager = new RendererContainerManager(container)
+    this.#containerManager.on('resize', (width, height) => this.#updateSize(width, height))
 
     if (options) {
       if (options.logicalWidth !== undefined) this.#logicalWidth = options.logicalWidth
@@ -68,8 +70,16 @@ export class Renderer extends PixiContainerNode {
     this.#pixiRenderer = pr
   }
 
-  #update(dt: number) {
+  #updateSize(containerWidth: number, containerHeight: number) {
     //TODO
+  }
+
+  #render(dt: number) {
+    this.update(dt)
+    for (const child of this.children) {
+      if (isTransformableNode(child)) child._resetTransformDirty()
+    }
+    this.#pixiRenderer?.render(this._pixiContainer)
   }
 
   _addToLayer(node: HasPixiContainer, layerName: string) {
