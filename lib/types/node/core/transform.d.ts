@@ -14,6 +14,6 @@ export declare class GlobalTransform {
     scaleX: DirtyNumber;
     scaleY: DirtyNumber;
     rotation: DirtyNumber;
-    isDirty: boolean;
+    dirty: boolean;
 }
 //# sourceMappingURL=transform.d.ts.map

@@ -24,11 +24,11 @@ export class DomContainerNode extends GameObject<EventMap> {
 
       this.#el.style.transform = `
         translate(
-          calc(-50% + ${gt.x.value * S + renderer.canvasLeft + renderer.centerX * S}px),
-          calc(-50% + ${gt.y.value * S + renderer.canvasTop + renderer.centerY * S}px)
+          calc(-50% + ${gt.x.v * S + renderer.canvasLeft + renderer.centerX * S}px),
+          calc(-50% + ${gt.y.v * S + renderer.canvasTop + renderer.centerY * S}px)
         )
-        scale(${gt.scaleX.value * S}, ${gt.scaleY.value * S})
-        rotate(${gt.rotation.value}rad)
+        scale(${gt.scaleX.v * S}, ${gt.scaleY.v * S})
+        rotate(${gt.rotation.v}rad)
       `
     }
   }
@@ -49,9 +49,9 @@ export class DomContainerNode extends GameObject<EventMap> {
     super.update(deltaTime)
 
     const renderer = this.renderer
-    if (renderer && (renderer._isContainerSizeDirty || this.globalTransform.isDirty)) {
+    if (renderer && (renderer._isContainerSizeDirty || this.globalTransform.dirty)) {
       this.#syncTransform()
     }
-    if (this.globalAlpha.isDirty) this.#el.style.opacity = this.globalAlpha.value.toString()
+    if (this.globalAlpha.dirty) this.#el.style.opacity = this.globalAlpha.v.toString()
   }
 }

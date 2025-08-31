@@ -16,5 +16,5 @@ export class GlobalTransform {
   scaleX = new DirtyNumber(1)
   scaleY = new DirtyNumber(1)
   rotation = new DirtyNumber(0)
-  isDirty = false
+  dirty = false
 }

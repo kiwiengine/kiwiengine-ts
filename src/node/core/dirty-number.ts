@@ -7,20 +7,15 @@ export class DirtyNumber {
     this.#isDirty = false
   }
 
-  get isDirty(): boolean {
-    return this.#isDirty
-  }
+  get dirty(): boolean { return this.#isDirty }
+  get v(): number { return this.#value }
 
-  get value(): number {
-    return this.#value
-  }
-
-  set value(newValue: number) {
+  set v(newValue: number) {
     if (this.#value !== newValue) this.#isDirty = true
     this.#value = newValue
   }
 
-  resetDirty() {
+  reset() {
     this.#isDirty = false
   }
 }
