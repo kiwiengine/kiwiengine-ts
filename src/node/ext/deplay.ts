@@ -1,7 +1,6 @@
-import { EventMap } from '@webtaku/event-emitter'
 import { GameNode } from '../core/game-node'
 
-export class DelayNode extends GameNode<EventMap> {
+export class DelayNode extends GameNode {
   #delay: number
   #accumulated = 0
   #callback: () => void

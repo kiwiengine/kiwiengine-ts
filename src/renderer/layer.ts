@@ -1,25 +1,22 @@
-import { EventMap } from '@webtaku/event-emitter'
 import { Container } from 'pixi.js'
 import { GameNode } from '../node/core/game-node'
 import { HasPixiContainer } from '../node/core/has-pixi-container'
 
-export type LayerOptions = {
-  drawOrder: number
-}
-
-export class Layer extends GameNode<EventMap> implements HasPixiContainer {
+export class Layer extends GameNode implements HasPixiContainer {
   pixiContainer = new Container({ sortableChildren: true })
 
-  constructor(options: LayerOptions) {
+  constructor(drawOrder: number) {
     super()
-    this.pixiContainer.zIndex = options.drawOrder
+    this.pixiContainer.zIndex = drawOrder
   }
 
-  override add(...children: (GameNode<EventMap> & HasPixiContainer)[]): void {
+  override add(...children: GameNode[]): void {
     super.add(...children)
 
     for (const child of children) {
-      this.pixiContainer.addChild(child.pixiContainer)
+      if ('pixiContainer' in child) {
+        this.pixiContainer.addChild((child as HasPixiContainer).pixiContainer)
+      }
     }
   }
 

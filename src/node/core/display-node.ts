@@ -16,11 +16,13 @@ export abstract class DisplayNode<E extends EventMap> extends TransformableNode<
     this.pixiContainer = pixiContainer
   }
 
-  override add(...children: (GameNode<EventMap> & HasPixiContainer)[]): void {
+  override add(...children: GameNode[]): void {
     super.add(...children)
 
     for (const child of children) {
-      this.pixiContainer.addChild(child.pixiContainer)
+      if ('pixiContainer' in child) {
+        this.pixiContainer.addChild((child as HasPixiContainer).pixiContainer)
+      }
     }
   }
 

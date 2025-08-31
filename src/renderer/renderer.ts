@@ -1,3 +1,4 @@
+import { GameNode } from '../node/core/game-node'
 import { Layer } from './layer'
 
 export type RendererOptions = {
@@ -7,5 +8,17 @@ export type RendererOptions = {
 export class Renderer {
   #layers: { [name: string]: Layer } = {};
 
-  constructor(public target: HTMLElement, options?: RendererOptions) { }
+  constructor(public target: HTMLElement, options?: RendererOptions) {
+    if (options?.layers) {
+      for (const layer of options.layers) {
+        this.#layers[layer.name] = new Layer(layer.drawOrder)
+      }
+    }
+  }
+
+  addToLayer(node: GameNode, layerName: string) {
+    const layer = this.#layers[layerName]
+    if (!layer) throw new Error(`Layer ${layerName} does not exist.`)
+    layer.add(node)
+  }
 }

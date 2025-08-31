@@ -9,7 +9,7 @@ export type DisplayNodeOptions = {
 export declare abstract class DisplayNode<E extends EventMap> extends TransformableNode<E> implements HasPixiContainer {
     pixiContainer: Container;
     constructor(pixiContainer: Container, options: DisplayNodeOptions);
-    add(...children: (GameNode<EventMap> & HasPixiContainer)[]): void;
+    add(...children: GameNode[]): void;
     remove(): void;
 }
 //# sourceMappingURL=display-node.d.ts.map
