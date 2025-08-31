@@ -1,1 +1,3 @@
-export class Renderer { }
+export class Renderer {
+  constructor(public target: HTMLElement) { }
+}

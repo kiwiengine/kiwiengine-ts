@@ -1,1 +1,1 @@
-{"version":3,"file":"physics-world.d.ts","sourceRoot":"","sources":["../../../../src/node/physics/physics-world.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,wBAAwB,CAAA;AACjD,OAAO,EAAE,UAAU,EAAE,MAAM,qBAAqB,CAAA;AAEhD,qBAAa,YAAa,SAAQ,UAAU,CAAC,QAAQ,CAAC;CACrD"}
+{"version":3,"file":"physics-world.d.ts","sourceRoot":"","sources":["../../../../src/node/physics/physics-world.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,wBAAwB,CAAA;AAEjD,OAAO,EAAE,QAAQ,EAAE,MAAM,mBAAmB,CAAA;AAE5C,qBAAa,YAAa,SAAQ,QAAQ,CAAC,QAAQ,CAAC;;CAEnD"}

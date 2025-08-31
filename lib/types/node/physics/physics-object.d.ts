@@ -1,5 +1,6 @@
 import { EventMap } from '@webtaku/event-emitter';
-import { GameObject } from '../core/game-object';
-export declare class PhysicsObject extends GameObject<EventMap> {
+import { GameNode } from '../core/game-node';
+export declare class PhysicsObject extends GameNode<EventMap> {
+    #private;
 }
 //# sourceMappingURL=physics-object.d.ts.map
