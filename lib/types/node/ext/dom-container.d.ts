@@ -1,15 +1,12 @@
 import { EventMap } from '@webtaku/event-emitter';
 import { Renderer } from '../../renderer/renderer';
 import { GameObject, GameObjectOptions } from '../core/game-object';
-type DomContainerNodeOptions = {
-    el: HTMLElement;
-} & GameObjectOptions;
+export type DomContainerNodeOptions = {} & GameObjectOptions;
 export declare class DomContainerNode extends GameObject<EventMap> {
     #private;
-    constructor(options: DomContainerNodeOptions);
+    constructor(x: number, y: number, el: HTMLElement, options?: DomContainerNodeOptions);
     protected set renderer(renderer: Renderer | undefined);
     protected get renderer(): Renderer | undefined;
     protected update(deltaTime: number): void;
 }
-export {};
 //# sourceMappingURL=dom-container.d.ts.map

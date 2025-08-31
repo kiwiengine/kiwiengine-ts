@@ -2,20 +2,18 @@ import { EventMap } from '@webtaku/event-emitter'
 import { Renderer } from '../../renderer/renderer'
 import { GameObject, GameObjectOptions } from '../core/game-object'
 
-type DomContainerNodeOptions = {
-  el: HTMLElement
-} & GameObjectOptions
+export type DomContainerNodeOptions = {} & GameObjectOptions
 
 export class DomContainerNode extends GameObject<EventMap> {
   #el: HTMLElement
 
-  constructor(options: DomContainerNodeOptions) {
-    super(options)
-    const el = this.#el = options.el
+  constructor(x: number, y: number, el: HTMLElement, options?: DomContainerNodeOptions) {
+    super(x, y, options)
     el.style.position = 'absolute'
     el.style.left = '0'
     el.style.top = '0'
     el.style.zIndex = '1'
+    this.#el = el
   }
 
   #syncTransform() {

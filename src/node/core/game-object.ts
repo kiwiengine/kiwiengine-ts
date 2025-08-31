@@ -5,7 +5,9 @@ import { DisplayNode, DisplayNodeOptions } from "./display-node"
 export type GameObjectOptions = {} & DisplayNodeOptions
 
 export class GameObject<E extends EventMap> extends DisplayNode<E> {
-  constructor(options?: GameObjectOptions) {
+  constructor(x: number, y: number, options?: GameObjectOptions) {
     super(new Container({ sortableChildren: true }), options ?? {})
+    this.localTransform.x.value = x
+    this.localTransform.y.value = y
   }
 }
