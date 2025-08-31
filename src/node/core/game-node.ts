@@ -1,5 +1,5 @@
 import { EventEmitter, EventMap } from '@webtaku/event-emitter'
-import { Renderer } from '../../renderer'
+import { Renderer } from '../../renderer/renderer'
 
 export abstract class GameNode<E extends EventMap> extends EventEmitter<E> {
   #renderer?: Renderer

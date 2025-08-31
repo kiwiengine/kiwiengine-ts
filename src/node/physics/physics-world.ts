@@ -4,7 +4,7 @@ import { GameNode } from '../core/game-node'
 import { HasPixiContainer } from '../core/has-pixi-container'
 
 export class PhysicsWorld extends GameNode<EventMap> implements HasPixiContainer {
-  pixiContainer = new Container()
+  pixiContainer = new Container({ sortableChildren: true })
 
   override add(...children: (GameNode<EventMap> & HasPixiContainer)[]): void {
     super.add(...children)

@@ -1,6 +1,6 @@
 import { EventMap } from '@webtaku/event-emitter'
 import { GameObject, GameObjectOptions } from '../core/game-object'
-import { Renderer } from '../../renderer'
+import { Renderer } from '../../renderer/renderer'
 
 type DomContainerNodeOptions = {
   el: HTMLElement
@@ -9,9 +9,9 @@ type DomContainerNodeOptions = {
 export class DomContainerNode extends GameObject<EventMap> {
   #el: HTMLElement
 
-  constructor(opts: DomContainerNodeOptions) {
-    super(opts)
-    this.#el = opts.el
+  constructor(options: DomContainerNodeOptions) {
+    super(options)
+    this.#el = options.el
   }
 
   protected override set renderer(renderer: Renderer | undefined) {

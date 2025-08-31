@@ -4,10 +4,14 @@ import { GameNode } from './game-node'
 import { HasPixiContainer } from './has-pixi-container'
 import { TransformableNode } from './transformable-node'
 
+export type DisplayNodeOptions = {
+  layer?: string
+}
+
 export abstract class DisplayNode<E extends EventMap> extends TransformableNode<E> implements HasPixiContainer {
   pixiContainer: Container
 
-  constructor(pixiContainer: Container) {
+  constructor(pixiContainer: Container, options: DisplayNodeOptions) {
     super()
     this.pixiContainer = pixiContainer
   }

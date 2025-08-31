@@ -1,7 +1,7 @@
 import { EventMap } from '@webtaku/event-emitter';
-import { DisplayNode } from "./display-node";
-export type GameObjectOptions = {};
+import { DisplayNode, DisplayNodeOptions } from "./display-node";
+export type GameObjectOptions = {} & DisplayNodeOptions;
 export declare class GameObject<E extends EventMap> extends DisplayNode<E> {
-    constructor(opts?: GameObjectOptions);
+    constructor(options?: GameObjectOptions);
 }
 //# sourceMappingURL=game-object.d.ts.map
