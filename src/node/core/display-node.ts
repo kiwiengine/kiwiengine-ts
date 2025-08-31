@@ -17,7 +17,7 @@ export abstract class DisplayNode<E extends EventMap> extends TransformableNode<
   #layer?: string
   #useYSort = false
 
-  protected localAlpha = new DirtyNumber(1)
+  alpha = 1;
   protected globalAlpha = new DirtyNumber(1)
 
   constructor(pixiContainer: Container, options: DisplayNodeOptions) {
@@ -57,20 +57,20 @@ export abstract class DisplayNode<E extends EventMap> extends TransformableNode<
     const pc = this._pixiContainer
     const renderer = this.renderer
 
+    // 레이어 상에 있는 경우, 독립적으로 업데이트
     if (this.#layer && renderer) {
+      //TODO
+    } else {
       const lt = this.localTransform
-      if (lt.x.dirty) pc.x = lt.x.v
-      if (lt.y.dirty) {
-        pc.y = lt.y.v
-        if (this.#useYSort) pc.zIndex = lt.y.v
-      }
-      if (lt.pivotX.dirty) pc.pivot.x = lt.pivotX.v
-      if (lt.pivotY.dirty) pc.pivot.y = lt.pivotY.v
-      if (lt.scaleX.dirty) pc.scale.x = lt.scaleX.v
-      if (lt.scaleY.dirty) pc.scale.y = lt.scaleY.v
-      if (lt.rotation.dirty) pc.rotation = lt.rotation.v
+      pc.x = lt.x
+      pc.y = lt.y
+      if (this.#useYSort) pc.zIndex = lt.y
+      pc.pivot.x = lt.pivotX
+      pc.pivot.y = lt.pivotY
+      pc.scale.x = lt.scaleX
+      pc.scale.y = lt.scaleY
+      pc.rotation = lt.rotation
+      pc.alpha = this.alpha
     }
-
-    if (this.localAlpha.dirty) pc.alpha = this.localAlpha.v
   }
 }

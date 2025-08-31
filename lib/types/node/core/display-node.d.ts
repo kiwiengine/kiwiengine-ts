@@ -12,7 +12,7 @@ export type DisplayNodeOptions = {
 export declare abstract class DisplayNode<E extends EventMap> extends TransformableNode<E> implements HasPixiContainer {
     #private;
     _pixiContainer: Container;
-    protected localAlpha: DirtyNumber;
+    alpha: number;
     protected globalAlpha: DirtyNumber;
     constructor(pixiContainer: Container, options: DisplayNodeOptions);
     protected set renderer(renderer: Renderer | undefined);
