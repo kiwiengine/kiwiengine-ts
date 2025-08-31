@@ -115,6 +115,8 @@ export class Renderer extends PixiContainerNode {
 
   override remove() {
     this.#containerManager.remove()
+    this.#ticker.remove()
+    this.#pixiRenderer?.destroy()
     super.remove()
   }
 }
