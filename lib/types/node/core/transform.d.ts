@@ -20,5 +20,6 @@ export declare class GlobalTransform {
     rotation: DirtyRadian;
     update(parent: GlobalTransform, local: LocalTransform): void;
     get dirty(): boolean;
+    resetDirty(): void;
 }
 //# sourceMappingURL=transform.d.ts.map

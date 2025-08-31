@@ -15,7 +15,7 @@ export class DirtyNumber {
     this.#value = newValue
   }
 
-  reset() {
+  resetDirty() {
     this.#isDirty = false
   }
 }

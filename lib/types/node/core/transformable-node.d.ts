@@ -4,5 +4,7 @@ import { GlobalTransform, LocalTransform } from './transform';
 export declare abstract class TransformableNode<E extends EventMap> extends GameNode<E> {
     protected localTransform: LocalTransform;
     protected globalTransform: GlobalTransform;
+    protected update(deltaTime: number): void;
+    _resetTransformDirty(): void;
 }
 //# sourceMappingURL=transformable-node.d.ts.map

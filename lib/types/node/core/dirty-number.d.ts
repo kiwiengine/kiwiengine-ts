@@ -4,7 +4,7 @@ export declare class DirtyNumber {
     get dirty(): boolean;
     get v(): number;
     set v(newValue: number);
-    reset(): void;
+    resetDirty(): void;
 }
 export declare class DirtyRadian extends DirtyNumber {
     #private;

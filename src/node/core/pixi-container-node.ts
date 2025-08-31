@@ -4,7 +4,7 @@ import { GameNode } from '../core/game-node'
 import { HasPixiContainer } from '../core/has-pixi-container'
 
 export function isHasPixiContainer(v: unknown): v is HasPixiContainer {
-  return !!v && typeof (v as any).pixiContainer === 'object'
+  return (v as HasPixiContainer)._pixiContainer !== undefined
 }
 
 export abstract class PixiContainerNode<E extends EventMap = EventMap>

@@ -59,4 +59,12 @@ export class GlobalTransform {
       this.scaleY.dirty ||
       this.rotation.dirty
   }
+
+  resetDirty() {
+    this.x.resetDirty()
+    this.y.resetDirty()
+    this.scaleX.resetDirty()
+    this.scaleY.resetDirty()
+    this.rotation.resetDirty()
+  }
 }
