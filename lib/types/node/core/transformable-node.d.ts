@@ -7,5 +7,11 @@ export declare abstract class TransformableNode<E extends EventMap> extends Game
     protected globalTransform: GlobalTransform;
     protected update(dt: number): void;
     _resetTransformDirty(): void;
+    set x(v: number);
+    get x(): number;
+    set y(v: number);
+    get y(): number;
+    set scale(v: number);
+    get scale(): number;
 }
 //# sourceMappingURL=transformable-node.d.ts.map

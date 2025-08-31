@@ -2,6 +2,7 @@ import { autoDetectRenderer, ColorSource, Renderer as PixiRenderer } from 'pixi.
 import { HasPixiContainer } from '../node/core/has-pixi-container'
 import { PixiContainerNode } from '../node/core/pixi-container-node'
 import { isTransformableNode } from '../node/core/transformable-node'
+import { Camera } from './camera'
 import { RendererContainerManager } from './container-manager'
 import { Layer } from './layer'
 import { Ticker } from './ticker'
@@ -16,6 +17,7 @@ export type RendererOptions = {
 export class Renderer extends PixiContainerNode {
   #containerManager: RendererContainerManager
   #ticker = new Ticker((dt) => this.#render(dt))
+  camera = new Camera()
 
   #logicalWidth?: number
   #logicalHeight?: number
@@ -35,6 +37,9 @@ export class Renderer extends PixiContainerNode {
     super()
     this.#containerManager = new RendererContainerManager(container)
     this.#containerManager.on('resize', (width, height) => this.#updateSize(width, height))
+
+    this.camera.on('positionChanged', () => this.#updatePosition())
+    this.camera.on('scaleChanged', () => this.#updatePosition())
 
     if (options) {
       if (options.logicalWidth !== undefined) this.#logicalWidth = options.logicalWidth
@@ -70,12 +75,22 @@ export class Renderer extends PixiContainerNode {
     this.#pixiRenderer = pr
   }
 
+  #updatePosition() {
+    const S = this.camera.scale
+    this._pixiContainer.scale = S
+    this._pixiContainer.position.set(
+      this.centerX - this.camera.x * S,
+      this.centerY - this.camera.y * S
+    )
+  }
+
   #updateSize(containerWidth: number, containerHeight: number) {
     const canvasWidth = this.#logicalWidth ?? containerWidth
     const canvasHeight = this.#logicalHeight ?? containerHeight
 
     this.centerX = canvasWidth / 2
     this.centerY = canvasHeight / 2
+    this.#updatePosition()
 
     const S = Math.min(containerWidth / canvasWidth, containerHeight / canvasHeight)
     this.viewportScale = S
@@ -97,6 +112,8 @@ export class Renderer extends PixiContainerNode {
       canvas.style.left = `${canvasLeft}px`
       canvas.style.top = `${canvasTop}px`
     }
+
+    this._isSizeDirty = true
   }
 
   #render(dt: number) {
@@ -104,6 +121,7 @@ export class Renderer extends PixiContainerNode {
     for (const child of this.children) {
       if (isTransformableNode(child)) child._resetTransformDirty()
     }
+    this._isSizeDirty = false
     this.#pixiRenderer?.render(this._pixiContainer)
   }
 

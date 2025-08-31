@@ -26,4 +26,13 @@ export abstract class TransformableNode<E extends EventMap> extends GameNode<E> 
       if (isTransformableNode(child)) child._resetTransformDirty()
     }
   }
+
+  set x(v: number) { this.localTransform.x = v }
+  get x() { return this.localTransform.x }
+
+  set y(v: number) { this.localTransform.y = v }
+  get y() { return this.localTransform.y }
+
+  set scale(v: number) { this.localTransform.scaleX = v; this.localTransform.scaleY = v }
+  get scale() { return this.localTransform.scaleX }
 }

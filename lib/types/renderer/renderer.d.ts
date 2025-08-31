@@ -1,6 +1,7 @@
 import { ColorSource } from 'pixi.js';
 import { HasPixiContainer } from '../node/core/has-pixi-container';
 import { PixiContainerNode } from '../node/core/pixi-container-node';
+import { Camera } from './camera';
 export type RendererOptions = {
     logicalWidth?: number;
     logicalHeight?: number;
@@ -13,6 +14,7 @@ export type RendererOptions = {
 export declare class Renderer extends PixiContainerNode {
     #private;
     container: HTMLElement;
+    camera: Camera;
     _isSizeDirty: boolean;
     canvasLeft: number;
     canvasTop: number;
