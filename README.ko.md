@@ -1,15 +1,21 @@
 # 키위엔진
+
 키위엔진은 TypeScript 기반 2D 웹 게임 엔진입니다.
 
 ## 특이사항
+
 ### 좌표계
+
 일반적으로 다른 2D 엔진들은 화면 좌측 상단을 `0, 0`으로 하는데 반해, 키위엔진의 `0, 0`은 화면 중간입니다. 이는 브라우저 화면이 주로 가변적인 웹의 특성 때문입니다. 화면의 가운데를 `0, 0`으로 해야, 오브젝트나 UI를 구성하기가 쉬워집니다.
 
 ### 캔버스 크기
+
 캔버스의 크기는 캔버스의 부모 엘리먼트의 크기와 같게 설정됩니다. 부모 엘리먼트 크기가 변경되면 캔버스의 크기도 변경됩니다. 부모 엘리먼트가 `body`이고 `body`가 윈도우 크기와 같다면, 캔버스 크기도 윈도우 크기와 동일하게 설정되며 윈도우 크기가 변경될 때 캔버스의 크기도 변경됩니다.
 
 ## API
+
 ### Delay 노드
+
 `Delay` 노드는 일정 시간이 지난 후에 콜백 함수를 실행하는 노드입니다.
 
 ```typescript
@@ -18,10 +24,33 @@ const delayNode = new Delay(2, () => {
 });
 parent.add(delayNode);
 ```
+
 `Delay` 노드는 자동으로 부모 노드에서 제거됩니다.
 
+### Renderer
+
+`Renderer`는 화면에 오브젝트를 그리기 위한 렌더링 관리 클래스입니다.
+
+```typescript
+const renderer = new Renderer(document.body, {
+  layers: [
+    { name: 'background', drawOrder: 0 },
+    { name: 'game', drawOrder: 1 },
+    { name: 'ui', drawOrder: 2 },
+  ],
+});
+
+// 특정 레이어에 노드 추가
+renderer.addToLayer(playerNode, 'game');
+```
+
+* `layers`: 레이어 이름과 그리는 순서를 지정할 수 있습니다.
+* `addToLayer(node, layerName)`: 특정 노드를 원하는 레이어에 추가합니다.
+
 ## 라이센스
+
 MIT
 
 ## 작성자
+
 제이쓴
