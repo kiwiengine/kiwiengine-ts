@@ -71,7 +71,32 @@ export class Renderer extends PixiContainerNode {
   }
 
   #updateSize(containerWidth: number, containerHeight: number) {
-    //TODO
+    const canvasWidth = this.#logicalWidth ?? containerWidth
+    const canvasHeight = this.#logicalHeight ?? containerHeight
+
+    this.centerX = canvasWidth / 2
+    this.centerY = canvasHeight / 2
+
+    const S = Math.min(containerWidth / canvasWidth, containerHeight / canvasHeight)
+    this.viewportScale = S
+
+    const displayWidth = canvasWidth * S
+    const displayHeight = canvasHeight * S
+
+    const canvasLeft = (containerWidth - displayWidth) / 2
+    const canvasTop = (containerHeight - displayHeight) / 2
+    this.canvasLeft = canvasLeft
+    this.canvasTop = canvasTop
+
+    if (this.#pixiRenderer) {
+      this.#pixiRenderer.resize(canvasWidth, canvasHeight)
+
+      const canvas = this.#pixiRenderer.canvas
+      canvas.style.width = `${displayWidth}px`
+      canvas.style.height = `${displayHeight}px`
+      canvas.style.left = `${canvasLeft}px`
+      canvas.style.top = `${canvasTop}px`
+    }
   }
 
   #render(dt: number) {
