@@ -9,6 +9,6 @@ export declare class Renderer {
     #private;
     target: HTMLElement;
     constructor(target: HTMLElement, options?: RendererOptions);
-    addToLayer(node: GameNode, layerName: string): void;
+    _addToLayer(node: GameNode, layerName: string): void;
 }
 //# sourceMappingURL=renderer.d.ts.map

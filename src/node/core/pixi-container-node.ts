@@ -10,20 +10,20 @@ export function isHasPixiContainer(v: unknown): v is HasPixiContainer {
 export abstract class PixiContainerNode<E extends EventMap = EventMap>
   extends GameNode<E>
   implements HasPixiContainer {
-  pixiContainer = new Container({ sortableChildren: true })
+  _pixiContainer = new Container({ sortableChildren: true })
 
   override add(...children: GameNode[]) {
     super.add(...children)
 
     for (const child of children) {
       if (isHasPixiContainer(child)) {
-        this.pixiContainer.addChild(child.pixiContainer)
+        this._pixiContainer.addChild(child._pixiContainer)
       }
     }
   }
 
   override remove() {
-    this.pixiContainer.destroy({ children: true })
+    this._pixiContainer.destroy({ children: true })
     super.remove()
   }
 }

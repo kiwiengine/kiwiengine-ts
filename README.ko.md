@@ -39,13 +39,9 @@ const renderer = new Renderer(document.body, {
     { name: 'ui', drawOrder: 2 },
   ],
 });
-
-// 특정 레이어에 노드 추가
-renderer.addToLayer(playerNode, 'game');
 ```
 
 * `layers`: 레이어 이름과 그리는 순서를 지정할 수 있습니다.
-* `addToLayer(node, layerName)`: 특정 노드를 원하는 레이어에 추가합니다.
 
 ## 라이센스
 

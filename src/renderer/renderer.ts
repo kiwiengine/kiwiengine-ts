@@ -16,7 +16,7 @@ export class Renderer {
     }
   }
 
-  addToLayer(node: GameNode, layerName: string) {
+  _addToLayer(node: GameNode, layerName: string) {
     const layer = this.#layers[layerName]
     if (!layer) throw new Error(`Layer ${layerName} does not exist.`)
     layer.add(node)

@@ -1,1 +1,1 @@
-{"version":3,"file":"has-pixi-container.d.ts","sourceRoot":"","sources":["../../../../src/node/core/has-pixi-container.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,SAAS,EAAE,MAAM,SAAS,CAAA;AAEnC,MAAM,WAAW,gBAAgB;IAC/B,QAAQ,CAAC,aAAa,EAAE,SAAS,CAAA;CAClC"}
+{"version":3,"file":"has-pixi-container.d.ts","sourceRoot":"","sources":["../../../../src/node/core/has-pixi-container.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,SAAS,EAAE,MAAM,SAAS,CAAA;AAEnC,MAAM,WAAW,gBAAgB;IAC/B,QAAQ,CAAC,cAAc,EAAE,SAAS,CAAA;CACnC"}
