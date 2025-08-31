@@ -1,20 +1,27 @@
-import { GameNode } from '../node/core/game-node';
+import { ColorSource } from 'pixi.js';
+import { HasPixiContainer } from '../node/core/has-pixi-container';
+import { PixiContainerNode } from '../node/core/pixi-container-node';
 export type RendererOptions = {
+    logicalWidth?: number;
+    logicalHeight?: number;
+    backgroundColor?: ColorSource;
     layers?: {
         name: string;
         drawOrder: number;
     }[];
 };
-export declare class Renderer {
+export declare class Renderer extends PixiContainerNode {
     #private;
     container: HTMLElement;
-    _isContainerSizeDirty: boolean;
+    _isSizeDirty: boolean;
     canvasLeft: number;
     canvasTop: number;
     viewportScale: number;
     centerX: number;
     centerY: number;
     constructor(container: HTMLElement, options?: RendererOptions);
-    _addToLayer(node: GameNode, layerName: string): void;
+    private init;
+    _addToLayer(node: HasPixiContainer, layerName: string): void;
+    remove(): void;
 }
 //# sourceMappingURL=renderer.d.ts.map

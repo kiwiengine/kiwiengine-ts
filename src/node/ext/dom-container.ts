@@ -49,7 +49,7 @@ export class DomContainerNode extends GameObject<EventMap> {
     super.update(deltaTime)
 
     const renderer = this.renderer
-    if (renderer && (renderer._isContainerSizeDirty || this.globalTransform.dirty)) {
+    if (renderer && (renderer._isSizeDirty || this.globalTransform.dirty)) {
       this.#syncTransform()
     }
     if (this.globalAlpha.dirty) this.#el.style.opacity = this.globalAlpha.v.toString()
