@@ -4,6 +4,8 @@ export declare abstract class GameNode<E extends EventMap = EventMap> extends Ev
     #private;
     protected set renderer(renderer: Renderer | undefined);
     protected get renderer(): Renderer | undefined;
+    protected set parent(parent: GameNode | undefined);
+    protected get parent(): GameNode | undefined;
     add(...children: GameNode[]): void;
     remove(): void;
     protected update(deltaTime: number): void;

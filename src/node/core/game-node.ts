@@ -17,6 +17,14 @@ export abstract class GameNode<E extends EventMap = EventMap> extends EventEmitt
     return this.#renderer
   }
 
+  protected set parent(parent: GameNode | undefined) {
+    this.#parent = parent
+  }
+
+  protected get parent() {
+    return this.#parent
+  }
+
   add(...children: GameNode[]) {
     for (const child of children) {
 
@@ -27,7 +35,7 @@ export abstract class GameNode<E extends EventMap = EventMap> extends EventEmitt
       }
 
       // 새로운 부모 설정
-      child.#parent = this
+      child.parent = this
       this.#children.push(child)
 
       // 렌더러 설정
@@ -47,7 +55,7 @@ export abstract class GameNode<E extends EventMap = EventMap> extends EventEmitt
 
     // 자식 노드 제거
     for (const child of this.#children) {
-      child.#parent = undefined
+      child.parent = undefined
       child.remove()
     }
     this.#children.length = 0
