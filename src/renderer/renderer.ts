@@ -6,9 +6,16 @@ export type RendererOptions = {
 }
 
 export class Renderer {
-  #layers: { [name: string]: Layer } = {};
+  #layers: { [name: string]: Layer } = {}
+  _isContainerSizeDirty = false
 
-  constructor(public target: HTMLElement, options?: RendererOptions) {
+  canvasLeft = 0
+  canvasTop = 0
+  viewportScale = 1
+  centerX = 0
+  centerY = 0
+
+  constructor(public container: HTMLElement, options?: RendererOptions) {
     if (options?.layers) {
       for (const layer of options.layers) {
         this.#layers[layer.name] = new Layer(layer.drawOrder)

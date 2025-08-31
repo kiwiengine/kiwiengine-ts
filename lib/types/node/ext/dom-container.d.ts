@@ -1,6 +1,6 @@
 import { EventMap } from '@webtaku/event-emitter';
-import { GameObject, GameObjectOptions } from '../core/game-object';
 import { Renderer } from '../../renderer/renderer';
+import { GameObject, GameObjectOptions } from '../core/game-object';
 type DomContainerNodeOptions = {
     el: HTMLElement;
 } & GameObjectOptions;

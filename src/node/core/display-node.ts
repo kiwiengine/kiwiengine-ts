@@ -43,4 +43,13 @@ export abstract class DisplayNode<E extends EventMap> extends TransformableNode<
     this._pixiContainer.destroy({ children: true })
     super.remove()
   }
+
+  protected update(deltaTime: number): void {
+    super.update(deltaTime)
+
+    const renderer = this.renderer
+    if (this.#layer && renderer) {
+      //TODO
+    }
+  }
 }

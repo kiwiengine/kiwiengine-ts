@@ -15,5 +15,6 @@ export declare abstract class DisplayNode<E extends EventMap> extends Transforma
     protected get renderer(): Renderer | undefined;
     add(...children: GameNode[]): void;
     remove(): void;
+    protected update(deltaTime: number): void;
 }
 //# sourceMappingURL=display-node.d.ts.map
