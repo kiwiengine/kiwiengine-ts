@@ -4,13 +4,6 @@ import { CircleCollider, Collider, ColliderType, EllipseCollider, Point, Polygon
 type Transform = GlobalTransform
 
 // =====================================================================================
-// Utility (scalar-only)
-// =====================================================================================
-
-function dot(ax: number, ay: number, bx: number, by: number) { return ax * bx + ay * by }
-function clamp(v: number, lo: number, hi: number) { return v < lo ? lo : (v > hi ? hi : v) }
-
-// =====================================================================================
 // Rectangle–Rectangle (OBB–OBB) — SAT with 4 axes (scalar-only)
 // =====================================================================================
 
