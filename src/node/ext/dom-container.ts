@@ -6,8 +6,8 @@ export type DomContainerNodeOptions = {} & GameObjectOptions
 export class DomContainerNode extends GameObject {
   #el: HTMLElement
 
-  constructor(x: number, y: number, el: HTMLElement, options?: DomContainerNodeOptions) {
-    super(x, y, options)
+  constructor(el: HTMLElement, options?: DomContainerNodeOptions) {
+    super(options)
     el.style.position = 'absolute'
     el.style.left = '0'
     el.style.top = '0'

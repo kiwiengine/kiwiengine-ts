@@ -9,6 +9,14 @@ export type RectangleNodeOptions = {
 } & DisplayNodeOptions;
 export declare class RectangleNode extends DisplayNode<Graphics, EventMap> {
     #private;
-    constructor(x: number, y: number, options: RectangleNodeOptions);
+    constructor(options: RectangleNodeOptions);
+    get width(): number;
+    set width(v: number);
+    get height(): number;
+    set height(v: number);
+    get fill(): FillInput | undefined;
+    set fill(v: FillInput | undefined);
+    get stroke(): StrokeInput | undefined;
+    set stroke(v: StrokeInput | undefined);
 }
 //# sourceMappingURL=rectangle.d.ts.map

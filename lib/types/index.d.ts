@@ -1,5 +1,7 @@
 export { enableDebug } from './debug';
+export { GameObject, GameObjectOptions } from './node/core/game-object';
 export { DelayNode } from './node/ext/deplay';
-export { DomContainerNode } from './node/ext/dom-container';
-export { Renderer } from './renderer/renderer';
+export { DomContainerNode, DomContainerNodeOptions } from './node/ext/dom-container';
+export { RectangleNode, RectangleNodeOptions } from './node/ext/rectangle';
+export { Renderer, RendererOptions } from './renderer/renderer';
 //# sourceMappingURL=index.d.ts.map

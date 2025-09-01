@@ -5,16 +5,17 @@ import { DirtyNumber } from './dirty-number'
 import { GameNode } from './game-node'
 import { HasPixiContainer } from './has-pixi-container'
 import { isHasPixiContainer } from './pixi-container-node'
-import { TransformableNode } from './transformable-node'
+import { TransformableNode, TransformableNodeOptions } from './transformable-node'
 
 function hasGlobalAlpha(v: unknown): v is { globalAlpha: DirtyNumber } {
   return (v as { globalAlpha: DirtyNumber }).globalAlpha !== undefined
 }
 
 export type DisplayNodeOptions = {
+  alpha?: number
   layer?: string
   useYSort?: boolean
-}
+} & TransformableNodeOptions
 
 export abstract class DisplayNode<C extends Container, E extends EventMap> extends TransformableNode<E> implements HasPixiContainer {
   _pixiContainer: C
@@ -25,10 +26,11 @@ export abstract class DisplayNode<C extends Container, E extends EventMap> exten
   protected globalAlpha = new DirtyNumber(1)
 
   constructor(pixiContainer: C, options: DisplayNodeOptions) {
-    super()
+    super(options)
     this._pixiContainer = pixiContainer
     this.#layer = options.layer
     this.#useYSort = options.useYSort ?? false
+    if (options.alpha !== undefined) this.alpha = options.alpha
   }
 
   protected override set renderer(renderer: Renderer | undefined) {
@@ -81,5 +83,10 @@ export abstract class DisplayNode<C extends Container, E extends EventMap> exten
       pc.rotation = lt.rotation
       pc.alpha = this.alpha
     }
+  }
+
+  override _resetTransformDirty() {
+    super._resetTransformDirty()
+    this.globalAlpha.resetDirty()
   }
 }

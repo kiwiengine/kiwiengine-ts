@@ -1,8 +1,8 @@
 import { DirtyNumber, DirtyRadian } from './dirty-number'
 
 export class LocalTransform {
-  x = Number.NEGATIVE_INFINITY
-  y = Number.NEGATIVE_INFINITY
+  x = 0
+  y = 0
   scaleX = 1
   scaleY = 1
   pivotX = 0
@@ -16,11 +16,11 @@ export class LocalTransform {
   get sin() { return this.#sin }
   get rotation() { return this.#rotation }
 
-  set rotation(value: number) {
-    if (this.#rotation !== value) {
-      this.#rotation = value
-      this.#cos = Math.cos(value)
-      this.#sin = Math.sin(value)
+  set rotation(v) {
+    if (this.#rotation !== v) {
+      this.#rotation = v
+      this.#cos = Math.cos(v)
+      this.#sin = Math.sin(v)
     }
   }
 }

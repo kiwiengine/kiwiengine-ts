@@ -10,7 +10,7 @@ export declare class LocalTransform {
     get cos(): number;
     get sin(): number;
     get rotation(): number;
-    set rotation(value: number);
+    set rotation(v: number);
 }
 export declare class GlobalTransform {
     x: DirtyNumber;
