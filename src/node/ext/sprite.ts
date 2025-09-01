@@ -27,8 +27,9 @@ export class SpriteNode extends GameObject {
     this.#sprite = undefined
 
     if (texture) {
-      this.#sprite = new PixiSprite({ texture, anchor: 0.5, zIndex: -999999 })
-      this._pixiContainer.addChild(this.#sprite)
+      const sprite = new PixiSprite({ texture, anchor: 0.5, zIndex: -999999 })
+      this._pixiContainer.addChild(sprite)
+      this.#sprite = sprite
     }
   }
 

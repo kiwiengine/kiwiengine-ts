@@ -3,7 +3,7 @@ import { audioLoader } from './loaders/audio'
 import { binaryLoader } from './loaders/binary'
 import { fontFamilyLoader } from './loaders/font'
 import { Loader } from './loaders/loader'
-import { getCachedId, spritesheetLoader } from './loaders/spritesheet'
+import { getCachedAtlasId, spritesheetLoader } from './loaders/spritesheet'
 import { textLoader } from './loaders/text'
 import { textureLoader } from './loaders/texture'
 
@@ -33,7 +33,7 @@ async function loadAsset(asset: AssetSource): Promise<void> {
     }
     await loader.load(asset)
   } else {
-    const id = getCachedId(asset.src, asset.atlas)
+    const id = getCachedAtlasId(asset.src, asset.atlas)
     await spritesheetLoader.load(id, asset.src, asset.atlas)
   }
 }
@@ -47,7 +47,7 @@ function releaseAsset(asset: AssetSource): void {
     }
     loader.release(asset)
   } else {
-    const id = getCachedId(asset.src, asset.atlas)
+    const id = getCachedAtlasId(asset.src, asset.atlas)
     spritesheetLoader.release(id)
   }
 }

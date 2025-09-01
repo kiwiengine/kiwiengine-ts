@@ -2,10 +2,10 @@ import { Spritesheet, SpritesheetData } from 'pixi.js'
 import { Loader } from './loader'
 import { textureLoader } from './texture'
 
-const atlasIdCache = new WeakMap<object, Map<string, string>>()
+const atlasIdCache = new WeakMap<SpritesheetData, Map<string, string>>()
 let idCounter = 0
 
-export function getCachedId(src: string, atlas: object): string {
+export function getCachedAtlasId(src: string, atlas: SpritesheetData): string {
   let innerMap = atlasIdCache.get(atlas)
   if (!innerMap) {
     innerMap = new Map<string, string>()

@@ -1,6 +1,6 @@
 import { Spritesheet, SpritesheetData } from 'pixi.js';
 import { Loader } from './loader';
-export declare function getCachedId(src: string, atlas: object): string;
+export declare function getCachedAtlasId(src: string, atlas: SpritesheetData): string;
 declare class SpritesheetLoader extends Loader<Spritesheet> {
     #private;
     protected doLoad(id: string, src: string, atlas: SpritesheetData): Promise<Spritesheet<SpritesheetData> | undefined>;

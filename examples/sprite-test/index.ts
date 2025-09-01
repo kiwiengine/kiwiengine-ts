@@ -1,4 +1,4 @@
-import { enableDebug, preload, Renderer, SpriteNode } from '../../src'
+import { AnimatedSpriteNode, enableDebug, preload, Renderer, SpriteNode } from '../../src'
 
 enableDebug()
 
@@ -19,14 +19,23 @@ for (let i = 0; i < 100; i++) {
   renderer.add(sprite)
 }
 
-/*const animatedSprite = new AnimatedSpriteNode({
+const animatedSprite = new AnimatedSpriteNode({
   src: 'assets/fire.png',
-  frameWidth: 64,
-  frameHeight: 64,
-  frameCount: 5,
+  atlas: {
+    frames: {
+      fire1: { frame: { x: 0, y: 0, w: 64, h: 64 } },
+      fire2: { frame: { x: 64, y: 0, w: 64, h: 64 } },
+      fire3: { frame: { x: 128, y: 0, w: 64, h: 64 } },
+      fire4: { frame: { x: 192, y: 0, w: 64, h: 64 } },
+      fire5: { frame: { x: 256, y: 0, w: 64, h: 64 } },
+    },
+    meta: { scale: 1 },
+    animations: {
+      fire: ['fire1', 'fire2', 'fire3', 'fire4', 'fire5'],
+    },
+  },
+  animation: 'fire',
   fps: 12,
   loop: true,
 })
-renderer.add(animatedSprite);
-*/
-
+renderer.add(animatedSprite)
