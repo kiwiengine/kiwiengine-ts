@@ -4,6 +4,7 @@ module.exports = {
   entry: {
     'renderer-test': './renderer-test/index.ts',
     'dom-test': './dom-test/index.ts',
+    'sprite-test': './sprite-test/index.ts',
     'flappy-cat': './flappy-cat/index.ts',
     'simple-battle': './simple-battle/index.ts',
   },

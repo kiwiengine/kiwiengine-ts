@@ -1,1 +1,1 @@
-{"version":3,"file":"sprite.d.ts","sourceRoot":"","sources":["../../../../src/node/ext/sprite.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,UAAU,EAAE,MAAM,qBAAqB,CAAA;AAEhD,qBAAa,UAAW,SAAQ,UAAU;CACzC"}
+{"version":3,"file":"sprite.d.ts","sourceRoot":"","sources":["../../../../src/node/ext/sprite.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,UAAU,EAAE,iBAAiB,EAAE,MAAM,qBAAqB,CAAA;AAEnE,MAAM,MAAM,iBAAiB,GAAG;IAC9B,GAAG,EAAE,MAAM,CAAA;CACZ,GAAG,iBAAiB,CAAA;AAErB,qBAAa,UAAW,SAAQ,UAAU;;gBAI5B,OAAO,EAAE,iBAAiB;CAavC"}

@@ -1,10 +1,10 @@
 import { ColorSource } from 'pixi.js';
+import { DirtyNumber } from '../node/core/dirty-number';
 import { HasPixiContainer } from '../node/core/has-pixi-container';
 import { PixiContainerNode } from '../node/core/pixi-container-node';
+import { GlobalTransform } from '../node/core/transform';
 import { Camera } from './camera';
 import { FpsDisplay } from './fps-display';
-import { GlobalTransform } from '../node/core/transform';
-import { DirtyNumber } from '../node/core/dirty-number';
 export type RendererOptions = {
     logicalWidth?: number;
     logicalHeight?: number;
@@ -20,6 +20,8 @@ export declare class Renderer extends PixiContainerNode {
     camera: Camera;
     fpsDisplay?: FpsDisplay;
     _isSizeDirty: boolean;
+    canvasWidth: number;
+    canvasHeight: number;
     canvasLeft: number;
     canvasTop: number;
     viewportScale: number;

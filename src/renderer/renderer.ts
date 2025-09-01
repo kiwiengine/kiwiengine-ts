@@ -1,15 +1,15 @@
 import { autoDetectRenderer, ColorSource, Renderer as PixiRenderer } from 'pixi.js'
+import { debugMode } from '../debug'
+import { DirtyNumber } from '../node/core/dirty-number'
 import { HasPixiContainer } from '../node/core/has-pixi-container'
 import { PixiContainerNode } from '../node/core/pixi-container-node'
+import { GlobalTransform } from '../node/core/transform'
 import { isTransformableNode } from '../node/core/transformable-node'
 import { Camera } from './camera'
 import { RendererContainerManager } from './container-manager'
+import { FpsDisplay } from './fps-display'
 import { Layer } from './layer'
 import { Ticker } from './ticker'
-import { FpsDisplay } from './fps-display'
-import { debugMode } from '../debug'
-import { GlobalTransform } from '../node/core/transform'
-import { DirtyNumber } from '../node/core/dirty-number'
 
 export type RendererOptions = {
   logicalWidth?: number
@@ -32,6 +32,8 @@ export class Renderer extends PixiContainerNode {
   #layers: { [name: string]: Layer } = {}
   _isSizeDirty = false
 
+  canvasWidth = 0
+  canvasHeight = 0
   canvasLeft = 0
   canvasTop = 0
   viewportScale = 1
@@ -104,6 +106,8 @@ export class Renderer extends PixiContainerNode {
   #updateSize(containerWidth: number, containerHeight: number) {
     const canvasWidth = this.#logicalWidth ?? containerWidth
     const canvasHeight = this.#logicalHeight ?? containerHeight
+    this.canvasWidth = canvasWidth
+    this.canvasHeight = canvasHeight
 
     this.centerX = canvasWidth / 2
     this.centerY = canvasHeight / 2

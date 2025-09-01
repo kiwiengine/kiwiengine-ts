@@ -13,7 +13,7 @@ el.textContent = 'Hello World'
 el.style.color = 'red'
 el.onclick = () => alert('click')
 
-const node = new DomContainerNode(0, 0, el)
+const node = new DomContainerNode(el)
 node.alpha = 0.5
 renderer.add(node)
 
