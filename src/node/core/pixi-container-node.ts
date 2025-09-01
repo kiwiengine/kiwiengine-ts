@@ -12,7 +12,7 @@ export abstract class PixiContainerNode<E extends EventMap = EventMap>
   implements HasPixiContainer {
   _pixiContainer = new Container({ sortableChildren: true })
 
-  override add(...children: GameNode[]) {
+  override add(...children: GameNode<EventMap>[]) {
     super.add(...children)
 
     for (const child of children) {

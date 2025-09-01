@@ -1,10 +1,9 @@
-import { EventMap } from '@webtaku/event-emitter'
 import { Renderer } from '../../renderer/renderer'
 import { GameObject, GameObjectOptions } from '../core/game-object'
 
 export type DomContainerNodeOptions = {} & GameObjectOptions
 
-export class DomContainerNode extends GameObject<EventMap> {
+export class DomContainerNode extends GameObject {
   #el: HTMLElement
 
   constructor(x: number, y: number, el: HTMLElement, options?: DomContainerNodeOptions) {

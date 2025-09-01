@@ -16,15 +16,15 @@ export type DisplayNodeOptions = {
   useYSort?: boolean
 }
 
-export abstract class DisplayNode<E extends EventMap> extends TransformableNode<E> implements HasPixiContainer {
-  _pixiContainer: Container
+export abstract class DisplayNode<C extends Container, E extends EventMap> extends TransformableNode<E> implements HasPixiContainer {
+  _pixiContainer: C
   #layer?: string
   #useYSort = false
 
   alpha = 1;
   protected globalAlpha = new DirtyNumber(1)
 
-  constructor(pixiContainer: Container, options: DisplayNodeOptions) {
+  constructor(pixiContainer: C, options: DisplayNodeOptions) {
     super()
     this._pixiContainer = pixiContainer
     this.#layer = options.layer
@@ -40,7 +40,7 @@ export abstract class DisplayNode<E extends EventMap> extends TransformableNode<
     return super.renderer
   }
 
-  override add(...children: GameNode[]) {
+  override add(...children: GameNode<EventMap>[]) {
     super.add(...children)
 
     for (const child of children) {

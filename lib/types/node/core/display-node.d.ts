@@ -9,15 +9,15 @@ export type DisplayNodeOptions = {
     layer?: string;
     useYSort?: boolean;
 };
-export declare abstract class DisplayNode<E extends EventMap> extends TransformableNode<E> implements HasPixiContainer {
+export declare abstract class DisplayNode<C extends Container, E extends EventMap> extends TransformableNode<E> implements HasPixiContainer {
     #private;
-    _pixiContainer: Container;
+    _pixiContainer: C;
     alpha: number;
     protected globalAlpha: DirtyNumber;
-    constructor(pixiContainer: Container, options: DisplayNodeOptions);
+    constructor(pixiContainer: C, options: DisplayNodeOptions);
     protected set renderer(renderer: Renderer | undefined);
     protected get renderer(): Renderer | undefined;
-    add(...children: GameNode[]): void;
+    add(...children: GameNode<EventMap>[]): void;
     remove(): void;
     protected update(dt: number): void;
 }
