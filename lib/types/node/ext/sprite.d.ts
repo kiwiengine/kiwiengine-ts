@@ -5,5 +5,8 @@ export type SpriteNodeOptions = {
 export declare class SpriteNode extends GameObject {
     #private;
     constructor(options: SpriteNodeOptions);
+    set src(src: string);
+    get src(): string;
+    remove(): void;
 }
 //# sourceMappingURL=sprite.d.ts.map

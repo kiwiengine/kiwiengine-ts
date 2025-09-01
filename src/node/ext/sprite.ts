@@ -21,6 +21,29 @@ export class SpriteNode extends GameObject {
       console.info(`Texture not preloaded. Loading now: ${this.#src}`)
     }
 
-    //TODO
+    const texture = await textureLoader.load(this.#src)
+
+    this.#sprite?.destroy({ children: true })
+    this.#sprite = undefined
+
+    if (texture) {
+      this.#sprite = new PixiSprite({ texture, anchor: 0.5, zIndex: -999999 })
+      this._pixiContainer.addChild(this.#sprite)
+    }
+  }
+
+  set src(src) {
+    if (this.#src !== src) {
+      textureLoader.release(this.#src)
+      this.#src = src
+      this.#load()
+    }
+  }
+
+  get src() { return this.#src }
+
+  override remove() {
+    textureLoader.release(this.#src)
+    super.remove()
   }
 }
