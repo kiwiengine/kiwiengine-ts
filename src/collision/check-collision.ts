@@ -6,7 +6,7 @@ import {
 type Transform = GlobalTransform
 
 // =====================================================================================
-// Utilities (scalar-only, no allocations)
+// Utilities (scalar-only, no allocations at runtime)
 // =====================================================================================
 
 const abs = (v: number) => (v < 0 ? -v : v)
@@ -92,37 +92,40 @@ function checkRectRectCollision(
 }
 
 // =====================================================================================
-// Circle–Circle (no allocations)
+// Circle tools (no allocations)
 // =====================================================================================
+
+// scratch for circle center computations (reused everywhere; no runtime object creation)
+let _ccx = 0, _ccy = 0
+
+// Writes the world-space center into (_ccx, _ccy).
+function circleCenterScratch(c: CircleCollider, t: Transform): void {
+  // No object/array allocation; scalar math only
+  const sx = t.scaleX.v, sy = t.scaleY.v
+  const cos = t.rotation.cos, sin = t.rotation.sin
+  // local axes
+  const ux = cos, uy = sin
+  const vx = -sin, vy = cos
+  // scaled local offset
+  const ox = (c.x || 0) * sx
+  const oy = (c.y || 0) * sy
+  _ccx = t.x.v + ux * ox + vx * oy
+  _ccy = t.y.v + uy * ox + vy * oy
+}
 
 function circleScaledRadius(c: CircleCollider, t: Transform) {
   const sx = abs(t.scaleX.v), sy = abs(t.scaleY.v)
   return c.radius * (sx > sy ? sx : sy) // conservative
 }
 
-function circleCenter(c: CircleCollider, t: Transform, out: { x: number; y: number }) {
-  // out is a pre-existing struct from caller (do not allocate new)
-  const sx = t.scaleX.v, sy = t.scaleY.v
-  const cos = t.rotation.cos, sin = t.rotation.sin
-  const ux = cos, uy = sin
-  const vx = -sin, vy = cos
-  const ox = (c.x || 0) * sx
-  const oy = (c.y || 0) * sy
-  out.x = t.x.v + ux * ox + vx * oy
-  out.y = t.y.v + uy * ox + vy * oy
-}
-
 function checkCircleCircleCollision(
   ca: CircleCollider, ta: Transform, cb: CircleCollider, tb: Transform
 ): boolean {
-  // reuse stack scalars; no objects created here
-  const A = { x: 0, y: 0 } as { x: number; y: number }
-  const B = { x: 0, y: 0 } as { x: number; y: number }
-  circleCenter(ca, ta, A)
-  circleCenter(cb, tb, B)
+  circleCenterScratch(ca, ta); const ax = _ccx, ay = _ccy
+  circleCenterScratch(cb, tb); const bx = _ccx, by = _ccy
   const ra = circleScaledRadius(ca, ta)
   const rb = circleScaledRadius(cb, tb)
-  const dx = B.x - A.x, dy = B.y - A.y
+  const dx = bx - ax, dy = by - ay
   const r = ra + rb
   return (dx * dx + dy * dy) <= r * r
 }
@@ -147,13 +150,12 @@ function checkRectCircleCollision(
   const rcx = tr.x.v + rux * rox + rvx * roy
   const rcy = tr.y.v + ruy * rox + rvy * roy
 
-  // Circle center + radius
-  const C = { x: 0, y: 0 } as { x: number; y: number }
-  circleCenter(c, tc, C)
+  // Circle center + radius (into scratch scalars)
+  circleCenterScratch(c, tc)
   const rr = circleScaledRadius(c, tc)
 
   // Project center delta onto rect local axes and clamp
-  const dx = C.x - rcx, dy = C.y - rcy
+  const dx = _ccx - rcx, dy = _ccy - rcy
   const qx = dx * rux + dy * ruy
   const qy = dx * rvx + dy * rvy
   const clx = qx < -rhx ? -rhx : (qx > rhx ? rhx : qx)
@@ -222,8 +224,8 @@ function checkPolyPolyCollision(a: PolygonCollider, b: PolygonCollider): boolean
 function checkPolyCircleCollision(poly: PolygonCollider, c: CircleCollider, tc: Transform): boolean {
   const v = poly.vertices; const n = v.length; if (n === 0) return false
 
-  const PC = { x: 0, y: 0 } as { x: number; y: number }
-  circleCenter(c, tc, PC)
+  circleCenterScratch(c, tc)
+  const PCx = _ccx, PCy = _ccy
   const rr = circleScaledRadius(c, tc)
 
   // Edge normals
@@ -240,7 +242,7 @@ function checkPolyCircleCollision(poly: PolygonCollider, c: CircleCollider, tc: 
       if (p < minP) minP = p
       if (p > maxP) maxP = p
     }
-    const centerProj = nx * PC.x + ny * PC.y
+    const centerProj = nx * PCx + ny * PCy
     const minC = centerProj - rr * nlen
     const maxC = centerProj + rr * nlen
     if (maxP < minC || maxC < minP) return false
@@ -249,8 +251,8 @@ function checkPolyCircleCollision(poly: PolygonCollider, c: CircleCollider, tc: 
   // Closest-vertex axis
   let bestDx = 0, bestDy = 0, bestD2 = Infinity
   for (let i = 0; i < n; i++) {
-    const dx = PC.x - v[i].x
-    const dy = PC.y - v[i].y
+    const dx = PCx - v[i].x
+    const dy = PCy - v[i].y
     const d2 = dx * dx + dy * dy
     if (d2 < bestD2) { bestD2 = d2; bestDx = dx; bestDy = dy }
   }
@@ -265,7 +267,7 @@ function checkPolyCircleCollision(poly: PolygonCollider, c: CircleCollider, tc: 
       if (p < minP) minP = p
       if (p > maxP) maxP = p
     }
-    const centerProj = nx * PC.x + ny * PC.y
+    const centerProj = nx * PCx + ny * PCy
     const minC = centerProj - rr * nlen
     const maxC = centerProj + rr * nlen
     if (maxP < minC || maxC < minP) return false
@@ -326,7 +328,7 @@ function checkPolyRectCollision(poly: PolygonCollider, r: RectangleCollider, tr:
     const maxR = cProj + rhx
     if (maxP < minR || maxR < minP) return false
   }
-  // B) rect axis v
+  // C) rect axis v
   {
     const nx = rvx, ny = rvy
     let minP = Infinity, maxP = -Infinity
@@ -345,7 +347,7 @@ function checkPolyRectCollision(poly: PolygonCollider, r: RectangleCollider, tr:
 }
 
 // =====================================================================================
-// GJK (no allocations: global scratch + selectable supports)
+// GJK (no allocations: global scratch + selectable supports) — FIXED/ROBUST
 // =====================================================================================
 
 // Global scratch for support result
@@ -388,8 +390,8 @@ function setSupportEllipse(
   dx: number, dy: number,
   cx: number, cy: number, ux: number, uy: number, vx: number, vy: number, rx: number, ry: number
 ) {
-  const du = dx * ux + dy * uy
-  const dv = dx * vx + dy * vy
+  const du = dx * ux + dvDy(dy, uy) // small micro-opt helper below
+  const dv = dx * vx + dvDy(dy, vy)
   const denom = Math.hypot(rx * du, ry * dv)
   if (denom === 0) { _sx = cx; _sy = cy; return }
   const kU = (rx * rx * du) / denom
@@ -397,6 +399,8 @@ function setSupportEllipse(
   _sx = cx + kU * ux + kV * vx
   _sy = cy + kU * uy + kV * vy
 }
+// tiny inline to help inlining without creating temps
+function dvDy(dy: number, a: number) { return dy * a }
 
 function setSupportPoly(dx: number, dy: number, verts: Point[]) {
   let best = 0, bestDot = -Infinity
@@ -424,67 +428,90 @@ function supportB(dx: number, dy: number) {
   else { _sx = 0; _sy = 0 }
 }
 
-// GJK core — returns true if intersection
+// GJK core — returns true if intersection (robust; no allocations)
 function gjkIntersectsNoAlloc(): boolean {
-  let dx = 1, dy = 0
+  // EPS guards degenerate directions/points
+  const EPS = 1e-9
+  const EPS2 = EPS * EPS
 
-  // simplex points (up to 3)
+  // simplex points (A = most recently added)
   let ax = 0, ay = 0, bx = 0, by = 0, cx = 0, cy = 0
   let n = 0
 
-  function addPoint() {
-    // p = supportA(d) - supportB(-d)
+  // search direction
+  let dx = 1, dy = 0
+
+  // Adds a new support point as A and shifts previous (C<-B, B<-A)
+  function addPointAsA() {
     supportA(dx, dy); const pax = _sx, pay = _sy
     supportB(-dx, -dy); const pbx = _sx, pby = _sy
     const px = pax - pbx, py = pay - pby
-    if (n === 0) { ax = px; ay = py }
-    else if (n === 1) { bx = px; by = py }
-    else { cx = px; cy = py }
-    n++
+    cx = bx; cy = by
+    bx = ax; by = ay
+    ax = px; ay = py
+    if (n < 3) n++
   }
 
-  addPoint()
+  addPointAsA()
+  if (ax * ax + ay * ay <= EPS2) return true // origin exactly (or ~) hit
   dx = -ax; dy = -ay
 
-  for (let iter = 0; iter < 20; iter++) {
-    addPoint()
+  for (let iter = 0; iter < 32; iter++) {
+    const dLen2 = dx * dx + dy * dy
+    if (dLen2 <= EPS2) return true // direction collapsed → enclosed
 
-    const lx = (n === 1) ? ax : (n === 2 ? bx : cx)
-    const ly = (n === 1) ? ay : (n === 2 ? by : cy)
-    if (lx * dx + ly * dy <= 0) return false
+    addPointAsA()
+
+    // If new point A does not pass beyond origin along d, shapes are separated
+    const Ad = ax * dx + ay * dy
+    if (Ad <= 0) return false
+    if (ax * ax + ay * ay <= EPS2) return true
 
     if (n === 2) {
+      // Segment (B-A). Use triple product to get perpendicular toward origin: d = triple(AB, AO, AB)
       const abx = bx - ax, aby = by - ay
       const aox = -ax, aoy = -ay
-      // normal toward origin
-      let nx = aby, ny = -abx
-      if (nx * aox + ny * aoy < 0) { nx = -nx; ny = -ny }
-      dx = nx; dy = ny
-    } else if (n === 3) {
-      const abx = bx - ax, aby = by - ay
-      const bcx = cx - bx, bcy = cy - by
-      const cax = ax - cx, cay = ay - cy
-
-      const aoX = -ax, aoY = -ay
-      const boX = -bx, boY = -by
-      const coX = -cx, coY = -cy
-
-      const abnX = aby, abnY = -abx
-      const bcnX = bcy, bcnY = -bcx
-      const canX = cay, canY = -cax
-
-      const abSide = (abnX * aoX + abnY * aoY) > 0
-      const bcSide = (bcnX * boX + bcnY * boY) > 0
-      const caSide = (canX * coX + canY * coY) > 0
-
-      if (!abSide) { cx = 0; cy = 0; n = 2; dx = abnX; dy = abnY; continue }
-      if (!bcSide) { ax = bx; ay = by; bx = cx; by = cy; cx = 0; cy = 0; n = 2; dx = bcnX; dy = bcnY; continue }
-      if (!caSide) { bx = ax; by = ay; ax = cx; ay = cy; cx = 0; cy = 0; n = 2; dx = canX; dy = canY; continue }
-
-      return true
+      const ac = abx * abx + aby * aby                  // (AB·AB)
+      const bc = aox * abx + aoy * aby                  // (AO·AB)
+      dx = aox * ac - abx * bc                          // AO*(AB·AB) - AB*(AO·AB)
+      dy = aoy * ac - aby * bc
+      continue
     }
+
+    // Triangle (C-B-A), A is the latest point
+    const abx = bx - ax, aby = by - ay
+    const acx = cx - ax, acy = cy - ay
+    const aox = -ax, aoy = -ay
+
+    // abPerp = triple(AC, AO, AB)
+    const ac_ab = acx * abx + acy * aby                 // (AC·AB)
+    const ao_ab = aox * abx + aoy * aby                 // (AO·AB)
+    let t1x = aox * ac_ab - acx * ao_ab
+    let t1y = aoy * ac_ab - acy * ao_ab
+    if (t1x * aox + t1y * aoy > 0) {
+      // Origin is in the AB region: drop C -> segment(B-A)
+      cx = bx; cy = by; n = 2
+      dx = t1x; dy = t1y
+      continue
+    }
+
+    // acPerp = triple(AB, AO, AC)
+    const ab_ac = abx * acx + aby * acy                 // (AB·AC)
+    const ao_ac = aox * acx + aoy * acy                 // (AO·AC)
+    let t2x = aox * ab_ac - abx * ao_ac
+    let t2y = aoy * ab_ac - aby * ao_ac
+    if (t2x * aox + t2y * aoy > 0) {
+      // Origin is in the AC region: drop B -> segment(C-A)
+      bx = cx; by = cy; n = 2
+      dx = t2x; dy = t2y
+      continue
+    }
+
+    // Origin is inside triangle
+    return true
   }
-  // Do not assert intersection when iteration cap is hit
+
+  // Conservative fallback
   return false
 }
 
@@ -540,9 +567,8 @@ function checkEllipseCircleCollision(
   _Apoly = null
 
   // B = Circle
-  const CC = { x: 0, y: 0 } as { x: number; y: number }
-  circleCenter(c, tc, CC)
-  _Bcx = CC.x; _Bcy = CC.y
+  circleCenterScratch(c, tc)
+  _Bcx = _ccx; _Bcy = _ccy
   _Brr = circleScaledRadius(c, tc)
   _supportBType = SupportType.Circle
   _Bpoly = null
