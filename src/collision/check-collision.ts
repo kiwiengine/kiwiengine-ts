@@ -339,14 +339,12 @@ function setSupportEllipse(
 ) {
   const du = dx * ux + dy * uy
   const dv = dx * vx + dy * vy
-  const rxx = rx * rx, ryy = ry * ry
-  const mx = du * (ux * rxx) + dv * (vx * ryy)
-  const my = du * (uy * rxx) + dv * (vy * ryy)
-  const m = Math.hypot(mx, my)
-  if (m === 0) { _sx = cx; _sy = cy; return }
-  const inv = 1 / m
-  _sx = cx + mx * inv
-  _sy = cy + my * inv
+  const denom = Math.hypot(rx * du, ry * dv)
+  if (denom === 0) { _sx = cx; _sy = cy; return }
+  const kU = (rx * rx * du) / denom
+  const kV = (ry * ry * dv) / denom
+  _sx = cx + kU * ux + kV * vx
+  _sy = cy + kU * uy + kV * vy
 }
 
 function setSupportPoly(dx: number, dy: number, verts: Point[]) {
