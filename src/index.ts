@@ -7,4 +7,3 @@ export { DomContainerNode, DomContainerNodeOptions } from './node/ext/dom-contai
 export { RectangleNode, RectangleNodeOptions } from './node/ext/rectangle'
 export { SpriteNode, SpriteNodeOptions } from './node/ext/sprite'
 export { Renderer, RendererOptions } from './renderer/renderer'
-

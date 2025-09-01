@@ -1,4 +1,5 @@
-import { enableDebug, preload, Renderer, SpriteNode } from '../../src'
+import { enableDebug, GameObjectOptions, preload, Renderer, SpriteNode } from '../../src'
+import { Collider } from '../../src/collision/colliders'
 
 enableDebug()
 
@@ -10,8 +11,16 @@ const renderer = new Renderer(document.body, {
   backgroundColor: '#304C79'
 })
 
-const cat1 = new SpriteNode({ x: -100, y: 0, src: 'assets/cat.png' })
-const cat2 = new SpriteNode({ x: 100, y: 0, src: 'assets/cat.png' })
+class Cat extends SpriteNode {
+  colliders: Collider[] = []
+
+  constructor(options: GameObjectOptions) {
+    super({ src: 'assets/cat.png', ...options })
+  }
+}
+
+const cat1 = new Cat({ x: -100, y: 0 })
+const cat2 = new Cat({ x: 100, y: 0 })
 renderer.add(cat1, cat2)
 
 renderer.on('update', (dt) => {

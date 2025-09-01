@@ -1,9 +1,9 @@
 import { EventMap } from '@webtaku/event-emitter'
 import { GameNode } from '../core/game-node'
-import { GameObject } from '../core/game-object'
+import { PixiContainerNode } from '../core/pixi-container-node'
 import { PhysicsWorld } from './physics-world'
 
-export class PhysicsObject<E extends EventMap> extends GameObject<E> {
+export class PhysicsObject<E extends EventMap> extends PixiContainerNode<E> {
   override set parent(parent: GameNode<EventMap> | undefined) {
     if (!(parent instanceof PhysicsWorld)) {
       const actual = parent === undefined
