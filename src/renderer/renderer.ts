@@ -74,6 +74,8 @@ export class Renderer extends PixiContainerNode {
       this.fpsDisplay = new FpsDisplay(container)
     }
 
+    const cr = this.container.getBoundingClientRect()
+    this.#updateSize(cr.width, cr.height)
     this.init()
   }
 

@@ -1,4 +1,4 @@
-import { enableDebug, Renderer, SpriteNode } from '../../src'
+import { enableDebug, preload, Renderer, SpriteNode } from '../../src'
 
 enableDebug()
 
@@ -7,6 +7,8 @@ const renderer = new Renderer(document.body, {
   logicalHeight: 600,
   backgroundColor: '#304C79'
 })
+
+await preload(['assets/bird.png'])
 
 for (let i = 0; i < 100; i++) {
   const sprite = new SpriteNode({
