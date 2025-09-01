@@ -4,6 +4,7 @@ import { PixiContainerNode } from '../node/core/pixi-container-node';
 import { Camera } from './camera';
 import { FpsDisplay } from './fps-display';
 import { GlobalTransform } from '../node/core/transform';
+import { DirtyNumber } from '../node/core/dirty-number';
 export type RendererOptions = {
     logicalWidth?: number;
     logicalHeight?: number;
@@ -19,12 +20,13 @@ export declare class Renderer extends PixiContainerNode {
     camera: Camera;
     fpsDisplay?: FpsDisplay;
     _isSizeDirty: boolean;
-    protected globalTransform: GlobalTransform;
     canvasLeft: number;
     canvasTop: number;
     viewportScale: number;
     centerX: number;
     centerY: number;
+    protected globalTransform: GlobalTransform;
+    protected globalAlpha: DirtyNumber;
     constructor(container: HTMLElement, options?: RendererOptions);
     private init;
     _addToLayer(node: HasPixiContainer, layerName: string): void;

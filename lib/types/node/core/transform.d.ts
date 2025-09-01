@@ -3,10 +3,10 @@ export declare class LocalTransform {
     #private;
     x: number;
     y: number;
-    pivotX: number;
-    pivotY: number;
     scaleX: number;
     scaleY: number;
+    pivotX: number;
+    pivotY: number;
     get cos(): number;
     get sin(): number;
     get rotation(): number;

@@ -9,6 +9,7 @@ import { Ticker } from './ticker'
 import { FpsDisplay } from './fps-display'
 import { debugMode } from '../debug'
 import { GlobalTransform } from '../node/core/transform'
+import { DirtyNumber } from '../node/core/dirty-number'
 
 export type RendererOptions = {
   logicalWidth?: number
@@ -30,13 +31,15 @@ export class Renderer extends PixiContainerNode {
   #pixiRenderer?: PixiRenderer
   #layers: { [name: string]: Layer } = {}
   _isSizeDirty = false
-  protected globalTransform = new GlobalTransform()
 
   canvasLeft = 0
   canvasTop = 0
   viewportScale = 1
   centerX = 0
   centerY = 0
+
+  protected globalTransform = new GlobalTransform()
+  protected globalAlpha = new DirtyNumber(1)
 
   constructor(public container: HTMLElement, options?: RendererOptions) {
     super()

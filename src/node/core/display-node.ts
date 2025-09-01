@@ -7,6 +7,10 @@ import { HasPixiContainer } from './has-pixi-container'
 import { isHasPixiContainer } from './pixi-container-node'
 import { TransformableNode } from './transformable-node'
 
+function hasGlobalAlpha(v: unknown): v is { globalAlpha: DirtyNumber } {
+  return (v as { globalAlpha: DirtyNumber }).globalAlpha !== undefined
+}
+
 export type DisplayNodeOptions = {
   layer?: string
   useYSort?: boolean
@@ -53,6 +57,11 @@ export abstract class DisplayNode<E extends EventMap> extends TransformableNode<
 
   protected override update(dt: number): void {
     super.update(dt)
+
+    const parent = this.parent
+    if (parent && hasGlobalAlpha(parent)) {
+      this.globalAlpha.v = parent.globalAlpha.v * this.alpha
+    }
 
     const pc = this._pixiContainer
     const renderer = this.renderer

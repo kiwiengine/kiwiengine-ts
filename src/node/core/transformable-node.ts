@@ -35,4 +35,19 @@ export abstract class TransformableNode<E extends EventMap> extends GameNode<E> 
 
   set scale(v: number) { this.localTransform.scaleX = v; this.localTransform.scaleY = v }
   get scale() { return this.localTransform.scaleX }
+
+  set scaleX(v: number) { this.localTransform.scaleX = v }
+  get scaleX() { return this.localTransform.scaleX }
+
+  set scaleY(v: number) { this.localTransform.scaleY = v }
+  get scaleY() { return this.localTransform.scaleY }
+
+  set pivotX(v: number) { this.localTransform.pivotX = v }
+  get pivotX() { return this.localTransform.pivotX }
+
+  set pivotY(v: number) { this.localTransform.pivotY = v }
+  get pivotY() { return this.localTransform.pivotY }
+
+  set rotation(v: number) { this.localTransform.rotation = v }
+  get rotation() { return this.localTransform.rotation }
 }

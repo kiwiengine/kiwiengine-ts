@@ -13,5 +13,15 @@ export declare abstract class TransformableNode<E extends EventMap> extends Game
     get y(): number;
     set scale(v: number);
     get scale(): number;
+    set scaleX(v: number);
+    get scaleX(): number;
+    set scaleY(v: number);
+    get scaleY(): number;
+    set pivotX(v: number);
+    get pivotX(): number;
+    set pivotY(v: number);
+    get pivotY(): number;
+    set rotation(v: number);
+    get rotation(): number;
 }
 //# sourceMappingURL=transformable-node.d.ts.map

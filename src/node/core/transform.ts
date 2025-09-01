@@ -3,10 +3,10 @@ import { DirtyNumber, DirtyRadian } from './dirty-number'
 export class LocalTransform {
   x = Number.NEGATIVE_INFINITY
   y = Number.NEGATIVE_INFINITY
-  pivotX = 0
-  pivotY = 0
   scaleX = 1
   scaleY = 1
+  pivotX = 0
+  pivotY = 0
 
   #rotation = 0
   #cos = 1

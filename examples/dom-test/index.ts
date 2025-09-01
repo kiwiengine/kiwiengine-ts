@@ -18,5 +18,5 @@ node.alpha = 0.5
 renderer.add(node)
 
 renderer.on('update', (dt) => {
-  //node.rotation += dt
+  node.rotation += dt
 })
