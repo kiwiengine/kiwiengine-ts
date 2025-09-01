@@ -14,7 +14,7 @@ export type TransformableNodeOptions = {
 };
 export declare abstract class TransformableNode<E extends EventMap> extends GameNode<E> {
     protected localTransform: LocalTransform;
-    protected globalTransform: GlobalTransform;
+    globalTransform: GlobalTransform;
     constructor(options: TransformableNodeOptions);
     protected update(dt: number): void;
     _resetTransformDirty(): void;

@@ -3,7 +3,7 @@ import { GameNode } from './game-node'
 import { GlobalTransform, LocalTransform } from './transform'
 
 export function isTransformableNode(v: unknown): v is TransformableNode<EventMap> {
-  return (v as any).globalTransform !== undefined
+  return (v as TransformableNode<EventMap>).globalTransform !== undefined
 }
 
 export type TransformableNodeOptions = {
@@ -19,7 +19,7 @@ export type TransformableNodeOptions = {
 
 export abstract class TransformableNode<E extends EventMap> extends GameNode<E> {
   protected localTransform = new LocalTransform()
-  protected globalTransform = new GlobalTransform()
+  globalTransform = new GlobalTransform()
 
   constructor(options: TransformableNodeOptions) {
     super()
