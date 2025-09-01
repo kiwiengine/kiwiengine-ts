@@ -1,4 +1,4 @@
-import { GameObject, GameObjectOptions, RectangleNode } from '../../../src/index'
+import { GameObject, GameObjectOptions, RectangleNode } from '../../../src'
 
 const HP_BAR_WIDTH = 26
 

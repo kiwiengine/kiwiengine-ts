@@ -1,5 +1,5 @@
-import { GameObject } from '../../../src/node/core/game-object'
+import { Character } from './character'
 
-export class Orc extends GameObject {
+export class Orc extends Character {
 
 }

@@ -1,4 +1,4 @@
-import { GameObject } from '../../src/node/core/game-object'
+import { GameObject } from '../../src'
 import { HpBar } from './hud/hp-bar'
 
 export class Stage extends GameObject {
