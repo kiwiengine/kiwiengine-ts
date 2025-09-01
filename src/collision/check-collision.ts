@@ -526,52 +526,52 @@ function checkPolyEllipseCollision(poly: PolygonCollider, e: EllipseCollider, te
 export function checkCollision(ca: Collider, ta: Transform, cb: Collider, tb: Transform): boolean {
   // Rectangle–Rectangle
   if (ca.type === ColliderType.Rectangle && cb.type === ColliderType.Rectangle)
-    return checkRectRectCollision(ca as RectangleCollider, ta, cb as RectangleCollider, tb)
+    return checkRectRectCollision(ca, ta, cb, tb)
 
   // Circle–Circle
   if (ca.type === ColliderType.Circle && cb.type === ColliderType.Circle)
-    return checkCircleCircleCollision(ca as CircleCollider, ta, cb as CircleCollider, tb)
+    return checkCircleCircleCollision(ca, ta, cb, tb)
 
   // Rect–Circle (both orders)
   if (ca.type === ColliderType.Rectangle && cb.type === ColliderType.Circle)
-    return checkRectCircleCollision(ca as RectangleCollider, ta, cb as CircleCollider, tb)
+    return checkRectCircleCollision(ca, ta, cb, tb)
   if (ca.type === ColliderType.Circle && cb.type === ColliderType.Rectangle)
-    return checkRectCircleCollision(cb as RectangleCollider, tb, ca as CircleCollider, ta)
+    return checkRectCircleCollision(cb, tb, ca, ta)
 
   // Polygon–Polygon
   if (ca.type === ColliderType.Polygon && cb.type === ColliderType.Polygon)
-    return checkPolyPolyCollision(ca as PolygonCollider, cb as PolygonCollider)
+    return checkPolyPolyCollision(ca, cb)
 
   // Polygon–Circle (both orders)
   if (ca.type === ColliderType.Polygon && cb.type === ColliderType.Circle)
-    return checkPolyCircleCollision(ca as PolygonCollider, cb as CircleCollider, tb)
+    return checkPolyCircleCollision(ca, cb, tb)
   if (ca.type === ColliderType.Circle && cb.type === ColliderType.Polygon)
-    return checkPolyCircleCollision(cb as PolygonCollider, ca as CircleCollider, ta)
+    return checkPolyCircleCollision(cb, ca, ta)
 
   // Polygon–Rect (both orders)
   if (ca.type === ColliderType.Polygon && cb.type === ColliderType.Rectangle)
-    return checkPolyRectCollision(ca as PolygonCollider, cb as RectangleCollider, tb)
+    return checkPolyRectCollision(ca, cb, tb)
   if (ca.type === ColliderType.Rectangle && cb.type === ColliderType.Polygon)
-    return checkPolyRectCollision(cb as PolygonCollider, ca as RectangleCollider, ta)
+    return checkPolyRectCollision(cb, ca, ta)
 
   // Ellipse interactions via GJK
   if (ca.type === ColliderType.Ellipse && cb.type === ColliderType.Rectangle)
-    return checkEllipseRectCollision(ca as EllipseCollider, ta, cb as RectangleCollider, tb)
+    return checkEllipseRectCollision(ca, ta, cb, tb)
   if (ca.type === ColliderType.Rectangle && cb.type === ColliderType.Ellipse)
-    return checkEllipseRectCollision(cb as EllipseCollider, tb, ca as RectangleCollider, ta)
+    return checkEllipseRectCollision(cb, tb, ca, ta)
 
   if (ca.type === ColliderType.Ellipse && cb.type === ColliderType.Circle)
-    return checkEllipseCircleCollision(ca as EllipseCollider, ta, cb as CircleCollider, tb)
+    return checkEllipseCircleCollision(ca, ta, cb, tb)
   if (ca.type === ColliderType.Circle && cb.type === ColliderType.Ellipse)
-    return checkEllipseCircleCollision(cb as EllipseCollider, tb, ca as CircleCollider, ta)
+    return checkEllipseCircleCollision(cb, tb, ca, ta)
 
   if (ca.type === ColliderType.Ellipse && cb.type === ColliderType.Ellipse)
-    return checkEllipseEllipseCollision(ca as EllipseCollider, ta, cb as EllipseCollider, tb)
+    return checkEllipseEllipseCollision(ca, ta, cb, tb)
 
   if (ca.type === ColliderType.Polygon && cb.type === ColliderType.Ellipse)
-    return checkPolyEllipseCollision(ca as PolygonCollider, cb as EllipseCollider, tb)
+    return checkPolyEllipseCollision(ca, cb, tb)
   if (ca.type === ColliderType.Ellipse && cb.type === ColliderType.Polygon)
-    return checkPolyEllipseCollision(cb as PolygonCollider, ca as EllipseCollider, ta)
+    return checkPolyEllipseCollision(cb, ca, ta)
 
   return false
 }
