@@ -1,4 +1,4 @@
-abstract class Loader<T> {
+export abstract class Loader<T> {
   protected loadedAssets = new Map<string, T>()
   protected loadingPromises = new Map<string, Promise<T | undefined>>()
 
@@ -35,5 +35,3 @@ abstract class Loader<T> {
     }
   }
 }
-
-export { Loader }
