@@ -1,1 +1,0 @@
-{"version":3,"file":"texture copy.d.ts","sourceRoot":"","sources":["../../../../src/asset/loaders/texture copy.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,SAAS,CAAC;AAClC,OAAO,EAAE,MAAM,EAAE,MAAM,UAAU,CAAC;AAElC,cAAM,aAAc,SAAQ,MAAM,CAAC,OAAO,CAAC;cAChB,KAAK,CAAC,GAAG,EAAE,MAAM;cAoCvB,QAAQ,CAAC,GAAG,EAAE,MAAM,EAAE,OAAO,EAAE,OAAO;CAG1D;AAED,eAAO,MAAM,aAAa,eAAsB,CAAC"}

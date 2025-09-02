@@ -1,33 +1,3 @@
-import { ColorSource } from 'pixi.js';
-import { HasPixiContainer } from '../node/core/has-pixi-container';
-import { PixiContainerNode } from '../node/core/pixi-container-node';
-import { Camera } from './camera';
-import { FpsDisplay } from './fps-display';
-export type RendererOptions = {
-    logicalWidth?: number;
-    logicalHeight?: number;
-    backgroundColor?: ColorSource;
-    layers?: {
-        name: string;
-        drawOrder: number;
-    }[];
-};
-export declare class Renderer extends PixiContainerNode {
-    #private;
-    container: HTMLElement;
-    camera: Camera;
-    fpsDisplay?: FpsDisplay;
-    _isSizeDirty: boolean;
-    canvasWidth: number;
-    canvasHeight: number;
-    canvasLeft: number;
-    canvasTop: number;
-    viewportScale: number;
-    centerX: number;
-    centerY: number;
-    constructor(container: HTMLElement, options?: RendererOptions);
-    private init;
-    _addToLayer(node: HasPixiContainer, layerName: string): void;
-    remove(): void;
+export declare class Renderer {
 }
 //# sourceMappingURL=renderer.d.ts.map

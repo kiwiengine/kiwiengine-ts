@@ -1,5 +1,6 @@
 import { EventMap } from '@webtaku/event-emitter';
-import { PixiContainerNode } from '../core/pixi-container-node';
-export declare class PhysicsWorld<E extends EventMap = EventMap> extends PixiContainerNode<E> {
+import { Container as PixiContainer } from 'pixi.js';
+import { RenderableNode } from '../core/renderable';
+export declare class PhysicsWorld<E extends EventMap = EventMap> extends RenderableNode<PixiContainer, E> {
 }
 //# sourceMappingURL=physics-world.d.ts.map

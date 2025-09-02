@@ -1,8 +1,0 @@
-import { EventMap } from '@webtaku/event-emitter';
-import { GameNode } from '../core/game-node';
-export declare class DelayNode extends GameNode<EventMap> {
-    #private;
-    constructor(delay: number, callback: () => void);
-    protected update(dt: number): void;
-}
-//# sourceMappingURL=deplay%20copy.d.ts.map

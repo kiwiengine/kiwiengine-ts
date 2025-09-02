@@ -1,1 +1,0 @@
-{"version":3,"file":"has-pixi-container.js","sourceRoot":"","sources":["../../../src/node/core/has-pixi-container.ts"],"names":[],"mappings":"","sourcesContent":["import { Container } from 'pixi.js'\n\nexport interface HasPixiContainer {\n  readonly _pixiContainer: Container\n}\n"]}

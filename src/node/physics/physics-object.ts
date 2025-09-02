@@ -1,36 +1,11 @@
 import { EventMap } from '@webtaku/event-emitter'
 import Matter, { IChamferableBodyDefinition } from 'matter-js'
+import { Container as PixiContainer } from 'pixi.js'
 import { Collider, ColliderType } from '../../collision/colliders'
 import { GameNode } from '../core/game-node'
-import { PixiContainerNode } from '../core/pixi-container-node'
+import { isRenderableNode, RenderableNode } from '../core/renderable'
 import { LocalTransform } from '../core/transform'
-import { isTransformableNode } from '../core/transformable-node'
 import { PhysicsWorld } from './physics-world'
-
-function createEllipseBody(
-  x: number,
-  y: number,
-  width: number,
-  height: number,
-  options: IChamferableBodyDefinition = {},
-  // segLen은 "인접 정점 사이의 목표 간격(px)" 정도로 생각하면 됩니다.
-  segLen = 6
-): Matter.Body {
-  const rx = width / 2
-  const ry = height / 2
-
-  // 주변길이 ~ π(a+b) 근사 → 그 길이를 segLen 간격으로 쪼개서 정점 수 결정
-  const perimeterApprox = Math.PI * (rx + ry)
-  const segments = Math.max(12, Math.ceil(perimeterApprox / segLen))
-
-  const verts = Array.from({ length: segments }, (_, i) => {
-    const t = (i / segments) * Math.PI * 2
-    return { x: Math.cos(t) * rx, y: Math.sin(t) * ry }
-  })
-
-  // fromVertices는 로컬 기준이므로 x,y는 중심 위치로 넘깁니다.
-  return Matter.Bodies.fromVertices(x, y, [verts], options)
-}
 
 export type PhysicsObjectOptions = {
   collider: Collider
@@ -39,12 +14,12 @@ export type PhysicsObjectOptions = {
   rotation?: number
 }
 
-export class PhysicsObject<E extends EventMap = EventMap> extends PixiContainerNode<E> {
+export class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode<PixiContainer, E> {
   #localTransform = new LocalTransform()
   #matterBody: Matter.Body
 
   constructor(options: PhysicsObjectOptions) {
-    super()
+    super(new PixiContainer({ sortableChildren: true }))
 
     const x = options.x ?? 0
     const y = options.y ?? 0
@@ -85,9 +60,7 @@ export class PhysicsObject<E extends EventMap = EventMap> extends PixiContainerN
     return super.parent
   }
 
-  protected override update(dt: number) {
-    super.update(dt)
-
+  override _updateWorldTransform() {
     const mb = this.#matterBody
 
     const pc = this._pixiContainer
@@ -100,9 +73,11 @@ export class PhysicsObject<E extends EventMap = EventMap> extends PixiContainerN
     lt.rotation = mb.angle
 
     const parent = this.parent
-    if (parent && isTransformableNode(parent)) {
-      this.worldTransform.update(parent.worldTransform, lt)
+    if (parent && isRenderableNode(parent)) {
+      this.worldTransform.update(parent.worldTransform, this.#localTransform)
     }
+
+    super._updateWorldTransform()
   }
 
   set x(v) { Matter.Body.setPosition(this.#matterBody, { x: v, y: this.#matterBody.position.y }) }
@@ -113,4 +88,29 @@ export class PhysicsObject<E extends EventMap = EventMap> extends PixiContainerN
 
   set rotation(v) { Matter.Body.setAngle(this.#matterBody, v) }
   get rotation() { return this.#matterBody.angle }
+}
+
+function createEllipseBody(
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  options: IChamferableBodyDefinition = {},
+  // segLen은 "인접 정점 사이의 목표 간격(px)" 정도로 생각하면 됩니다.
+  segLen = 6
+): Matter.Body {
+  const rx = width / 2
+  const ry = height / 2
+
+  // 주변길이 ~ π(a+b) 근사 → 그 길이를 segLen 간격으로 쪼개서 정점 수 결정
+  const perimeterApprox = Math.PI * (rx + ry)
+  const segments = Math.max(12, Math.ceil(perimeterApprox / segLen))
+
+  const verts = Array.from({ length: segments }, (_, i) => {
+    const t = (i / segments) * Math.PI * 2
+    return { x: Math.cos(t) * rx, y: Math.sin(t) * ry }
+  })
+
+  // fromVertices는 로컬 기준이므로 x,y는 중심 위치로 넘깁니다.
+  return Matter.Bodies.fromVertices(x, y, [verts], options)
 }

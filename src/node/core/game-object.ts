@@ -1,11 +1,11 @@
 import { EventMap } from '@webtaku/event-emitter'
-import { Container } from 'pixi.js'
-import { DisplayNode, DisplayNodeOptions } from "./display-node"
+import { Container as PixiContainer } from 'pixi.js'
+import { TransformableNode, TransformableNodeOptions } from './transformable'
 
-export type GameObjectOptions = {} & DisplayNodeOptions
+export type GameObjectOptions = {} & TransformableNodeOptions
 
-export class GameObject<E extends EventMap = EventMap> extends DisplayNode<Container, E> {
+export class GameObject<E extends EventMap = EventMap> extends TransformableNode<PixiContainer, E> {
   constructor(options?: GameObjectOptions) {
-    super(new Container({ sortableChildren: true }), options ?? {})
+    super(new PixiContainer({ sortableChildren: true }), options ?? {})
   }
 }

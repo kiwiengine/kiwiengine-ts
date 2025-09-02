@@ -1,1 +1,0 @@
-{"version":3,"file":"collidable.js","sourceRoot":"","sources":["../../src/collision/collidable.ts"],"names":[],"mappings":"","sourcesContent":["import { Collider } from './colliders'\n\nexport interface Collidable {\n  colliders: Collider[]\n}\n"]}
