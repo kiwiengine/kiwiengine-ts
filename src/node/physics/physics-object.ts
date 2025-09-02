@@ -36,6 +36,7 @@ export type PhysicsObjectOptions = {
   collider: Collider
   x?: number
   y?: number
+  rotation?: number
 }
 
 export class PhysicsObject<E extends EventMap = EventMap> extends PixiContainerNode<E> {
@@ -47,9 +48,11 @@ export class PhysicsObject<E extends EventMap = EventMap> extends PixiContainerN
 
     const x = options.x ?? 0
     const y = options.y ?? 0
+    const r = options.rotation ?? 0
     const c = options.collider
 
     const bodyOptions: IChamferableBodyDefinition = {
+      angle: r,
     }
 
     if (c.type === ColliderType.Rectangle) {
@@ -68,7 +71,7 @@ export class PhysicsObject<E extends EventMap = EventMap> extends PixiContainerN
     }
   }
 
-  override set parent(parent: GameNode<EventMap> | undefined) {
+  protected override set parent(parent: GameNode<EventMap> | undefined) {
     if (!(parent instanceof PhysicsWorld)) {
       const actual = parent === undefined
         ? 'undefined'
@@ -78,7 +81,7 @@ export class PhysicsObject<E extends EventMap = EventMap> extends PixiContainerN
     super.parent = parent
   }
 
-  override get parent() {
+  protected override get parent() {
     return super.parent
   }
 
@@ -107,4 +110,7 @@ export class PhysicsObject<E extends EventMap = EventMap> extends PixiContainerN
 
   set y(v) { Matter.Body.setPosition(this.#matterBody, { x: this.#matterBody.position.x, y: v }) }
   get y() { return this.#matterBody.position.y }
+
+  set rotation(v) { Matter.Body.setAngle(this.#matterBody, v) }
+  get rotation() { return this.#matterBody.angle }
 }
