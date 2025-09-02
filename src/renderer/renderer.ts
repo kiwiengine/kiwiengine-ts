@@ -1,9 +1,7 @@
 import { autoDetectRenderer, ColorSource, Renderer as PixiRenderer } from 'pixi.js'
 import { debugMode } from '../debug'
-import { DirtyNumber } from '../node/core/dirty-number'
 import { HasPixiContainer } from '../node/core/has-pixi-container'
 import { PixiContainerNode } from '../node/core/pixi-container-node'
-import { WorldTransform } from '../node/core/transform'
 import { isTransformableNode } from '../node/core/transformable-node'
 import { Camera } from './camera'
 import { RendererContainerManager } from './container-manager'
@@ -40,15 +38,9 @@ export class Renderer extends PixiContainerNode {
   centerX = 0
   centerY = 0
 
-  protected worldTransform = new WorldTransform()
-  protected globalAlpha = new DirtyNumber(1)
-
   constructor(public container: HTMLElement, options?: RendererOptions) {
     super()
     this.renderer = this
-    this.worldTransform.x.v = 0
-    this.worldTransform.y.v = 0
-    this.worldTransform.resetDirty()
 
     this.#containerManager = new RendererContainerManager(container)
     this.#containerManager.on('resize', (width, height) => this.#updateSize(width, height))

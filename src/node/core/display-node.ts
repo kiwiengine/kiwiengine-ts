@@ -70,16 +70,17 @@ export abstract class DisplayNode<C extends Container, E extends EventMap> exten
 
     // 레이어 상에 있는 경우, 독립적으로 업데이트
     if (this.#layer && renderer) {
-      //TODO
+      const wt = this.worldTransform
+      pc.position.set(wt.x.v, wt.y.v)
+      pc.scale.set(wt.scaleX.v, wt.scaleY.v)
+      pc.rotation = wt.rotation.v
+      pc.alpha = this.globalAlpha.v
     } else {
       const lt = this.localTransform
-      pc.x = lt.x
-      pc.y = lt.y
+      pc.position.set(lt.x, lt.y)
       if (this.#useYSort) pc.zIndex = lt.y
-      pc.pivot.x = lt.pivotX
-      pc.pivot.y = lt.pivotY
-      pc.scale.x = lt.scaleX
-      pc.scale.y = lt.scaleY
+      pc.pivot.set(lt.pivotX, lt.pivotY)
+      pc.scale.set(lt.scaleX, lt.scaleY)
       pc.rotation = lt.rotation
       pc.alpha = this.alpha
     }

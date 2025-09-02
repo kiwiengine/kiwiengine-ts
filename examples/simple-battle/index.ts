@@ -13,7 +13,10 @@ await preload([
 ])
 
 const renderer = new Renderer(document.body, {
-  backgroundColor: '#304C79'
+  backgroundColor: '#304C79',
+  layers: [
+    { name: 'hud', drawOrder: 1 }
+  ],
 })
 
 renderer.add(new Stage())

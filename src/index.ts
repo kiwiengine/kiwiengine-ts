@@ -10,5 +10,7 @@ export { DomContainerNode, DomContainerNodeOptions } from './node/ext/dom-contai
 export { IntervalNode } from './node/ext/interval'
 export { RectangleNode, RectangleNodeOptions } from './node/ext/rectangle'
 export { SpriteNode, SpriteNodeOptions } from './node/ext/sprite'
+export { PhysicsObject, PhysicsObjectOptions } from './node/physics/physics-object'
+export { PhysicsWorld } from './node/physics/physics-world'
 export { Renderer, RendererOptions } from './renderer/renderer'
 
