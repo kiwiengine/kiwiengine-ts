@@ -14,12 +14,12 @@ export declare abstract class DisplayNode<C extends Container, E extends EventMa
     #private;
     _pixiContainer: C;
     alpha: number;
-    protected globalAlpha: DirtyNumber;
+    protected worldAlpha: DirtyNumber;
     constructor(pixiContainer: C, options: DisplayNodeOptions);
-    protected set renderer(renderer: Renderer | undefined);
-    protected get renderer(): Renderer | undefined;
     add(...children: GameNode<EventMap>[]): void;
     remove(): void;
+    protected set renderer(renderer: Renderer | undefined);
+    protected get renderer(): Renderer | undefined;
     protected update(dt: number): void;
     _resetTransformDirty(): void;
 }

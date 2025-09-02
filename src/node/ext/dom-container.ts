@@ -51,6 +51,6 @@ export class DomContainerNode extends GameObject {
     if (renderer && (renderer._isSizeDirty || this.worldTransform.dirty)) {
       this.#syncTransform()
     }
-    if (this.globalAlpha.dirty) this.#el.style.opacity = this.globalAlpha.v.toString()
+    if (this.worldAlpha.dirty) this.#el.style.opacity = this.worldAlpha.v.toString()
   }
 }

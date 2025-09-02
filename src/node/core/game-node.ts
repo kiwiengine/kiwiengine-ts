@@ -1,23 +1,10 @@
 import { EventEmitter, EventMap } from '@webtaku/event-emitter'
-import { Renderer } from '../../renderer/renderer'
 
 export abstract class GameNode<E extends EventMap> extends EventEmitter<E & {
   update: (dt: number) => void
 }> {
-  #renderer?: Renderer
   #parent?: GameNode<EventMap>
   protected children: GameNode<EventMap>[] = [];
-
-  protected set renderer(renderer: Renderer | undefined) {
-    this.#renderer = renderer
-    for (const child of this.children) {
-      child.renderer = renderer
-    }
-  }
-
-  protected get renderer() {
-    return this.#renderer
-  }
 
   protected set parent(parent: GameNode<EventMap> | undefined) {
     this.#parent = parent
@@ -39,9 +26,6 @@ export abstract class GameNode<E extends EventMap> extends EventEmitter<E & {
       // 새로운 부모 설정
       child.parent = this
       this.children.push(child)
-
-      // 렌더러 설정
-      if (this.#renderer) child.renderer = this.#renderer
     }
   }
 

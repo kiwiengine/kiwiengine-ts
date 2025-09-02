@@ -33,12 +33,14 @@ export abstract class TransformableNode<E extends EventMap> extends GameNode<E> 
     if (options.rotation !== undefined) this.rotation = options.rotation
   }
 
-  protected override update(dt: number) {
-    super.update(dt)
-
+  _updateWorldTransform() {
     const parent = this.parent
     if (parent && isTransformableNode(parent)) {
       this.worldTransform.update(parent.worldTransform, this.localTransform)
+    }
+
+    for (const child of this.children) {
+      if (isTransformableNode(child)) child._updateWorldTransform()
     }
   }
 

@@ -4,11 +4,11 @@ import { Renderer } from '../../renderer/renderer'
 import { DirtyNumber } from './dirty-number'
 import { GameNode } from './game-node'
 import { HasPixiContainer } from './has-pixi-container'
-import { isHasPixiContainer } from './pixi-container-node'
+import { isRenderableNode } from './renderable-node'
 import { TransformableNode, TransformableNodeOptions } from './transformable-node'
 
-function hasGlobalAlpha(v: unknown): v is { globalAlpha: DirtyNumber } {
-  return (v as { globalAlpha: DirtyNumber }).globalAlpha !== undefined
+function hasWorldAlpha(v: unknown): v is { worldAlpha: DirtyNumber } {
+  return (v as { worldAlpha: DirtyNumber }).worldAlpha !== undefined
 }
 
 export type DisplayNodeOptions = {
@@ -19,11 +19,13 @@ export type DisplayNodeOptions = {
 
 export abstract class DisplayNode<C extends Container, E extends EventMap> extends TransformableNode<E> implements HasPixiContainer {
   _pixiContainer: C
+
+  #renderer?: Renderer
   #layer?: string
   #useYSort = false
 
   alpha = 1;
-  protected globalAlpha = new DirtyNumber(1)
+  protected worldAlpha = new DirtyNumber(1)
 
   constructor(pixiContainer: C, options: DisplayNodeOptions) {
     super(options)
@@ -33,20 +35,11 @@ export abstract class DisplayNode<C extends Container, E extends EventMap> exten
     if (options.alpha !== undefined) this.alpha = options.alpha
   }
 
-  protected override set renderer(renderer: Renderer | undefined) {
-    super.renderer = renderer
-    if (this.#layer && renderer) renderer._addToLayer(this, this.#layer)
-  }
-
-  protected override get renderer() {
-    return super.renderer
-  }
-
   override add(...children: GameNode<EventMap>[]) {
     super.add(...children)
 
     for (const child of children) {
-      if (isHasPixiContainer(child)) {
+      if (isRenderableNode(child)) {
         this._pixiContainer.addChild(child._pixiContainer)
       }
     }
@@ -57,12 +50,30 @@ export abstract class DisplayNode<C extends Container, E extends EventMap> exten
     super.remove()
   }
 
+  protected set renderer(renderer: Renderer | undefined) {
+    this.#renderer = renderer
+
+    for (const child of this.children) {
+      if (isRenderableNode(child)) {
+        child.renderer = renderer
+      }
+    }
+
+    if (this.#layer && renderer) {
+      renderer._addToLayer(this, this.#layer)
+    }
+  }
+
+  protected get renderer() {
+    return this.#renderer
+  }
+
   protected override update(dt: number): void {
     super.update(dt)
 
     const parent = this.parent
-    if (parent && hasGlobalAlpha(parent)) {
-      this.globalAlpha.v = parent.globalAlpha.v * this.alpha
+    if (parent && hasWorldAlpha(parent)) {
+      this.worldAlpha.v = parent.worldAlpha.v * this.alpha
     }
 
     const pc = this._pixiContainer
@@ -74,7 +85,7 @@ export abstract class DisplayNode<C extends Container, E extends EventMap> exten
       pc.position.set(wt.x.v, wt.y.v)
       pc.scale.set(wt.scaleX.v, wt.scaleY.v)
       pc.rotation = wt.rotation.v
-      pc.alpha = this.globalAlpha.v
+      pc.alpha = this.worldAlpha.v
     } else {
       const lt = this.localTransform
       pc.position.set(lt.x, lt.y)
@@ -88,6 +99,6 @@ export abstract class DisplayNode<C extends Container, E extends EventMap> exten
 
   override _resetTransformDirty() {
     super._resetTransformDirty()
-    this.globalAlpha.resetDirty()
+    this.worldAlpha.resetDirty()
   }
 }

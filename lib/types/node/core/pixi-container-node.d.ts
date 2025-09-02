@@ -8,7 +8,7 @@ export declare function isHasPixiContainer(v: unknown): v is HasPixiContainer;
 export declare abstract class PixiContainerNode<E extends EventMap = EventMap> extends GameNode<E> implements HasPixiContainer {
     _pixiContainer: Container<import("pixi.js").ContainerChild>;
     worldTransform: WorldTransform;
-    protected globalAlpha: DirtyNumber;
+    protected worldAlpha: DirtyNumber;
     constructor();
     add(...children: GameNode<EventMap>[]): void;
     remove(): void;
