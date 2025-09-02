@@ -4,6 +4,7 @@ export { CircleCollider, Collider, ColliderType, EllipseCollider, PolygonCollide
 export { enableDebug } from './debug'
 export { GameObject, GameObjectOptions } from './node/core/game-object'
 export { AnimatedSpriteNode, AnimatedSpriteNodeOptions } from './node/ext/animated-sprite'
+export { CircleNode, CircleNodeOptions } from './node/ext/circle'
 export { DelayNode } from './node/ext/deplay'
 export { DomContainerNode, DomContainerNodeOptions } from './node/ext/dom-container'
 export { IntervalNode } from './node/ext/interval'

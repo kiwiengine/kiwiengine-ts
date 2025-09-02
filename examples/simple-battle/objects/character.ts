@@ -28,8 +28,8 @@ export class Character extends GameObject {
     this.add(this.#hpBar)
 
     if (debugMode) {
-      this.add(new RectangleNode({ x: this.hitbox.x, y: this.hitbox.y, width: this.hitbox.width, height: this.hitbox.height, stroke: 'red' }))
-      this.add(new RectangleNode({ x: this.hurtbox.x, y: this.hurtbox.y, width: this.hurtbox.width, height: this.hurtbox.height, stroke: 'green' }))
+      this.add(new RectangleNode({ ...this.hitbox, stroke: 'red' }))
+      this.add(new RectangleNode({ ...this.hurtbox, stroke: 'green' }))
     }
   }
 }
