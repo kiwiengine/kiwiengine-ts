@@ -86,10 +86,12 @@ class Audio {
     if (isMobile && !isPageVisible) return
 
     if (!this.#audioBuffer) {
-      if (!audioLoader.checkLoaded(this.src)) {
+      if (audioLoader.checkLoaded(this.src)) {
+        this.#audioBuffer = audioLoader.get(this.src)
+      } else {
         console.info(`Audio not preloaded. Loading now: ${this.src}`)
+        this.#audioBuffer = await audioLoader.load(this.src)
       }
-      this.#audioBuffer = await audioLoader.load(this.src)
     }
     if (!this.#audioBuffer) return
 

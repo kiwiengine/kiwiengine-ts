@@ -13,6 +13,10 @@ export abstract class Loader<T> {
     return this.loadedAssets.has(id)
   }
 
+  get(id: string) {
+    return this.loadedAssets.get(id)
+  }
+
   async load(id: string, ...args: any[]) {
     this.#incRefCount(id)
     if (this.checkLoaded(id)) return this.loadedAssets.get(id)

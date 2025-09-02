@@ -1,0 +1,1 @@
+{"version":3,"file":"interval.d.ts","sourceRoot":"","sources":["../../../../src/node/ext/interval.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,wBAAwB,CAAA;AACjD,OAAO,EAAE,QAAQ,EAAE,MAAM,mBAAmB,CAAA;AAE5C,qBAAa,YAAa,SAAQ,QAAQ,CAAC,QAAQ,CAAC;;IAClD,QAAQ,EAAE,MAAM,CAAA;gBAIJ,QAAQ,EAAE,MAAM,EAAE,QAAQ,EAAE,MAAM,IAAI;cAM/B,MAAM,CAAC,EAAE,EAAE,MAAM;CASrC"}

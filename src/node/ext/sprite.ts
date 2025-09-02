@@ -17,11 +17,13 @@ export class SpriteNode extends GameObject {
   }
 
   async #load() {
-    if (!textureLoader.checkLoaded(this.#src)) {
+    let texture
+    if (textureLoader.checkLoaded(this.#src)) {
+      texture = textureLoader.get(this.#src)
+    } else {
       console.info(`Texture not preloaded. Loading now: ${this.#src}`)
+      texture = await textureLoader.load(this.#src)
     }
-
-    const texture = await textureLoader.load(this.#src)
 
     this.#sprite?.destroy({ children: true })
     this.#sprite = undefined

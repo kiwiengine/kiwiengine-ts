@@ -34,11 +34,12 @@ export class AnimatedSpriteNode extends GameObject {
   async #load() {
     this.#atlasId = getCachedAtlasId(this.#src, this.#atlas)
 
-    if (!spritesheetLoader.checkLoaded(this.#atlasId)) {
+    if (spritesheetLoader.checkLoaded(this.#atlasId)) {
+      this.#sheet = spritesheetLoader.get(this.#atlasId)
+    } else {
       console.info(`Spritesheet not preloaded. Loading now: ${this.#atlasId}`)
+      this.#sheet = await spritesheetLoader.load(this.#atlasId, this.#src, this.#atlas)
     }
-
-    this.#sheet = await spritesheetLoader.load(this.#atlasId, this.#src, this.#atlas)
 
     this.#updateAnimation()
   }

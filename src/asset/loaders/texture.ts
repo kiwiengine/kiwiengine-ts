@@ -23,6 +23,7 @@ class TextureLoader extends Loader<Texture> {
         }
 
         const texture = Texture.from(image)
+        texture.source.scaleMode = 'nearest'
         this.loadedAssets.set(src, texture)
         resolve(texture)
       }

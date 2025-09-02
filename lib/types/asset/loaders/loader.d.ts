@@ -6,6 +6,7 @@ export declare abstract class Loader<T> {
     protected abstract doLoad(id: string, ...args: any[]): Promise<T | undefined>;
     protected cleanup(id: string, asset: T): void;
     checkLoaded(id: string): boolean;
+    get(id: string): T | undefined;
     load(id: string, ...args: any[]): Promise<T | undefined>;
     release(id: string): void;
 }
