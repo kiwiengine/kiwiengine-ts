@@ -8,6 +8,9 @@ export type PhysicsObjectOptions = {
     x?: number;
     y?: number;
     rotation?: number;
+    fixedRotation?: boolean;
+    velocityX?: number;
+    velocityY?: number;
 };
 export declare class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode<PixiContainer, E> {
     #private;
@@ -15,11 +18,16 @@ export declare class PhysicsObject<E extends EventMap = EventMap> extends Render
     protected set parent(parent: GameNode<EventMap> | undefined);
     protected get parent(): GameNode<EventMap> | undefined;
     _updateWorldTransform(): void;
+    remove(): void;
     set x(v: number);
     get x(): number;
     set y(v: number);
     get y(): number;
     set rotation(v: number);
     get rotation(): number;
+    set velocityX(v: number);
+    get velocityX(): number;
+    set velocityY(v: number);
+    get velocityY(): number;
 }
 //# sourceMappingURL=physics-object.d.ts.map

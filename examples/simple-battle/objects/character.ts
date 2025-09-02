@@ -29,9 +29,9 @@ export class Character extends PhysicsObject {
     this.add(this.#hpBar)
 
     if (debugMode) {
-      this.add(new RectangleNode({ ...options.collider, stroke: 'yellow', layer: 'hud' }))
-      this.add(new RectangleNode({ ...this.hitbox, stroke: 'red', layer: 'hud' }))
-      this.add(new RectangleNode({ ...this.hurtbox, stroke: 'green', layer: 'hud' }))
+      this.add(new RectangleNode({ ...options.collider, stroke: 'yellow', alpha: 0.5, layer: 'hud' }))
+      this.add(new RectangleNode({ ...this.hitbox, stroke: 'red', alpha: 0.5, layer: 'hud' }))
+      this.add(new RectangleNode({ ...this.hurtbox, stroke: 'green', alpha: 0.5, layer: 'hud' }))
     }
   }
 }

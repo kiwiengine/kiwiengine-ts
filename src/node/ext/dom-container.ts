@@ -54,4 +54,9 @@ export class DomContainerNode extends GameObject {
     }
     if (this.worldAlpha.dirty) this.#el.style.opacity = this.worldAlpha.v.toString()
   }
+
+  override remove() {
+    this.#el.remove()
+    super.remove()
+  }
 }
