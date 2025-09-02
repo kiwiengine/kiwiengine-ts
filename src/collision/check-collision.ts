@@ -162,118 +162,212 @@ function checkRectCircleCollision(
 }
 
 // =====================================================================================
-// Polygon helpers — SAT (no allocations; polygons are in WORLD space)
+// Polygon helpers — SAT (no allocations; polygons are in LOCAL space + Transform)
 // =====================================================================================
 
-function checkPolyPolyCollision(a: PolygonCollider, b: PolygonCollider): boolean {
+/*
+  Notes:
+  - Polygons are stored in LOCAL space. We never allocate world-space copies.
+  - For any world axis N = (nx, ny), projection of a local vertex (vx, vy) is:
+      dot(N, C) + dot(N, U)*sx*vx + dot(N, V)*sy*vy
+    where C is world center, U/V are world unit axes of the polygon frame,
+    and sx/sy are scale on those local axes.
+  - No objects/arrays are created at runtime. Only scalar computations and loops.
+*/
+
+// Poly–Poly (LOCAL + Transform)
+function checkPolyPolyCollision(
+  a: PolygonCollider, ta: WorldTransform,
+  b: PolygonCollider, tb: WorldTransform
+): boolean {
   const av = a.vertices, bv = b.vertices
-  let n = av.length; if (n === 0) return false
-  let m = bv.length; if (m === 0) return false
+  const na = av.length, nb = bv.length
+  if (na === 0 || nb === 0) return false
 
-  // Edges of A
-  for (let i = 0; i < n; i++) {
-    const j = (i + 1) % n
-    const ex = av[j].x - av[i].x
-    const ey = av[j].y - av[i].y
-    const nx = -ey, ny = ex
+  // Frame A
+  const asx = ta.scaleX.v, asy = ta.scaleY.v
+  const acs = ta.rotation.cos, asn = ta.rotation.sin
+  const aux = acs, auy = asn
+  const avx = -asn, avy = acs
+  const aox = ((a as any).x || 0) * asx
+  const aoy = ((a as any).y || 0) * asy
+  const acx = ta.x.v + aux * aox + avx * aoy
+  const acy = ta.y.v + auy * aox + avy * aoy
 
+  // Frame B
+  const bsx = tb.scaleX.v, bsy = tb.scaleY.v
+  const bcs = tb.rotation.cos, bsn = tb.rotation.sin
+  const bux = bcs, buy = bsn
+  const bvx = -bsn, bvy = bcs
+  const box = ((b as any).x || 0) * bsx
+  const boy = ((b as any).y || 0) * bsy
+  const bcx = tb.x.v + bux * box + bvx * boy
+  const bcy = tb.y.v + buy * box + bvy * boy
+
+  let i = 0, j = 0, k = 0
+
+  // A's edge axes
+  for (i = 0; i < na; i++) {
+    j = (i + 1) % na
+    const adx = av[j].x - av[i].x
+    const ady = av[j].y - av[i].y
+    // edge in world: Ew = U*(sx*dx) + V*(sy*dy)
+    const ewx = aux * (asx * adx) + avx * (asy * ady)
+    const ewy = auy * (asx * adx) + avy * (asy * ady)
+    const nx = -ewy, ny = ewx // world normal (no normalization)
+
+    // project A on (nx,ny)
+    const kUa = (nx * aux + ny * auy) * asx
+    const kVa = (nx * avx + ny * avy) * asy
+    const baseA = nx * acx + ny * acy
     let minA = Infinity, maxA = -Infinity
-    for (let k = 0; k < n; k++) {
-      const p = nx * av[k].x + ny * av[k].y
-      if (p < minA) minA = p
-      if (p > maxA) maxA = p
+    for (k = 0; k < na; k++) {
+      const s = baseA + kUa * av[k].x + kVa * av[k].y
+      if (s < minA) minA = s
+      if (s > maxA) maxA = s
     }
+
+    // project B on (nx,ny)
+    const kUb = (nx * bux + ny * buy) * bsx
+    const kVb = (nx * bvx + ny * bvy) * bsy
+    const baseB = nx * bcx + ny * bcy
     let minB = Infinity, maxB = -Infinity
-    for (let k = 0; k < m; k++) {
-      const p = nx * bv[k].x + ny * bv[k].y
-      if (p < minB) minB = p
-      if (p > maxB) maxB = p
+    for (k = 0; k < nb; k++) {
+      const s = baseB + kUb * bv[k].x + kVb * bv[k].y
+      if (s < minB) minB = s
+      if (s > maxB) maxB = s
     }
+
     if (maxA < minB || maxB < minA) return false
   }
 
-  // Edges of B
-  for (let i = 0; i < m; i++) {
-    const j = (i + 1) % m
-    const ex = bv[j].x - bv[i].x
-    const ey = bv[j].y - bv[i].y
-    const nx = -ey, ny = ex
+  // B's edge axes
+  for (i = 0; i < nb; i++) {
+    j = (i + 1) % nb
+    const bdx = bv[j].x - bv[i].x
+    const bdy = bv[j].y - bv[i].y
+    const ewx = bux * (bsx * bdx) + bvx * (bsy * bdy)
+    const ewy = buy * (bsx * bdx) + bvy * (bsy * bdy)
+    const nx = -ewy, ny = ewx
 
+    // project A
+    const kUa = (nx * aux + ny * auy) * asx
+    const kVa = (nx * avx + ny * avy) * asy
+    const baseA = nx * acx + ny * acy
     let minA = Infinity, maxA = -Infinity
-    for (let k = 0; k < n; k++) {
-      const p = nx * av[k].x + ny * av[k].y
-      if (p < minA) minA = p
-      if (p > maxA) maxA = p
+    for (k = 0; k < na; k++) {
+      const s = baseA + kUa * av[k].x + kVa * av[k].y
+      if (s < minA) minA = s
+      if (s > maxA) maxA = s
     }
+
+    // project B
+    const kUb = (nx * bux + ny * buy) * bsx
+    const kVb = (nx * bvx + ny * bvy) * bsy
+    const baseB = nx * bcx + ny * bcy
     let minB = Infinity, maxB = -Infinity
-    for (let k = 0; k < m; k++) {
-      const p = nx * bv[k].x + ny * bv[k].y
-      if (p < minB) minB = p
-      if (p > maxB) maxB = p
+    for (k = 0; k < nb; k++) {
+      const s = baseB + kUb * bv[k].x + kVb * bv[k].y
+      if (s < minB) minB = s
+      if (s > maxB) maxB = s
     }
+
     if (maxA < minB || maxB < minA) return false
   }
 
   return true
 }
 
-function checkPolyCircleCollision(poly: PolygonCollider, c: CircleCollider, tc: WorldTransform): boolean {
+// Poly–Circle (LOCAL + Transform)
+function checkPolyCircleCollision(poly: PolygonCollider, tp: WorldTransform, c: CircleCollider, tc: WorldTransform): boolean {
   const v = poly.vertices; const n = v.length; if (n === 0) return false
 
+  // Poly frame
+  const psx = tp.scaleX.v, psy = tp.scaleY.v
+  const pcs = tp.rotation.cos, psn = tp.rotation.sin
+  const pux = pcs, puy = psn
+  const pvx = -psn, pvy = pcs
+  const pox = ((poly as any).x || 0) * psx
+  const poy = ((poly as any).y || 0) * psy
+  const pcx = tp.x.v + pux * pox + pvx * poy
+  const pcy = tp.y.v + puy * pox + pvy * poy
+
+  // Circle center + radius
   circleCenterScratch(c, tc)
-  const PCx = _ccx, PCy = _ccy
+  const CCx = _ccx, CCy = _ccy
   const rr = circleScaledRadius(c, tc)
 
-  // Edge normals
-  for (let i = 0; i < n; i++) {
-    const j = (i + 1) % n
-    const ex = v[j].x - v[i].x
-    const ey = v[j].y - v[i].y
-    const nx = -ey, ny = ex
-    const nlen = Math.hypot(nx, ny)
+  let i = 0, j = 0, k = 0
 
+  // (A) Polygon edge axes
+  for (i = 0; i < n; i++) {
+    j = (i + 1) % n
+    const dx = v[j].x - v[i].x
+    const dy = v[j].y - v[i].y
+    const ewx = pux * (psx * dx) + pvx * (psy * dy)
+    const ewy = puy * (psx * dx) + pvy * (psy * dy)
+    const nx = -ewy, ny = ewx
+    const kUp = (nx * pux + ny * puy) * psx
+    const kVp = (nx * pvx + ny * pvy) * psy
+    const baseP = nx * pcx + ny * pcy
     let minP = Infinity, maxP = -Infinity
-    for (let k = 0; k < n; k++) {
-      const p = nx * v[k].x + ny * v[k].y
-      if (p < minP) minP = p
-      if (p > maxP) maxP = p
+    for (k = 0; k < n; k++) {
+      const s = baseP + kUp * v[k].x + kVp * v[k].y
+      if (s < minP) minP = s
+      if (s > maxP) maxP = s
     }
-    const centerProj = nx * PCx + ny * PCy
-    const minC = centerProj - rr * nlen
-    const maxC = centerProj + rr * nlen
+    const nlen = Math.hypot(nx, ny)
+    const cProj = nx * CCx + ny * CCy
+    const minC = cProj - rr * nlen
+    const maxC = cProj + rr * nlen
     if (maxP < minC || maxC < minP) return false
   }
 
-  // Closest-vertex axis
+  // (B) Closest-vertex axis
   let bestDx = 0, bestDy = 0, bestD2 = Infinity
-  for (let i = 0; i < n; i++) {
-    const dx = PCx - v[i].x
-    const dy = PCy - v[i].y
+  for (i = 0; i < n; i++) {
+    const wx = pcx + pux * (psx * v[i].x) + pvx * (psy * v[i].y)
+    const wy = pcy + puy * (psx * v[i].x) + pvy * (psy * v[i].y)
+    const dx = CCx - wx
+    const dy = CCy - wy
     const d2 = dx * dx + dy * dy
     if (d2 < bestD2) { bestD2 = d2; bestDx = dx; bestDy = dy }
   }
   if (bestD2 === 0) return true
   {
     const nx = bestDx, ny = bestDy
-    const nlen = Math.hypot(nx, ny)
-
+    const kUp = (nx * pux + ny * puy) * psx
+    const kVp = (nx * pvx + ny * pvy) * psy
+    const baseP = nx * pcx + ny * pcy
     let minP = Infinity, maxP = -Infinity
-    for (let i = 0; i < n; i++) {
-      const p = nx * v[i].x + ny * v[i].y
-      if (p < minP) minP = p
-      if (p > maxP) maxP = p
+    for (i = 0; i < n; i++) {
+      const s = baseP + kUp * v[i].x + kVp * v[i].y
+      if (s < minP) minP = s
+      if (s > maxP) maxP = s
     }
-    const centerProj = nx * PCx + ny * PCy
-    const minC = centerProj - rr * nlen
-    const maxC = centerProj + rr * nlen
+    const nlen = Math.hypot(nx, ny)
+    const cProj = nx * CCx + ny * CCy
+    const minC = cProj - rr * nlen
+    const maxC = cProj + rr * nlen
     if (maxP < minC || maxC < minP) return false
   }
 
   return true
 }
 
-function checkPolyRectCollision(poly: PolygonCollider, r: RectangleCollider, tr: WorldTransform): boolean {
+// Poly–Rect (LOCAL + Transform)
+function checkPolyRectCollision(poly: PolygonCollider, tp: WorldTransform, r: RectangleCollider, tr: WorldTransform): boolean {
   const v = poly.vertices; const n = v.length; if (n === 0) return false
+
+  // Poly frame
+  const psx = tp.scaleX.v, psy = tp.scaleY.v
+  const pcs = tp.rotation.cos, psn = tp.rotation.sin
+  const pux = pcs, puy = psn
+  const pvx = -psn, pvy = pcs
+  const pox = ((poly as any).x || 0) * psx
+  const poy = ((poly as any).y || 0) * psy
+  const pcx = tp.x.v + pux * pox + pvx * poy
+  const pcy = tp.y.v + puy * pox + pvy * poy
 
   // Rect frame
   const rsx = tr.scaleX.v, rsy = tr.scaleY.v
@@ -282,56 +376,70 @@ function checkPolyRectCollision(poly: PolygonCollider, r: RectangleCollider, tr:
   const rc = tr.rotation.cos, rs = tr.rotation.sin
   const rux = rc, ruy = rs
   const rvx = -rs, rvy = rc
-  const rox = (r.x || 0) * rsx
-  const roy = (r.y || 0) * rsy
+  const rox = (r.x || 0) * rsx, roy = (r.y || 0) * rsy
   const rcx = tr.x.v + rux * rox + rvx * roy
   const rcy = tr.y.v + ruy * rox + rvy * roy
 
-  // A) polygon edge normals
-  for (let i = 0; i < n; i++) {
-    const j = (i + 1) % n
-    const ex = v[j].x - v[i].x
-    const ey = v[j].y - v[i].y
-    const nx = -ey, ny = ex
+  let i = 0, j = 0, k = 0
 
+  // (A) polygon edge axes
+  for (i = 0; i < n; i++) {
+    j = (i + 1) % n
+    const dx = v[j].x - v[i].x
+    const dy = v[j].y - v[i].y
+    const ewx = pux * (psx * dx) + pvx * (psy * dy)
+    const ewy = puy * (psx * dx) + pvy * (psy * dy)
+    const nx = -ewy, ny = ewx
+
+    // poly projection
+    const kUp = (nx * pux + ny * puy) * psx
+    const kVp = (nx * pvx + ny * pvy) * psy
+    const baseP = nx * pcx + ny * pcy
     let minP = Infinity, maxP = -Infinity
-    for (let k = 0; k < n; k++) {
-      const p = nx * v[k].x + ny * v[k].y
-      if (p < minP) minP = p
-      if (p > maxP) maxP = p
+    for (k = 0; k < n; k++) {
+      const s = baseP + kUp * v[k].x + kVp * v[k].y
+      if (s < minP) minP = s
+      if (s > maxP) maxP = s
     }
 
+    // rect projection radius on axis
     const nu = nx * rux + ny * ruy
     const nv = nx * rvx + ny * rvy
-    const rRad = (rhx * (nu < 0 ? -nu : nu)) + (rhy * (nv < 0 ? -nv : nv))
+    const rRad = rhx * (nu < 0 ? -nu : nu) + rhy * (nv < 0 ? -nv : nv)
     const cProj = nx * rcx + ny * rcy
     const minR = cProj - rRad
     const maxR = cProj + rRad
     if (maxP < minR || maxR < minP) return false
   }
 
-  // B) rect axis u
+  // (B) rect axis u
   {
     const nx = rux, ny = ruy
+    const kUp = (nx * pux + ny * puy) * psx
+    const kVp = (nx * pvx + ny * pvy) * psy
+    const baseP = nx * pcx + ny * pcy
     let minP = Infinity, maxP = -Infinity
-    for (let i = 0; i < n; i++) {
-      const p = nx * v[i].x + ny * v[i].y
-      if (p < minP) minP = p
-      if (p > maxP) maxP = p
+    for (i = 0; i < n; i++) {
+      const s = baseP + kUp * v[i].x + kVp * v[i].y
+      if (s < minP) minP = s
+      if (s > maxP) maxP = s
     }
     const cProj = nx * rcx + ny * rcy
     const minR = cProj - rhx
     const maxR = cProj + rhx
     if (maxP < minR || maxR < minP) return false
   }
-  // C) rect axis v
+  // (C) rect axis v
   {
     const nx = rvx, ny = rvy
+    const kUp = (nx * pux + ny * puy) * psx
+    const kVp = (nx * pvx + ny * pvy) * psy
+    const baseP = nx * pcx + ny * pcy
     let minP = Infinity, maxP = -Infinity
-    for (let i = 0; i < n; i++) {
-      const p = nx * v[i].x + ny * v[i].y
-      if (p < minP) minP = p
-      if (p > maxP) maxP = p
+    for (i = 0; i < n; i++) {
+      const s = baseP + kUp * v[i].x + kVp * v[i].y
+      if (s < minP) minP = s
+      if (s > maxP) maxP = s
     }
     const cProj = nx * rcx + ny * rcy
     const minR = cProj - rhy
@@ -350,7 +458,7 @@ function checkPolyRectCollision(poly: PolygonCollider, r: RectangleCollider, tr:
 let _sx = 0, _sy = 0
 
 // Support selectors
-const enum SupportType { None = 0, Ellipse = 1, OBB = 2, Circle = 3, Poly = 4 }
+const enum SupportType { None = 0, Ellipse = 1, OBB = 2, Circle = 3, Poly = 4, PolyLocal = 5 }
 let _supportAType = SupportType.None
 let _supportBType = SupportType.None
 
@@ -382,11 +490,13 @@ function setSupportOBB(
   _sy = cy + uy * hx * sx + vy * hy * sy
 }
 
+function dvDy(dy: number, a: number) { return dy * a } // tiny inline helper (prevents temp vars)
+
 function setSupportEllipse(
   dx: number, dy: number,
   cx: number, cy: number, ux: number, uy: number, vx: number, vy: number, rx: number, ry: number
 ) {
-  const du = dx * ux + dvDy(dy, uy) // small micro-opt helper below
+  const du = dx * ux + dvDy(dy, uy)
   const dv = dx * vx + dvDy(dy, vy)
   const denom = Math.hypot(rx * du, ry * dv)
   if (denom === 0) { _sx = cx; _sy = cy; return }
@@ -395,8 +505,6 @@ function setSupportEllipse(
   _sx = cx + kU * ux + kV * vx
   _sy = cy + kU * uy + kV * vy
 }
-// tiny inline to help inlining without creating temps
-function dvDy(dy: number, a: number) { return dy * a }
 
 function setSupportPoly(dx: number, dy: number, verts: { x: number, y: number }[]) {
   let best = 0, bestDot = -Infinity
@@ -409,18 +517,38 @@ function setSupportPoly(dx: number, dy: number, verts: { x: number, y: number }[
   _sy = verts[best].y
 }
 
+// PolyLocal support: verts in LOCAL, with frame (cx,cy, U/V, sx/sy)
+function setSupportPolyLocal(
+  dx: number, dy: number,
+  verts: { x: number, y: number }[],
+  cx: number, cy: number, ux: number, uy: number, vx: number, vy: number, sx: number, sy: number
+) {
+  const kU = (dx * ux + dy * uy) * sx
+  const kV = (dx * vx + dy * vy) * sy
+  let best = 0, bestDot = -Infinity
+  for (let i = 0, n = verts.length; i < n; i++) {
+    const s = kU * verts[i].x + kV * verts[i].y
+    if (s > bestDot) { bestDot = s; best = i }
+  }
+  const lx = verts[best].x, ly = verts[best].y
+  _sx = cx + ux * (sx * lx) + vx * (sy * ly)
+  _sy = cy + uy * (sx * lx) + vy * (sy * ly)
+}
+
 function supportA(dx: number, dy: number) {
   if (_supportAType === SupportType.Ellipse) setSupportEllipse(dx, dy, _Acx, _Acy, _Aux, _Auy, _Avx, _Avy, _Arx, _Ary)
   else if (_supportAType === SupportType.OBB) setSupportOBB(dx, dy, _Acx, _Acy, _Aux, _Auy, _Avx, _Avy, _Ahx, _Ahy)
   else if (_supportAType === SupportType.Circle) setSupportCircle(dx, dy, _Acx, _Acy, _Arr)
-  else if (_supportAType === SupportType.Poly && _Apoly) setSupportPoly(dx, dy, _Apoly)
+  else if (_supportAType === SupportType.Poly) setSupportPoly(dx, dy, _Apoly!)
+  else if (_supportAType === SupportType.PolyLocal) setSupportPolyLocal(dx, dy, _Apoly!, _Acx, _Acy, _Aux, _Auy, _Avx, _Avy, _Arx, _Ary)
   else { _sx = 0; _sy = 0 }
 }
 function supportB(dx: number, dy: number) {
   if (_supportBType === SupportType.Ellipse) setSupportEllipse(dx, dy, _Bcx, _Bcy, _Bux, _Buy, _Bvx, _Bvy, _Brx, _Bry)
   else if (_supportBType === SupportType.OBB) setSupportOBB(dx, dy, _Bcx, _Bcy, _Bux, _Buy, _Bvx, _Bvy, _Bhx, _Bhy)
   else if (_supportBType === SupportType.Circle) setSupportCircle(dx, dy, _Bcx, _Bcy, _Brr)
-  else if (_supportBType === SupportType.Poly && _Bpoly) setSupportPoly(dx, dy, _Bpoly)
+  else if (_supportBType === SupportType.Poly) setSupportPoly(dx, dy, _Bpoly!)
+  else if (_supportBType === SupportType.PolyLocal) setSupportPolyLocal(dx, dy, _Bpoly!, _Bcx, _Bcy, _Bux, _Buy, _Bvx, _Bvy, _Brx, _Bry)
   else { _sx = 0; _sy = 0 }
 }
 
@@ -603,10 +731,21 @@ function checkEllipseEllipseCollision(
   return gjkIntersectsNoAlloc()
 }
 
-function checkPolyEllipseCollision(poly: PolygonCollider, e: EllipseCollider, te: WorldTransform): boolean {
-  // A = Poly
+// Poly–Ellipse via GJK (Poly in LOCAL + Transform, Ellipse in LOCAL + Transform)
+function checkPolyEllipseCollision(poly: PolygonCollider, tp: WorldTransform, e: EllipseCollider, te: WorldTransform): boolean {
+  // A = Poly (LOCAL + Transform) → use PolyLocal support; reuse A scratch slots
+  const psx = tp.scaleX.v, psy = tp.scaleY.v
+  const pcs = tp.rotation.cos, psn = tp.rotation.sin
+  const pux = pcs, puy = psn
+  const pvx = -psn, pvy = pcs
+  const pox = ((poly as any).x || 0) * psx
+  const poy = ((poly as any).y || 0) * psy
+  _Acx = tp.x.v + pux * pox + pvx * poy
+  _Acy = tp.y.v + puy * pox + pvy * poy
+  _Aux = pux; _Auy = puy; _Avx = pvx; _Avy = pvy
+  _Arx = psx; _Ary = psy
   _Apoly = poly.vertices
-  _supportAType = SupportType.Poly
+  _supportAType = SupportType.PolyLocal
 
   // B = Ellipse
   const esx = te.scaleX.v, esy = te.scaleY.v
@@ -617,8 +756,8 @@ function checkPolyEllipseCollision(poly: PolygonCollider, e: EllipseCollider, te
   const eox = (e.x || 0) * esx, eoy = (e.y || 0) * esy
   _Bcx = te.x.v + _Bux * eox + _Bvx * eoy
   _Bcy = te.y.v + _Buy * eox + _Bvy * eoy
-  _supportBType = SupportType.Ellipse
   _Bpoly = null
+  _supportBType = SupportType.Ellipse
 
   return gjkIntersectsNoAlloc()
 }
@@ -642,21 +781,21 @@ export function checkCollision(ca: Collider, ta: WorldTransform, cb: Collider, t
   if (ca.type === ColliderType.Circle && cb.type === ColliderType.Rectangle)
     return checkRectCircleCollision(cb, tb, ca, ta)
 
-  // Polygon–Polygon
+  // Polygon–Polygon (LOCAL + Transform)
   if (ca.type === ColliderType.Polygon && cb.type === ColliderType.Polygon)
-    return checkPolyPolyCollision(ca, cb)
+    return checkPolyPolyCollision(ca, ta, cb, tb)
 
-  // Polygon–Circle (both orders)
+  // Polygon–Circle (both orders; LOCAL + Transform for polygon)
   if (ca.type === ColliderType.Polygon && cb.type === ColliderType.Circle)
-    return checkPolyCircleCollision(ca, cb, tb)
+    return checkPolyCircleCollision(ca, ta, cb, tb)
   if (ca.type === ColliderType.Circle && cb.type === ColliderType.Polygon)
-    return checkPolyCircleCollision(cb, ca, ta)
+    return checkPolyCircleCollision(cb, tb, ca, ta)
 
-  // Polygon–Rect (both orders)
+  // Polygon–Rect (both orders; LOCAL + Transform for polygon)
   if (ca.type === ColliderType.Polygon && cb.type === ColliderType.Rectangle)
-    return checkPolyRectCollision(ca, cb, tb)
+    return checkPolyRectCollision(ca, ta, cb, tb)
   if (ca.type === ColliderType.Rectangle && cb.type === ColliderType.Polygon)
-    return checkPolyRectCollision(cb, ca, ta)
+    return checkPolyRectCollision(cb, tb, ca, ta)
 
   // Ellipse interactions via GJK
   if (ca.type === ColliderType.Ellipse && cb.type === ColliderType.Rectangle)
@@ -672,10 +811,11 @@ export function checkCollision(ca: Collider, ta: WorldTransform, cb: Collider, t
   if (ca.type === ColliderType.Ellipse && cb.type === ColliderType.Ellipse)
     return checkEllipseEllipseCollision(ca, ta, cb, tb)
 
+  // Polygon–Ellipse (both orders; polygon is LOCAL + Transform via PolyLocal support)
   if (ca.type === ColliderType.Polygon && cb.type === ColliderType.Ellipse)
-    return checkPolyEllipseCollision(ca, cb, tb)
+    return checkPolyEllipseCollision(ca, ta, cb, tb)
   if (ca.type === ColliderType.Ellipse && cb.type === ColliderType.Polygon)
-    return checkPolyEllipseCollision(cb, ca, ta)
+    return checkPolyEllipseCollision(cb, tb, ca, ta)
 
   return false
 }
