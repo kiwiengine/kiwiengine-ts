@@ -1,12 +1,9 @@
-import { GlobalTransform } from '../node/core/transform'
+import { WorldTransform } from '../node/core/transform'
 import { checkCollision } from './check-collision'
-import {
-  CircleCollider,
-  ColliderType, EllipseCollider, Point, PolygonCollider, RectangleCollider
-} from './colliders'
+import { CircleCollider, ColliderType, EllipseCollider, PolygonCollider, RectangleCollider } from './colliders'
 
 // ===== Local type alias to match the engine ========================================================
-type Transform = GlobalTransform
+type Transform = WorldTransform
 
 // ===== Builders ====================================================================================
 const rad = (deg: number) => (deg * Math.PI) / 180
@@ -32,7 +29,7 @@ function E(width: number, height: number, ox = 0, oy = 0): EllipseCollider {
   return { type: ColliderType.Ellipse, width, height, x: ox, y: oy } as EllipseCollider
 }
 function P(points: Array<[number, number]>): PolygonCollider {
-  const vertices: Point[] = points.map(([x, y]) => ({ x, y }))
+  const vertices = points.map(([x, y]) => ({ x, y }))
   return { type: ColliderType.Polygon, vertices } as PolygonCollider
 }
 

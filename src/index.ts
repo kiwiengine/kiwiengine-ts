@@ -1,4 +1,6 @@
 export { AssetSource, preload } from './asset/preload'
+export { checkCollision } from './collision/check-collision'
+export { CircleCollider, Collider, ColliderType, EllipseCollider, PolygonCollider, RectangleCollider } from './collision/colliders'
 export { enableDebug } from './debug'
 export { GameObject, GameObjectOptions } from './node/core/game-object'
 export { AnimatedSpriteNode, AnimatedSpriteNodeOptions } from './node/ext/animated-sprite'
@@ -7,3 +9,4 @@ export { DomContainerNode, DomContainerNodeOptions } from './node/ext/dom-contai
 export { RectangleNode, RectangleNodeOptions } from './node/ext/rectangle'
 export { SpriteNode, SpriteNodeOptions } from './node/ext/sprite'
 export { Renderer, RendererOptions } from './renderer/renderer'
+

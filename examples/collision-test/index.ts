@@ -1,5 +1,4 @@
-import { enableDebug, GameObjectOptions, preload, Renderer, SpriteNode } from '../../src'
-import { Collider } from '../../src/collision/colliders'
+import { checkCollision, ColliderType, enableDebug, GameObjectOptions, preload, RectangleCollider, Renderer, SpriteNode } from '../../src'
 
 enableDebug()
 
@@ -12,7 +11,7 @@ const renderer = new Renderer(document.body, {
 })
 
 class Cat extends SpriteNode {
-  colliders: Collider[] = []
+  collider: RectangleCollider = { type: ColliderType.Rectangle, width: 50, height: 50 }
 
   constructor(options: GameObjectOptions) {
     super({ src: 'assets/cat.png', ...options })
@@ -20,10 +19,12 @@ class Cat extends SpriteNode {
 }
 
 const cat1 = new Cat({ x: -100, y: 0 })
-const cat2 = new Cat({ x: 100, y: 0 })
+const cat2 = new Cat({ x: 100, y: 0, scale: 2, rotation: Math.PI / 4 })
 renderer.add(cat1, cat2)
 
 renderer.on('update', (dt) => {
   cat1.x += dt * 30
   cat2.x -= dt * 30
+
+  console.log(checkCollision(cat1.collider, cat1.worldTransform, cat2.collider, cat2.worldTransform))
 })

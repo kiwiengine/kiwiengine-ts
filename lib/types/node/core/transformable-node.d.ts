@@ -1,6 +1,6 @@
 import { EventMap } from '@webtaku/event-emitter';
 import { GameNode } from './game-node';
-import { GlobalTransform, LocalTransform } from './transform';
+import { WorldTransform, LocalTransform } from './transform';
 export declare function isTransformableNode(v: unknown): v is TransformableNode<EventMap>;
 export type TransformableNodeOptions = {
     x?: number;
@@ -14,7 +14,7 @@ export type TransformableNodeOptions = {
 };
 export declare abstract class TransformableNode<E extends EventMap> extends GameNode<E> {
     protected localTransform: LocalTransform;
-    globalTransform: GlobalTransform;
+    worldTransform: WorldTransform;
     constructor(options: TransformableNodeOptions);
     protected update(dt: number): void;
     _resetTransformDirty(): void;

@@ -1,6 +1,4 @@
-import { GlobalTransform } from '../node/core/transform';
+import { WorldTransform } from '../node/core/transform';
 import { Collider } from './colliders';
-type Transform = GlobalTransform;
-export declare function checkCollision(ca: Collider, ta: Transform, cb: Collider, tb: Transform): boolean;
-export {};
+export declare function checkCollision(ca: Collider, ta: WorldTransform, cb: Collider, tb: WorldTransform): boolean;
 //# sourceMappingURL=check-collision.d.ts.map

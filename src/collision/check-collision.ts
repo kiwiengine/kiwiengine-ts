@@ -1,9 +1,5 @@
-import { GlobalTransform } from '../node/core/transform'
-import {
-  CircleCollider, Collider, ColliderType, EllipseCollider, Point, PolygonCollider, RectangleCollider
-} from './colliders'
-
-type Transform = GlobalTransform
+import { WorldTransform } from '../node/core/transform'
+import { CircleCollider, Collider, ColliderType, EllipseCollider, PolygonCollider, RectangleCollider } from './colliders'
 
 // =====================================================================================
 // Utilities (scalar-only, no allocations at runtime)
@@ -44,8 +40,8 @@ function axisSeparates(
 // =====================================================================================
 
 function checkRectRectCollision(
-  ca: RectangleCollider, ta: Transform,
-  cb: RectangleCollider, tb: Transform
+  ca: RectangleCollider, ta: WorldTransform,
+  cb: RectangleCollider, tb: WorldTransform
 ): boolean {
   // A frame (half extents must be non-negative)
   const asx = ta.scaleX.v, asy = ta.scaleY.v
@@ -99,7 +95,7 @@ function checkRectRectCollision(
 let _ccx = 0, _ccy = 0
 
 // Writes the world-space center into (_ccx, _ccy).
-function circleCenterScratch(c: CircleCollider, t: Transform): void {
+function circleCenterScratch(c: CircleCollider, t: WorldTransform): void {
   // No object/array allocation; scalar math only
   const sx = t.scaleX.v, sy = t.scaleY.v
   const cos = t.rotation.cos, sin = t.rotation.sin
@@ -113,13 +109,13 @@ function circleCenterScratch(c: CircleCollider, t: Transform): void {
   _ccy = t.y.v + uy * ox + vy * oy
 }
 
-function circleScaledRadius(c: CircleCollider, t: Transform) {
+function circleScaledRadius(c: CircleCollider, t: WorldTransform) {
   const sx = abs(t.scaleX.v), sy = abs(t.scaleY.v)
   return c.radius * (sx > sy ? sx : sy) // conservative
 }
 
 function checkCircleCircleCollision(
-  ca: CircleCollider, ta: Transform, cb: CircleCollider, tb: Transform
+  ca: CircleCollider, ta: WorldTransform, cb: CircleCollider, tb: WorldTransform
 ): boolean {
   circleCenterScratch(ca, ta); const ax = _ccx, ay = _ccy
   circleCenterScratch(cb, tb); const bx = _ccx, by = _ccy
@@ -135,8 +131,8 @@ function checkCircleCircleCollision(
 // =====================================================================================
 
 function checkRectCircleCollision(
-  r: RectangleCollider, tr: Transform,
-  c: CircleCollider, tc: Transform
+  r: RectangleCollider, tr: WorldTransform,
+  c: CircleCollider, tc: WorldTransform
 ): boolean {
   // Rect frame
   const rsx = tr.scaleX.v, rsy = tr.scaleY.v
@@ -221,7 +217,7 @@ function checkPolyPolyCollision(a: PolygonCollider, b: PolygonCollider): boolean
   return true
 }
 
-function checkPolyCircleCollision(poly: PolygonCollider, c: CircleCollider, tc: Transform): boolean {
+function checkPolyCircleCollision(poly: PolygonCollider, c: CircleCollider, tc: WorldTransform): boolean {
   const v = poly.vertices; const n = v.length; if (n === 0) return false
 
   circleCenterScratch(c, tc)
@@ -276,7 +272,7 @@ function checkPolyCircleCollision(poly: PolygonCollider, c: CircleCollider, tc: 
   return true
 }
 
-function checkPolyRectCollision(poly: PolygonCollider, r: RectangleCollider, tr: Transform): boolean {
+function checkPolyRectCollision(poly: PolygonCollider, r: RectangleCollider, tr: WorldTransform): boolean {
   const v = poly.vertices; const n = v.length; if (n === 0) return false
 
   // Rect frame
@@ -360,11 +356,11 @@ let _supportBType = SupportType.None
 
 // A-shape params
 let _Acx = 0, _Acy = 0, _Aux = 0, _Auy = 0, _Avx = 0, _Avy = 0, _Arx = 0, _Ary = 0, _Ahx = 0, _Ahy = 0, _Arr = 0
-let _Apoly: Point[] | null = null
+let _Apoly: { x: number, y: number }[] | null = null
 
 // B-shape params
 let _Bcx = 0, _Bcy = 0, _Bux = 0, _Buy = 0, _Bvx = 0, _Bvy = 0, _Brx = 0, _Bry = 0, _Bhx = 0, _Bhy = 0, _Brr = 0
-let _Bpoly: Point[] | null = null
+let _Bpoly: { x: number, y: number }[] | null = null
 
 function setSupportCircle(dx: number, dy: number, cx: number, cy: number, r: number) {
   const len = Math.hypot(dx, dy)
@@ -402,7 +398,7 @@ function setSupportEllipse(
 // tiny inline to help inlining without creating temps
 function dvDy(dy: number, a: number) { return dy * a }
 
-function setSupportPoly(dx: number, dy: number, verts: Point[]) {
+function setSupportPoly(dx: number, dy: number, verts: { x: number, y: number }[]) {
   let best = 0, bestDot = -Infinity
   for (let i = 0, n = verts.length; i < n; i++) {
     const vx = verts[i].x, vy = verts[i].y
@@ -520,8 +516,8 @@ function gjkIntersectsNoAlloc(): boolean {
 // =====================================================================================
 
 function checkEllipseRectCollision(
-  e: EllipseCollider, te: Transform,
-  r: RectangleCollider, tr: Transform
+  e: EllipseCollider, te: WorldTransform,
+  r: RectangleCollider, tr: WorldTransform
 ): boolean {
   // A = Ellipse
   const esx = te.scaleX.v, esy = te.scaleY.v
@@ -551,8 +547,8 @@ function checkEllipseRectCollision(
 }
 
 function checkEllipseCircleCollision(
-  e: EllipseCollider, te: Transform,
-  c: CircleCollider, tc: Transform
+  e: EllipseCollider, te: WorldTransform,
+  c: CircleCollider, tc: WorldTransform
 ): boolean {
   // A = Ellipse
   const esx = te.scaleX.v, esy = te.scaleY.v
@@ -577,8 +573,8 @@ function checkEllipseCircleCollision(
 }
 
 function checkEllipseEllipseCollision(
-  a: EllipseCollider, ta: Transform,
-  b: EllipseCollider, tb: Transform
+  a: EllipseCollider, ta: WorldTransform,
+  b: EllipseCollider, tb: WorldTransform
 ): boolean {
   // A
   const asx = ta.scaleX.v, asy = ta.scaleY.v
@@ -607,7 +603,7 @@ function checkEllipseEllipseCollision(
   return gjkIntersectsNoAlloc()
 }
 
-function checkPolyEllipseCollision(poly: PolygonCollider, e: EllipseCollider, te: Transform): boolean {
+function checkPolyEllipseCollision(poly: PolygonCollider, e: EllipseCollider, te: WorldTransform): boolean {
   // A = Poly
   _Apoly = poly.vertices
   _supportAType = SupportType.Poly
@@ -631,7 +627,7 @@ function checkPolyEllipseCollision(poly: PolygonCollider, e: EllipseCollider, te
 // Dispatcher (no allocations)
 // =====================================================================================
 
-export function checkCollision(ca: Collider, ta: Transform, cb: Collider, tb: Transform): boolean {
+export function checkCollision(ca: Collider, ta: WorldTransform, cb: Collider, tb: WorldTransform): boolean {
   // Rectangle–Rectangle
   if (ca.type === ColliderType.Rectangle && cb.type === ColliderType.Rectangle)
     return checkRectRectCollision(ca, ta, cb, tb)

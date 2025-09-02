@@ -5,12 +5,12 @@ export enum ColliderType {
   Polygon,
 }
 
-export type Point = { x: number, y: number }
+type Position = { x?: number, y?: number }
 
-export type RectangleCollider = { type: ColliderType.Rectangle, width: number, height: number } & Point
-export type CircleCollider = { type: ColliderType.Circle, radius: number } & Point
-export type EllipseCollider = { type: ColliderType.Ellipse, width: number, height: number } & Point
-export type PolygonCollider = { type: ColliderType.Polygon, vertices: Point[] } & Point
+export type RectangleCollider = { type: ColliderType.Rectangle, width: number, height: number } & Position
+export type CircleCollider = { type: ColliderType.Circle, radius: number } & Position
+export type EllipseCollider = { type: ColliderType.Ellipse, width: number, height: number } & Position
+export type PolygonCollider = { type: ColliderType.Polygon, vertices: { x: number, y: number }[] } & Position
 
 export type Collider =
   | RectangleCollider

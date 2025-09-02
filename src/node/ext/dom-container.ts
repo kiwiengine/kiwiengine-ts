@@ -18,7 +18,7 @@ export class DomContainerNode extends GameObject {
   #syncTransform() {
     const renderer = this.renderer
     if (renderer) {
-      const gt = this.globalTransform
+      const gt = this.worldTransform
       const S = renderer.viewportScale
 
       this.#el.style.transform = `
@@ -48,7 +48,7 @@ export class DomContainerNode extends GameObject {
     super.update(dt)
 
     const renderer = this.renderer
-    if (renderer && (renderer._isSizeDirty || this.globalTransform.dirty)) {
+    if (renderer && (renderer._isSizeDirty || this.worldTransform.dirty)) {
       this.#syncTransform()
     }
     if (this.globalAlpha.dirty) this.#el.style.opacity = this.globalAlpha.v.toString()

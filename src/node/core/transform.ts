@@ -25,14 +25,14 @@ export class LocalTransform {
   }
 }
 
-export class GlobalTransform {
+export class WorldTransform {
   x = new DirtyNumber(Number.NEGATIVE_INFINITY)
   y = new DirtyNumber(Number.NEGATIVE_INFINITY)
   scaleX = new DirtyNumber(1)
   scaleY = new DirtyNumber(1)
   rotation = new DirtyRadian(0)
 
-  update(parent: GlobalTransform, local: LocalTransform) {
+  update(parent: WorldTransform, local: LocalTransform) {
     const rx = local.x * parent.scaleX.v
     const ry = local.y * parent.scaleY.v
     const pCos = parent.rotation.cos

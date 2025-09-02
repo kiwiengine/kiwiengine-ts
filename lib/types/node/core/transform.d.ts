@@ -12,13 +12,13 @@ export declare class LocalTransform {
     get rotation(): number;
     set rotation(v: number);
 }
-export declare class GlobalTransform {
+export declare class WorldTransform {
     x: DirtyNumber;
     y: DirtyNumber;
     scaleX: DirtyNumber;
     scaleY: DirtyNumber;
     rotation: DirtyRadian;
-    update(parent: GlobalTransform, local: LocalTransform): void;
+    update(parent: WorldTransform, local: LocalTransform): void;
     get dirty(): boolean;
     resetDirty(): void;
 }

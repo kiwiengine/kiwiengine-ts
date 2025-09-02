@@ -2,7 +2,7 @@ import { ColorSource } from 'pixi.js';
 import { DirtyNumber } from '../node/core/dirty-number';
 import { HasPixiContainer } from '../node/core/has-pixi-container';
 import { PixiContainerNode } from '../node/core/pixi-container-node';
-import { GlobalTransform } from '../node/core/transform';
+import { WorldTransform } from '../node/core/transform';
 import { Camera } from './camera';
 import { FpsDisplay } from './fps-display';
 export type RendererOptions = {
@@ -27,7 +27,7 @@ export declare class Renderer extends PixiContainerNode {
     viewportScale: number;
     centerX: number;
     centerY: number;
-    protected globalTransform: GlobalTransform;
+    protected worldTransform: WorldTransform;
     protected globalAlpha: DirtyNumber;
     constructor(container: HTMLElement, options?: RendererOptions);
     private init;

@@ -1,9 +1,9 @@
 import { EventMap } from '@webtaku/event-emitter'
 import { GameNode } from './game-node'
-import { GlobalTransform, LocalTransform } from './transform'
+import { WorldTransform, LocalTransform } from './transform'
 
 export function isTransformableNode(v: unknown): v is TransformableNode<EventMap> {
-  return (v as TransformableNode<EventMap>).globalTransform !== undefined
+  return (v as TransformableNode<EventMap>).worldTransform !== undefined
 }
 
 export type TransformableNodeOptions = {
@@ -19,20 +19,18 @@ export type TransformableNodeOptions = {
 
 export abstract class TransformableNode<E extends EventMap> extends GameNode<E> {
   protected localTransform = new LocalTransform()
-  globalTransform = new GlobalTransform()
+  worldTransform = new WorldTransform()
 
   constructor(options: TransformableNodeOptions) {
     super()
-    if (options) {
-      if (options.x !== undefined) this.x = options.x
-      if (options.y !== undefined) this.y = options.y
-      if (options.scale !== undefined) this.scale = options.scale
-      if (options.scaleX !== undefined) this.scaleX = options.scaleX
-      if (options.scaleY !== undefined) this.scaleY = options.scaleY
-      if (options.pivotX !== undefined) this.pivotX = options.pivotX
-      if (options.pivotY !== undefined) this.pivotY = options.pivotY
-      if (options.rotation !== undefined) this.rotation = options.rotation
-    }
+    if (options.x !== undefined) this.x = options.x
+    if (options.y !== undefined) this.y = options.y
+    if (options.scale !== undefined) this.scale = options.scale
+    if (options.scaleX !== undefined) this.scaleX = options.scaleX
+    if (options.scaleY !== undefined) this.scaleY = options.scaleY
+    if (options.pivotX !== undefined) this.pivotX = options.pivotX
+    if (options.pivotY !== undefined) this.pivotY = options.pivotY
+    if (options.rotation !== undefined) this.rotation = options.rotation
   }
 
   protected override update(dt: number) {
@@ -40,12 +38,12 @@ export abstract class TransformableNode<E extends EventMap> extends GameNode<E> 
 
     const parent = this.parent
     if (parent && isTransformableNode(parent)) {
-      this.globalTransform.update(parent.globalTransform, this.localTransform)
+      this.worldTransform.update(parent.worldTransform, this.localTransform)
     }
   }
 
   _resetTransformDirty() {
-    this.globalTransform.resetDirty()
+    this.worldTransform.resetDirty()
 
     for (const child of this.children) {
       if (isTransformableNode(child)) child._resetTransformDirty()
