@@ -1,5 +1,6 @@
 import { EventMap } from '@webtaku/event-emitter';
 import { Container as PixiContainer } from 'pixi.js';
+import { Renderer } from '../../renderer/renderer';
 import { RenderableNode } from './renderable';
 import { LocalTransform } from './transform';
 export type TransformableNodeOptions = {
@@ -20,6 +21,8 @@ export declare abstract class TransformableNode<C extends PixiContainer, E exten
     protected localTransform: LocalTransform;
     alpha: number;
     constructor(pixiContainer: C, options: TransformableNodeOptions);
+    protected set renderer(renderer: Renderer | undefined);
+    protected get renderer(): Renderer | undefined;
     _updateWorldTransform(): void;
     set x(v: number);
     get x(): number;

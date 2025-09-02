@@ -1,0 +1,1 @@
+{"version":3,"file":"container-manager.d.ts","sourceRoot":"","sources":["../../../src/renderer/container-manager.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,YAAY,EAAE,MAAM,wBAAwB,CAAA;AAGrD,qBAAa,wBAAyB,SAAQ,YAAY,CAAC;IACzD,MAAM,EAAE,CAAC,KAAK,EAAE,MAAM,EAAE,MAAM,EAAE,MAAM,KAAK,IAAI,CAAA;CAChD,CAAC;;gBAMY,SAAS,EAAE,WAAW;IAoBzB,MAAM;CAIhB"}

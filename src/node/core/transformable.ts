@@ -1,5 +1,6 @@
 import { EventMap } from '@webtaku/event-emitter'
 import { Container as PixiContainer } from 'pixi.js'
+import { Renderer } from '../../renderer/renderer'
 import { isRenderableNode, RenderableNode } from './renderable'
 import { LocalTransform } from './transform'
 
@@ -40,6 +41,18 @@ export abstract class TransformableNode<C extends PixiContainer, E extends Event
 
     this.#layer = options.layer
     this.#useYSort = options.useYSort ?? false
+  }
+
+  protected override set renderer(renderer: Renderer | undefined) {
+    super.renderer = renderer
+
+    if (this.#layer && renderer) {
+      renderer._addToLayer(this, this.#layer)
+    }
+  }
+
+  protected override get renderer() {
+    return super.renderer
   }
 
   override _updateWorldTransform() {

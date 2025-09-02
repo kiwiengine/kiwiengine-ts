@@ -1,0 +1,1 @@
+{"version":3,"file":"layer.d.ts","sourceRoot":"","sources":["../../../src/renderer/layer.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,wBAAwB,CAAA;AACjD,OAAO,EAAE,SAAS,IAAI,aAAa,EAAE,MAAM,SAAS,CAAA;AACpD,OAAO,EAAE,cAAc,EAAE,MAAM,yBAAyB,CAAA;AAExD,qBAAa,KAAM,SAAQ,cAAc,CAAC,aAAa,EAAE,QAAQ,CAAC;gBACpD,SAAS,EAAE,MAAM;CAS9B"}
