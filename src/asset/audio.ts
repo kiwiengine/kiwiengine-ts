@@ -1,3 +1,4 @@
+import { isMobile } from '../utils/device'
 import { audioLoader } from './loaders/audio'
 
 export const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
@@ -9,7 +10,6 @@ async function getAvailableContext(): Promise<AudioContext> {
   return audioContext
 }
 
-const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
 let isPageVisible = !document.hidden
 window.addEventListener('visibilitychange', () => isPageVisible = !document.hidden)
 
