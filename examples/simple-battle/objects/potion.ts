@@ -24,6 +24,8 @@ export class Potion extends GameObject {
       scale: 2
     }))
 
-    if (debugMode) this.add(new CircleNode({ ...this.triggerCollider, stroke: 'green', alpha: 0.5, layer: 'hud' }))
+    if (debugMode) {
+      this.add(new CircleNode({ ...this.triggerCollider, stroke: 'green', alpha: 0.5, layer: 'hud' }))
+    }
   }
 }
