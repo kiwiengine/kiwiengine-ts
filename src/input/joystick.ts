@@ -14,6 +14,18 @@ function clampVector(dx: number, dy: number, maxR: number) {
   return { x: dx * s, y: dy * s, dist: maxR }
 }
 
+function setStyle(el: HTMLElement | undefined, styles: Partial<CSSStyleDeclaration>) {
+  if (!el) return
+  Object.assign(el.style, styles)
+  return el
+}
+
+function setPosition(el: HTMLElement | undefined, left: number, top: number) {
+  if (!el) return
+  el.style.left = `${left}px`
+  el.style.top = `${top}px`
+}
+
 export type JoystickOptions = {
   // 공통 필수 콜백
   onMove: (radian: number, distance: number) => void // 키보드일 때 distance=1
@@ -39,7 +51,7 @@ export class Joystick extends GameObject {
   #activeTouchId?: number
   #touchStartX = 0
   #touchStartY = 0
-  #isMoving = false
+  #moving = false
 
   // DOM (터치용)
   #joystickImage?: HTMLElement
@@ -80,7 +92,7 @@ export class Joystick extends GameObject {
       c.addEventListener('touchcancel', this.#onTouchEnd)
 
       if (this.#joystickImage) {
-        Object.assign(this.#joystickImage.style, {
+        setStyle(this.#joystickImage, {
           left: `${this.#imageDefaultPosition.left}px`,
           top: `${this.#imageDefaultPosition.top}px`,
           zIndex: '999998',
@@ -90,7 +102,7 @@ export class Joystick extends GameObject {
       }
 
       if (this.#knobImage) {
-        Object.assign(this.#knobImage.style, {
+        setStyle(this.#knobImage, {
           left: `${this.#imageDefaultPosition.left}px`,
           top: `${this.#imageDefaultPosition.top}px`,
           zIndex: '999998',
@@ -106,15 +118,83 @@ export class Joystick extends GameObject {
   }
 
   #onTouchStart = (event: TouchEvent) => {
+    if (this.paused) return
+    event.preventDefault()
 
+    if (this.#activeTouchId !== undefined) return
+
+    const touch = event.changedTouches[0]
+    this.#activeTouchId = touch.identifier
+    this.#touchStartX = touch.clientX
+    this.#touchStartY = touch.clientY
+    this.#moving = false
+
+    if (!this.renderer) return
+
+    const r = this.renderer.container.getBoundingClientRect()
+    const left = this.#touchStartX - r.left
+    const top = this.#touchStartY - r.top
+
+    setPosition(this.#joystickImage, left, top)
+    setPosition(this.#knobImage, left, top)
   }
 
   #onTouchMove = (event: TouchEvent) => {
+    if (this.paused) return
+    event.preventDefault()
 
+    if (this.#activeTouchId === undefined) return
+
+    for (let i = 0; i < event.changedTouches.length; i++) {
+      const t = event.changedTouches[i]
+      if (t.identifier !== this.#activeTouchId) continue
+
+      const dx = t.clientX - this.#touchStartX
+      const dy = t.clientY - this.#touchStartY
+
+      const { x: cx, y: cy, dist } = clampVector(dx, dy, this.#maxKnobDistance)
+
+      if (this.renderer) {
+        const r = this.renderer.container.getBoundingClientRect()
+        const left = this.#touchStartX - r.left + cx
+        const top = this.#touchStartY - r.top + cy
+        setPosition(this.#knobImage, left, top)
+      }
+
+      if (this.#moving || dist >= this.#moveThreshold) {
+        this.#moving = true
+        if (cx !== 0 || cy !== 0) {
+          const radian = Math.atan2(cy, cx)
+          this.#onMove(radian, dist)
+        }
+      }
+      break
+    }
   }
 
   #onTouchEnd = (event: TouchEvent) => {
+    if (this.paused || this.#activeTouchId === undefined) return
 
+    let ended = false
+    for (let i = 0; i < event.changedTouches.length; i++) {
+      if (event.changedTouches[i].identifier === this.#activeTouchId) {
+        ended = true
+        break
+      }
+    }
+    if (!ended) return
+
+    this.#activeTouchId = undefined
+
+    // 기본 위치로 복귀
+    const { left, top } = this.#imageDefaultPosition
+    setPosition(this.#joystickImage, left, top)
+    setPosition(this.#knobImage, left, top)
+
+    if (this.#moving) {
+      this.#moving = false
+      this.#onRelease()
+    }
   }
 
   #calculateRadianFromArrows() {
@@ -134,32 +214,68 @@ export class Joystick extends GameObject {
   }
 
   #onKeyDown = (event: KeyboardEvent) => {
+    if (this.paused) return
 
+    const code = event.code
+    if (this.#codesPressed.has(code)) return
+
+    this.#codesPressed.add(code)
+    this.#onKeydown?.(code)
+
+    if (isArrow(code)) {
+      this.#arrowCodesPressed.add(code)
+      this.#calculateRadianFromArrows()
+    }
   }
 
   #onKeyUp = (event: KeyboardEvent) => {
+    if (this.paused) return
 
+    const code = event.code
+    this.#codesPressed.delete(code)
+
+    if (isArrow(code)) {
+      this.#arrowCodesPressed.delete(code)
+
+      if (this.#arrowCodesPressed.size === 0) {
+        this.#onRelease()
+      } else {
+        this.#calculateRadianFromArrows()
+      }
+    }
   }
 
   #onBlur = () => {
+    if (this.paused) return
 
+    // 키보드/터치 공통 릴리즈
+    this.#codesPressed.clear()
+    this.#arrowCodesPressed.clear()
+    this.#activeTouchId = undefined
+    this.#moving = false
+
+    // 기본 위치로 복귀
+    const { left, top } = this.#imageDefaultPosition
+    setPosition(this.#joystickImage, left, top)
+    setPosition(this.#knobImage, left, top)
+
+    this.#onRelease()
+  }
+
+  override pause() {
+    this.#onBlur()
+    super.pause()
   }
 
   // 조이스틱 이미지의 기본 위치(숨김 좌표) 설정
-  setImageDefaultPosition(position: { left: number; top: number }): void {
-    this.#imageDefaultPosition = position
+  setImageDefaultPosition(p: { left: number; top: number }): void {
+    this.#imageDefaultPosition = p
 
     // 드래그 중이면 즉시 반영하지 않음
     if (this.#activeTouchId !== undefined) return
 
-    if (this.#joystickImage) Object.assign(this.#joystickImage.style, {
-      left: `${this.#imageDefaultPosition.left}px`,
-      top: `${this.#imageDefaultPosition.top}px`,
-    })
-    if (this.#knobImage) Object.assign(this.#knobImage.style, {
-      left: `${this.#imageDefaultPosition.left}px`,
-      top: `${this.#imageDefaultPosition.top}px`,
-    })
+    setPosition(this.#joystickImage, p.left, p.top)
+    setPosition(this.#knobImage, p.left, p.top)
   }
 
   override remove() {

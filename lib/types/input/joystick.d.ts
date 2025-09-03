@@ -18,7 +18,8 @@ export declare class Joystick extends GameObject {
     constructor(options: JoystickOptions);
     protected set renderer(renderer: Renderer | undefined);
     protected get renderer(): Renderer | undefined;
-    setImageDefaultPosition(position: {
+    pause(): void;
+    setImageDefaultPosition(p: {
         left: number;
         top: number;
     }): void;

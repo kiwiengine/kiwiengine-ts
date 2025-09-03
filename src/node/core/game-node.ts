@@ -5,6 +5,7 @@ export abstract class GameNode<E extends EventMap> extends EventEmitter<E & {
 }> {
   #parent?: GameNode<EventMap>
   protected children: GameNode<EventMap>[] = [];
+  paused = false
 
   protected set parent(parent: GameNode<EventMap> | undefined) {
     this.#parent = parent
@@ -47,10 +48,27 @@ export abstract class GameNode<E extends EventMap> extends EventEmitter<E & {
     this.children.length = 0
   }
 
-  protected update(dt: number) {
+  pause() {
+    this.paused = true
     for (const child of this.children) {
-      child.update(dt)
+      child.pause()
     }
+  }
+
+  resume() {
+    this.paused = false
+    for (const child of this.children) {
+      child.resume()
+    }
+  }
+
+  protected update(dt: number) {
+    if (this.paused) return
+
+    for (const child of this.children) {
+      if (!child.paused) child.update(dt)
+    }
+
     (this as any).emit('update', dt)
   }
 }

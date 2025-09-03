@@ -4,10 +4,13 @@ export declare abstract class GameNode<E extends EventMap> extends EventEmitter<
 }> {
     #private;
     protected children: GameNode<EventMap>[];
+    paused: boolean;
     protected set parent(parent: GameNode<EventMap> | undefined);
     protected get parent(): GameNode<EventMap> | undefined;
     add(...children: GameNode<EventMap>[]): void;
     remove(): void;
+    pause(): void;
+    resume(): void;
     protected update(dt: number): void;
 }
 //# sourceMappingURL=game-node.d.ts.map
