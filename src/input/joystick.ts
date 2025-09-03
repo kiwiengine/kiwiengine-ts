@@ -32,14 +32,14 @@ export type JoystickOptions = {
   onRelease: () => void
 
   // 선택 콜백
-  onKeydown?: (code: string) => void
+  onKeyDown?: (code: string) => void
 
   // (선택) 터치 전용 리소스/옵션
   joystickImage?: HTMLElement         // 조이스틱 배경
   knobImage?: HTMLElement             // 노브(스틱)
   maxKnobDistance?: number            // px (기본 80)
   moveThreshold?: number              // px (기본 0)
-  imageDefaultPosition?: { left: number; top: number } // 이미지 기본 위치 (기본값은 숨김 위치 -999999, -999999)
+  idlePosition?: { left: number; top: number } // 이미지 기본 위치 (기본값은 숨김 위치 -999999, -999999)
 }
 
 export class Joystick extends GameObject {
@@ -58,7 +58,7 @@ export class Joystick extends GameObject {
   #knobImage?: HTMLElement
   #maxKnobDistance: number
   #moveThreshold: number
-  #imageDefaultPosition: { left: number; top: number }
+  #idlePosition: { left: number; top: number }
 
   // 콜백
   #onMove: (radian: number, distance: number) => void
@@ -70,12 +70,12 @@ export class Joystick extends GameObject {
 
     this.#onMove = options.onMove
     this.#onRelease = options.onRelease
-    this.#onKeydown = options.onKeydown
+    this.#onKeydown = options.onKeyDown
     this.#joystickImage = options.joystickImage
     this.#knobImage = options.knobImage
     this.#maxKnobDistance = options.maxKnobDistance ?? 80
     this.#moveThreshold = options.moveThreshold ?? 0
-    this.#imageDefaultPosition = options.imageDefaultPosition ?? { left: -999999, top: -999999 }
+    this.#idlePosition = options.idlePosition ?? { left: -999999, top: -999999 }
 
     window.addEventListener('keydown', this.#onKeyDown)
     window.addEventListener('keyup', this.#onKeyUp)
@@ -103,10 +103,11 @@ export class Joystick extends GameObject {
       if (this.#joystickImage) {
         setStyle(this.#joystickImage, {
           position: 'absolute',
-          left: `${this.#imageDefaultPosition.left}px`,
-          top: `${this.#imageDefaultPosition.top}px`,
+          left: `${this.#idlePosition.left}px`,
+          top: `${this.#idlePosition.top}px`,
           zIndex: '999998',
           transform: 'translate(-50%, -50%)',
+          pointerEvents: 'none',
         })
         c.appendChild(this.#joystickImage)
       }
@@ -114,10 +115,11 @@ export class Joystick extends GameObject {
       if (this.#knobImage) {
         setStyle(this.#knobImage, {
           position: 'absolute',
-          left: `${this.#imageDefaultPosition.left}px`,
-          top: `${this.#imageDefaultPosition.top}px`,
+          left: `${this.#idlePosition.left}px`,
+          top: `${this.#idlePosition.top}px`,
           zIndex: '999999',
           transform: 'translate(-50%, -50%)',
+          pointerEvents: 'none',
         })
         c.appendChild(this.#knobImage)
       }
@@ -198,7 +200,7 @@ export class Joystick extends GameObject {
     this.#activeTouchId = undefined
 
     // 기본 위치로 복귀
-    const { left, top } = this.#imageDefaultPosition
+    const { left, top } = this.#idlePosition
     setPosition(this.#joystickImage, left, top)
     setPosition(this.#knobImage, left, top)
 
@@ -208,7 +210,7 @@ export class Joystick extends GameObject {
     }
   }
 
-  #calculateRadianFromArrows() {
+  #emitFromArrowKeys() {
     let dx = 0
     let dy = 0
 
@@ -236,11 +238,11 @@ export class Joystick extends GameObject {
     if (isArrow(code)) {
       const target = event.target as HTMLElement | null
       const isEditing =
-        !!target?.closest('input, textarea, [contenteditable=""], [contenteditable="true"]')
+        !!target?.closest('input, textarea, [contenteditable]:not([contenteditable="false"])')
       if (!isEditing) event.preventDefault()
 
       this.#arrowCodesPressed.add(code)
-      this.#calculateRadianFromArrows()
+      this.#emitFromArrowKeys()
     }
   }
 
@@ -256,7 +258,7 @@ export class Joystick extends GameObject {
       if (this.#arrowCodesPressed.size === 0) {
         this.#onRelease()
       } else {
-        this.#calculateRadianFromArrows()
+        this.#emitFromArrowKeys()
       }
     }
   }
@@ -271,7 +273,7 @@ export class Joystick extends GameObject {
     this.#moving = false
 
     // 기본 위치로 복귀
-    const { left, top } = this.#imageDefaultPosition
+    const { left, top } = this.#idlePosition
     setPosition(this.#joystickImage, left, top)
     setPosition(this.#knobImage, left, top)
 
@@ -284,8 +286,8 @@ export class Joystick extends GameObject {
   }
 
   // 조이스틱 이미지의 기본 위치(숨김 좌표) 설정
-  setImageDefaultPosition(p: { left: number; top: number }): void {
-    this.#imageDefaultPosition = p
+  setIdlePosition(p: { left: number; top: number }): void {
+    this.#idlePosition = p
 
     // 드래그 중이면 즉시 반영하지 않음
     if (this.#activeTouchId !== undefined) return

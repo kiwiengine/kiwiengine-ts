@@ -3,12 +3,12 @@ import { Renderer } from '../renderer/renderer';
 export type JoystickOptions = {
     onMove: (radian: number, distance: number) => void;
     onRelease: () => void;
-    onKeydown?: (code: string) => void;
+    onKeyDown?: (code: string) => void;
     joystickImage?: HTMLElement;
     knobImage?: HTMLElement;
     maxKnobDistance?: number;
     moveThreshold?: number;
-    imageDefaultPosition?: {
+    idlePosition?: {
         left: number;
         top: number;
     };
@@ -19,7 +19,7 @@ export declare class Joystick extends GameObject {
     protected set renderer(renderer: Renderer | undefined);
     protected get renderer(): Renderer | undefined;
     pause(): void;
-    setImageDefaultPosition(p: {
+    setIdlePosition(p: {
         left: number;
         top: number;
     }): void;
