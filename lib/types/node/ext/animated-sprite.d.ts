@@ -1,3 +1,4 @@
+import { EventMap } from '@webtaku/event-emitter';
 import { SpritesheetData } from 'pixi.js';
 import { GameObject, GameObjectOptions } from '../core/game-object';
 export type AnimatedSpriteNodeOptions = {
@@ -7,7 +8,9 @@ export type AnimatedSpriteNodeOptions = {
     fps: number;
     loop?: boolean;
 } & GameObjectOptions;
-export declare class AnimatedSpriteNode extends GameObject {
+export declare class AnimatedSpriteNode<E extends EventMap = EventMap> extends GameObject<E & {
+    animationend: (animation: string) => void;
+}> {
     #private;
     constructor(options: AnimatedSpriteNodeOptions);
     set src(src: string);

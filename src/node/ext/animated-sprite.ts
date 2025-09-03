@@ -1,3 +1,4 @@
+import { EventMap } from '@webtaku/event-emitter'
 import { AnimatedSprite as PixiAnimatedSprite, Spritesheet, SpritesheetData } from 'pixi.js'
 import { getCachedAtlasId, spritesheetLoader } from '../../asset/loaders/spritesheet'
 import { GameObject, GameObjectOptions } from '../core/game-object'
@@ -10,7 +11,9 @@ export type AnimatedSpriteNodeOptions = {
   loop?: boolean
 } & GameObjectOptions
 
-export class AnimatedSpriteNode extends GameObject {
+export class AnimatedSpriteNode<E extends EventMap = EventMap> extends GameObject<E & {
+  animationend: (animation: string) => void
+}> {
   #src: string
   #atlas: SpritesheetData
   #animation: string
@@ -59,6 +62,8 @@ export class AnimatedSpriteNode extends GameObject {
       sprite.loop = this.#loop
       sprite.animationSpeed = (this.#fps ?? 0) / 60
       sprite.play()
+      sprite.onLoop = () => (this as any).emit('animationend', this.#animation)
+      sprite.onComplete = () => (this as any).emit('animationend', this.#animation)
       this._pixiContainer.addChild(sprite)
       this.#sprite = sprite
     }

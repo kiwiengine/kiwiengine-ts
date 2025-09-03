@@ -4,13 +4,18 @@ import { Character } from './character'
 
 const HERO_MOVE_SPEED = 300 as const
 const HERO_HITBOX_X = 24 as const
+const HERO_ATTACK_DAMAGE = 300 as const
 
-export class Hero extends Character {
+export class Hero extends Character<{
+  attack: (damage: number) => void
+  dead: () => void
+}> {
   protected _sprite: AnimatedSpriteNode
 
   #cachedVelX = 0
   #cachedVelY = 0
   #prevX = this.x
+  #attacking = false
 
   constructor(options?: GameObjectOptions) {
     super({
@@ -31,6 +36,14 @@ export class Hero extends Character {
       loop: true,
       scale: 2
     })
+    this._sprite.on('animationend', (animation) => {
+      if (animation.startsWith('attack')) {
+        this.#attacking = false
+        this._sprite.animation = 'idle'
+      } else if (animation === 'die') {
+        this.emit('dead')
+      }
+    })
     this.add(this._sprite)
   }
 
@@ -45,7 +58,10 @@ export class Hero extends Character {
   }
 
   attack() {
-    //TODO
+    if (this.#attacking) return
+    this.#attacking = true
+
+    this._sprite.animation = Math.floor(Math.random() * 2) ? 'attack1' : 'attack2'
   }
 
   protected override update(dt: number) {

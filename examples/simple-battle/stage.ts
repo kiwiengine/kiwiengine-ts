@@ -1,4 +1,4 @@
-import { IntervalNode, Joystick, PhysicsWorld } from '../../src'
+import { checkCollision, IntervalNode, Joystick, PhysicsWorld } from '../../src'
 import { Hero } from './objects/hero'
 import { Orc } from './objects/orc'
 import { Potion } from './objects/potion'
@@ -99,8 +99,14 @@ export class Stage extends PhysicsWorld {
   protected override update(dt: number) {
     super.update(dt)
 
+    const h = this.#hero
+
     for (const o of this.#orcs) {
-      o.moveTo(this.#hero.x, this.#hero.y)
+      if (checkCollision(h.hurtbox, h.worldTransform, o.hitbox, o.worldTransform)) {
+        o.attack()
+      } else {
+        o.moveTo(this.#hero.x, this.#hero.y)
+      }
     }
   }
 }

@@ -1,3 +1,4 @@
+import { EventMap } from '@webtaku/event-emitter'
 import { Sprite as PixiSprite } from 'pixi.js'
 import { textureLoader } from '../../asset/loaders/texture'
 import { GameObject, GameObjectOptions } from '../core/game-object'
@@ -6,7 +7,7 @@ export type SpriteNodeOptions = {
   src: string
 } & GameObjectOptions
 
-export class SpriteNode extends GameObject {
+export class SpriteNode<E extends EventMap = EventMap> extends GameObject<E> {
   #src: string
   #sprite?: PixiSprite
 

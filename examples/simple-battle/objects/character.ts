@@ -1,3 +1,4 @@
+import { EventMap } from '@webtaku/event-emitter'
 import { AnimatedSpriteNode, PhysicsObject, PhysicsObjectOptions, RectangleCollider, RectangleNode } from '../../../src'
 import { debugMode } from '../../../src/debug'
 import { HpBar } from '../hud/hp-bar'
@@ -10,37 +11,37 @@ export type CharacterOptions = {
   hurtbox: RectangleCollider
 } & PhysicsObjectOptions
 
-export class Character extends PhysicsObject {
+export class Character<E extends EventMap = EventMap> extends PhysicsObject<E> {
   maxHp: number
   hp: number
 
-  #hitbox: RectangleCollider
-  #hurtbox: RectangleCollider
-  #hitboxDebugNode?: RectangleNode
+  hitbox: RectangleCollider
+  hurtbox: RectangleCollider
 
   #hpBar: HpBar
   protected _sprite?: AnimatedSpriteNode
+  #hitboxDebugNode?: RectangleNode
 
   constructor(options: CharacterOptions) {
     super({ ...options, fixedRotation: true })
     this.maxHp = options.maxHp
     this.hp = options.hp
-    this.#hitbox = options.hitbox
-    this.#hurtbox = options.hurtbox
+    this.hitbox = options.hitbox
+    this.hurtbox = options.hurtbox
 
     this.#hpBar = new HpBar({ y: -30, maxHp: options.maxHp, hp: options.hp, layer: 'hud' })
     this.add(this.#hpBar)
 
     if (debugMode) {
       this.add(new RectangleNode({ ...options.collider, stroke: 'yellow', alpha: 0.5, layer: 'hud' }))
-      this.#hitboxDebugNode = new RectangleNode({ ...this.#hitbox, stroke: 'red', alpha: 0.5, layer: 'hud' })
+      this.#hitboxDebugNode = new RectangleNode({ ...this.hitbox, stroke: 'red', alpha: 0.5, layer: 'hud' })
       this.add(this.#hitboxDebugNode)
-      this.add(new RectangleNode({ ...this.#hurtbox, stroke: 'green', alpha: 0.5, layer: 'hud' }))
+      this.add(new RectangleNode({ ...this.hurtbox, stroke: 'green', alpha: 0.5, layer: 'hud' }))
     }
   }
 
   set hitboxX(x: number) {
-    this.#hitbox.x = x
+    this.hitbox.x = x
     if (this.#hitboxDebugNode) this.#hitboxDebugNode.x = x
   }
 }

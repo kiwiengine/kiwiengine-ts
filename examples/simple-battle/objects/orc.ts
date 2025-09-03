@@ -4,12 +4,17 @@ import { Character } from './character'
 
 const ORC_MOVE_VELOCITY = 3 as const
 const ORC_HITBOX_X = 24 as const
+const ORC_ATTACK_DAMAGE = 1 as const
 
-export class Orc extends Character {
+export class Orc extends Character<{
+  attack: (damage: number) => void
+  dead: () => void
+}> {
   protected _sprite: AnimatedSpriteNode
 
   #cachedVelX = 0
   #cachedVelY = 0
+  #attacking = false
 
   constructor(options?: GameObjectOptions) {
     super({
@@ -29,6 +34,14 @@ export class Orc extends Character {
       loop: true,
       scale: 2
     })
+    this._sprite.on('animationend', (animation) => {
+      if (animation.startsWith('attack')) {
+        this.#attacking = false
+        this._sprite.animation = 'idle'
+      } else if (animation === 'die') {
+        this.emit('dead')
+      }
+    })
     this.add(this._sprite)
   }
 
@@ -42,6 +55,16 @@ export class Orc extends Character {
     const scale = Math.abs(this._sprite.scaleX)
     this._sprite.scaleX = dx > 0 ? scale : -scale
     this.hitboxX = dx > 0 ? ORC_HITBOX_X : -ORC_HITBOX_X
+  }
+
+  attack() {
+    if (this.#attacking) return
+    this.#attacking = true
+
+    this.#cachedVelX = 0
+    this.#cachedVelY = 0
+
+    this._sprite.animation = Math.floor(Math.random() * 2) ? 'attack1' : 'attack2'
   }
 
   protected override update(dt: number) {

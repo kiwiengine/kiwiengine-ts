@@ -57,28 +57,12 @@ const rigidRotateT = (t: Transform, deltaDeg: number): Transform => {
   return T(nx, ny, newRotDeg, t.scaleX.v, t.scaleY.v)
 }
 
-// ---- Polygons live in world space; move/rotate vertices directly (Transform is ignored).
-function shiftPoly(poly: PolygonCollider, dx: number, dy: number): PolygonCollider {
-  return {
-    ...poly,
-    vertices: poly.vertices.map(p => ({ x: p.x + dx, y: p.y + dy })),
-  }
-}
-function rotatePoly(poly: PolygonCollider, deg: number): PolygonCollider {
-  const th = rad(deg), c = Math.cos(th), s = Math.sin(th)
-  return {
-    ...poly,
-    vertices: poly.vertices.map(p => ({ x: c * p.x - s * p.y, y: s * p.x + c * p.y })),
-  }
-}
-
 // Apply transforms per-shape for property tests
 function applyTranslation(
   col: CircleCollider | RectangleCollider | EllipseCollider | PolygonCollider,
   t: Transform,
   dx: number, dy: number
 ): [typeof col, Transform] {
-  if (col.type === ColliderType.Polygon) return [shiftPoly(col, dx, dy), t]
   return [col, translateT(t, dx, dy)]
 }
 function applyRotation(
@@ -86,7 +70,6 @@ function applyRotation(
   t: Transform,
   deg: number
 ): [typeof col, Transform] {
-  if (col.type === ColliderType.Polygon) return [rotatePoly(col, deg), t]
   return [col, rigidRotateT(t, deg)]
 }
 
