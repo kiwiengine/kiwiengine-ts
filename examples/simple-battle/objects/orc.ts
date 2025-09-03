@@ -2,8 +2,12 @@ import { AnimatedSpriteNode, ColliderType, GameObjectOptions } from '../../../sr
 import { Character } from './character'
 import orcAtlas from '../assets/spritesheets/orc-atlas.json'
 
+const ORC_MOVE_SPEED = 3 as const
+
 export class Orc extends Character {
   #sprite: AnimatedSpriteNode
+  #cachedVelX = 0
+  #cachedVelY = 0
 
   constructor(options?: GameObjectOptions) {
     super({
@@ -24,5 +28,19 @@ export class Orc extends Character {
       scale: 2
     })
     this.add(this.#sprite)
+  }
+
+  moveTo(x: number, y: number) {
+    const dx = x - this.x
+    const dy = y - this.y
+    const radian = Math.atan2(dy, dx)
+    this.#cachedVelX = Math.cos(radian) * ORC_MOVE_SPEED
+    this.#cachedVelY = Math.sin(radian) * ORC_MOVE_SPEED
+  }
+
+  protected override update(dt: number) {
+    super.update(dt)
+    this.velocityX = this.#cachedVelX
+    this.velocityY = this.#cachedVelY
   }
 }

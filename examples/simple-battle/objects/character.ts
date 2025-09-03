@@ -19,7 +19,7 @@ export class Character extends PhysicsObject {
   #hpBar: HpBar
 
   constructor(options: CharacterOptions) {
-    super(options)
+    super({ ...options, fixedRotation: true })
     this.maxHp = options.maxHp
     this.hp = options.hp
     this.hitbox = options.hitbox

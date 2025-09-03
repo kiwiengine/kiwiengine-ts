@@ -2,8 +2,12 @@ import { AnimatedSpriteNode, ColliderType, GameObjectOptions } from '../../../sr
 import { Character } from './character'
 import heroAtlas from '../assets/spritesheets/hero-atlas.json'
 
+const HERO_MOVE_SPEED = 5 as const
+
 export class Hero extends Character {
   #sprite: AnimatedSpriteNode
+  #cachedVelX = 0
+  #cachedVelY = 0
 
   constructor(options?: GameObjectOptions) {
     super({
@@ -24,5 +28,26 @@ export class Hero extends Character {
       scale: 2
     })
     this.add(this.#sprite)
+  }
+
+  move(radian: number, distance: number) {
+    this.#cachedVelX = Math.cos(radian) * distance * HERO_MOVE_SPEED
+    this.#cachedVelY = Math.sin(radian) * distance * HERO_MOVE_SPEED
+  }
+
+  stop() {
+    this.#cachedVelX = 0
+    this.#cachedVelY = 0
+  }
+
+  attack() {
+    //TODO
+  }
+
+  protected override update(dt: number) {
+    super.update(dt)
+
+    this.velocityX = this.#cachedVelX
+    this.velocityY = this.#cachedVelY
   }
 }

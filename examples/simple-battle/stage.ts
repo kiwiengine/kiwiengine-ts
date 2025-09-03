@@ -1,4 +1,4 @@
-import { IntervalNode, PhysicsWorld } from '../../src'
+import { IntervalNode, Joystick, PhysicsWorld } from '../../src'
 import { Hero } from './objects/hero'
 import { Orc } from './objects/orc'
 import { Potion } from './objects/potion'
@@ -13,6 +13,25 @@ export class Stage extends PhysicsWorld {
     this.add(this.#hero)
     this.add(new IntervalNode(1, () => this.#spawnOrc()))
     this.add(new IntervalNode(3, () => this.#spawnPotion()))
+
+    const joystickImage = new Image()
+    joystickImage.src = 'assets/joystick/joystick.png'
+
+    const knobImage = new Image()
+    knobImage.src = 'assets/joystick/knob.png'
+
+    this.add(
+      new Joystick({
+        onMove: (r, d) => this.#hero.move(r, d),
+        onRelease: () => this.#hero.stop(),
+        onKeyDown: (code) => {
+          if (code === 'KeyA') this.#hero.attack()
+        },
+        joystickImage,
+        knobImage,
+        maxKnobDistance: 70,
+      }),
+    )
   }
 
   #spawnOrc() {
@@ -29,5 +48,13 @@ export class Stage extends PhysicsWorld {
     p.y = Math.random() * 600 - 300
     this.add(p)
     this.#potions.add(p)
+  }
+
+  protected override update(dt: number) {
+    super.update(dt)
+
+    for (const o of this.#orcs) {
+      o.moveTo(this.#hero.x, this.#hero.y)
+    }
   }
 }
