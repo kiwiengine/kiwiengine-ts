@@ -40,6 +40,7 @@ export type PhysicsObjectOptions = {
   fixedRotation?: boolean
   velocityX?: number
   velocityY?: number
+  isStatic?: boolean
 }
 
 export class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode<PixiContainer, E> {
@@ -49,13 +50,14 @@ export class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode
   constructor(options: PhysicsObjectOptions) {
     super(new PixiContainer({ sortableChildren: true }))
 
+    const c = options.collider
     const x = options.x ?? 0
     const y = options.y ?? 0
-    const c = options.collider
 
     const bodyOptions: IChamferableBodyDefinition = {
       angle: options.rotation ?? 0,
       velocity: { x: options.velocityX ?? 0, y: options.velocityY ?? 0 },
+      isStatic: options.isStatic ?? false
     }
 
     if (options.fixedRotation) {
@@ -133,4 +135,7 @@ export class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode
 
   set velocityY(v) { Matter.Body.setVelocity(this.#matterBody, { x: this.#matterBody.velocity.x, y: v }) }
   get velocityY() { return this.#matterBody.velocity.y }
+
+  set isStatic(v) { Matter.Body.setStatic(this.#matterBody, v) }
+  get isStatic() { return this.#matterBody.isStatic }
 }

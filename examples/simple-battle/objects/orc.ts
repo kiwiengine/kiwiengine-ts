@@ -2,7 +2,7 @@ import { AnimatedSpriteNode, ColliderType, GameObjectOptions } from '../../../sr
 import { Character } from './character'
 import orcAtlas from '../assets/spritesheets/orc-atlas.json'
 
-const ORC_MOVE_SPEED = 3 as const
+const ORC_MOVE_VELOCITY = 3 as const
 
 export class Orc extends Character {
   #sprite: AnimatedSpriteNode
@@ -34,8 +34,8 @@ export class Orc extends Character {
     const dx = x - this.x
     const dy = y - this.y
     const radian = Math.atan2(dy, dx)
-    this.#cachedVelX = Math.cos(radian) * ORC_MOVE_SPEED
-    this.#cachedVelY = Math.sin(radian) * ORC_MOVE_SPEED
+    this.#cachedVelX = Math.cos(radian) * ORC_MOVE_VELOCITY
+    this.#cachedVelY = Math.sin(radian) * ORC_MOVE_VELOCITY
   }
 
   protected override update(dt: number) {

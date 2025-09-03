@@ -14,6 +14,10 @@ export class Stage extends PhysicsWorld {
     this.add(new IntervalNode(1, () => this.#spawnOrc()))
     this.add(new IntervalNode(3, () => this.#spawnPotion()))
 
+    for (let i = 0; i < 100; i++) {
+      this.#spawnOrc()
+    }
+
     const joystickImage = new Image()
     joystickImage.src = 'assets/joystick/joystick.png'
 

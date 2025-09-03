@@ -2,7 +2,7 @@ import { AnimatedSpriteNode, ColliderType, GameObjectOptions } from '../../../sr
 import { Character } from './character'
 import heroAtlas from '../assets/spritesheets/hero-atlas.json'
 
-const HERO_MOVE_SPEED = 5 as const
+const HERO_MOVE_SPEED = 300 as const
 
 export class Hero extends Character {
   #sprite: AnimatedSpriteNode
@@ -17,6 +17,7 @@ export class Hero extends Character {
       collider: { type: ColliderType.Rectangle, width: 24, height: 12, y: 12 },
       hitbox: { type: ColliderType.Rectangle, width: 32, height: 52, x: 24, y: -8 },
       hurtbox: { type: ColliderType.Rectangle, width: 24, height: 40, x: 0, y: -4 },
+      isStatic: true
     })
 
     this.#sprite = new AnimatedSpriteNode({
@@ -47,7 +48,7 @@ export class Hero extends Character {
   protected override update(dt: number) {
     super.update(dt)
 
-    this.velocityX = this.#cachedVelX
-    this.velocityY = this.#cachedVelY
+    this.x += this.#cachedVelX * dt
+    this.y += this.#cachedVelY * dt
   }
 }

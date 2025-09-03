@@ -11,6 +11,7 @@ export type PhysicsObjectOptions = {
     fixedRotation?: boolean;
     velocityX?: number;
     velocityY?: number;
+    isStatic?: boolean;
 };
 export declare class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode<PixiContainer, E> {
     #private;
@@ -29,5 +30,7 @@ export declare class PhysicsObject<E extends EventMap = EventMap> extends Render
     get velocityX(): number;
     set velocityY(v: number);
     get velocityY(): number;
+    set isStatic(v: boolean);
+    get isStatic(): boolean;
 }
 //# sourceMappingURL=physics-object.d.ts.map
