@@ -4,7 +4,9 @@ import orcAtlas from './assets/spritesheets/orc-atlas.json'
 import potionAtlas from './assets/spritesheets/potion-atlas.json'
 import { Stage } from './stage'
 
-enableDebug()
+if (process.env.NODE_ENV === 'development') {
+  enableDebug()
+}
 
 await preload([
   { src: 'assets/spritesheets/hero.png', atlas: heroAtlas },

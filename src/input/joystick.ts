@@ -28,7 +28,7 @@ function setPosition(el: HTMLElement | undefined, left: number, top: number) {
 
 export type JoystickOptions = {
   // 공통 필수 콜백
-  onMove: (radian: number, distance: number) => void // 키보드일 때 distance=1
+  onMove: (radian: number, strength: number) => void // 키보드일 때 strength=1
   onRelease: () => void
 
   // 선택 콜백
@@ -61,7 +61,7 @@ export class Joystick extends GameObject {
   #idlePosition: { left: number; top: number }
 
   // 콜백
-  #onMove: (radian: number, distance: number) => void
+  #onMove: (radian: number, strength: number) => void
   #onRelease: () => void
   #onKeydown?: (code: string) => void
 
@@ -178,7 +178,8 @@ export class Joystick extends GameObject {
         this.#moving = true
         if (cx !== 0 || cy !== 0) {
           const radian = Math.atan2(cy, cx)
-          this.#onMove(radian, dist)
+          const normalized = this.#maxKnobDistance === 0 ? 0 : dist / this.#maxKnobDistance
+          this.#onMove(radian, normalized)
         }
       }
       break
@@ -221,7 +222,7 @@ export class Joystick extends GameObject {
 
     if (dx !== 0 || dy !== 0) {
       const radian = Math.atan2(dy, dx)
-      // 키보드: distance=1 로 일관 전달
+      // 키보드: strength=1 로 일관 전달
       this.#onMove(radian, 1)
     }
   }

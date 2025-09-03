@@ -1,7 +1,7 @@
 import { GameObject } from '../node/core/game-object';
 import { Renderer } from '../renderer/renderer';
 export type JoystickOptions = {
-    onMove: (radian: number, distance: number) => void;
+    onMove: (radian: number, strength: number) => void;
     onRelease: () => void;
     onKeyDown?: (code: string) => void;
     joystickImage?: HTMLElement;
