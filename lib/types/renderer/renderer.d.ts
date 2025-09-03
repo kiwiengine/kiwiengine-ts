@@ -12,7 +12,9 @@ export type RendererOptions = {
         drawOrder: number;
     }[];
 };
-export declare class Renderer extends RenderableNode<PixiContainer, EventMap> {
+export declare class Renderer extends RenderableNode<PixiContainer, {
+    resize: (width: number, height: number) => void;
+}> {
     #private;
     container: HTMLElement;
     camera: Camera;

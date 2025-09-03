@@ -3,10 +3,26 @@ import { Hero } from './objects/hero'
 import { Orc } from './objects/orc'
 import { Potion } from './objects/potion'
 
+function createTextElement() {
+  const el = document.createElement('div')
+  el.style.color = 'white'
+  el.style.position = 'absolute'
+  el.style.top = '10px'
+  el.style.zIndex = '1'
+  return el
+}
+
 export class Stage extends PhysicsWorld {
   #hero = new Hero();
   #orcs: Set<Orc> = new Set();
   #potions: Set<Potion> = new Set();
+
+  #time = 0
+  #score = 0
+
+  #timeText: HTMLDivElement
+  #hpText: HTMLDivElement
+  #scoreText: HTMLDivElement
 
   constructor() {
     super()
@@ -36,6 +52,32 @@ export class Stage extends PhysicsWorld {
         maxKnobDistance: 70,
       }),
     )
+
+    this.#timeText = createTextElement()
+    this.#hpText = createTextElement()
+    this.#scoreText = createTextElement()
+
+    this.#timeText.textContent = `Time: ${this.#time}`
+    this.#hpText.textContent = `HP: ${this.#hero.hp}`
+    this.#scoreText.textContent = `Score: ${this.#score}`
+
+    this.#timeText.style.left = '10px'
+    this.#hpText.style.left = '50%'
+    this.#hpText.style.transform = 'translate(-50%, 0)'
+    this.#scoreText.style.right = '10px'
+  }
+
+  protected override set renderer(renderer) {
+    super.renderer = renderer
+
+    if (renderer) {
+      const c = renderer.container
+      c.append(this.#timeText, this.#hpText, this.#scoreText)
+    }
+  }
+
+  protected override get renderer() {
+    return super.renderer
   }
 
   #spawnOrc() {

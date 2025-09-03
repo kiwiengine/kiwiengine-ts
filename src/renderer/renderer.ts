@@ -15,7 +15,9 @@ export type RendererOptions = {
   layers?: { name: string; drawOrder: number }[]
 }
 
-export class Renderer extends RenderableNode<PixiContainer, EventMap> {
+export class Renderer extends RenderableNode<PixiContainer, {
+  resize: (width: number, height: number) => void
+}> {
   #containerManager: RendererContainerManager
   #ticker = new Ticker((dt) => this.#render(dt))
   camera = new Camera()
@@ -129,6 +131,8 @@ export class Renderer extends RenderableNode<PixiContainer, EventMap> {
       canvas.style.height = `${displayHeight}px`
       canvas.style.left = `${canvasLeft}px`
       canvas.style.top = `${canvasTop}px`
+
+      this.emit('resize', canvasWidth, canvasHeight)
     }
 
     this._isSizeDirty = true
