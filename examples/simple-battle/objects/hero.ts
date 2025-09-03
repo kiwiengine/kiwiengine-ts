@@ -3,12 +3,14 @@ import heroAtlas from '../assets/spritesheets/hero-atlas.json'
 import { Character } from './character'
 
 const HERO_MOVE_SPEED = 300 as const
+const HERO_HITBOX_X = 24 as const
 
 export class Hero extends Character {
   protected _sprite: AnimatedSpriteNode
 
   #cachedVelX = 0
   #cachedVelY = 0
+  #prevX = this.x
 
   constructor(options?: GameObjectOptions) {
     super({
@@ -16,7 +18,7 @@ export class Hero extends Character {
       maxHp: 1000,
       hp: 1000,
       collider: { type: ColliderType.Rectangle, width: 30, height: 30, y: 12 },
-      hitbox: { type: ColliderType.Rectangle, width: 32, height: 52, x: 24, y: -8 },
+      hitbox: { type: ColliderType.Rectangle, width: 32, height: 52, x: HERO_HITBOX_X, y: -8 },
       hurtbox: { type: ColliderType.Rectangle, width: 24, height: 40, x: 0, y: -4 },
       isStatic: true
     })
@@ -51,5 +53,12 @@ export class Hero extends Character {
 
     this.x += this.#cachedVelX * dt
     this.y += this.#cachedVelY * dt
+
+    if (this._sprite && this.x !== this.#prevX) {
+      const scale = Math.abs(this._sprite.scaleX)
+      this._sprite.scaleX = this.x > this.#prevX ? scale : -scale
+      this.hitboxX = this.x > this.#prevX ? HERO_HITBOX_X : -HERO_HITBOX_X
+    }
+    this.#prevX = this.x
   }
 }

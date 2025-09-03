@@ -13,38 +13,34 @@ export type CharacterOptions = {
 export class Character extends PhysicsObject {
   maxHp: number
   hp: number
-  hitbox: RectangleCollider
-  hurtbox: RectangleCollider
+
+  #hitbox: RectangleCollider
+  #hurtbox: RectangleCollider
+  #hitboxDebugNode?: RectangleNode
 
   #hpBar: HpBar
   protected _sprite?: AnimatedSpriteNode
-
-  #prevX = this.x
 
   constructor(options: CharacterOptions) {
     super({ ...options, fixedRotation: true })
     this.maxHp = options.maxHp
     this.hp = options.hp
-    this.hitbox = options.hitbox
-    this.hurtbox = options.hurtbox
+    this.#hitbox = options.hitbox
+    this.#hurtbox = options.hurtbox
 
     this.#hpBar = new HpBar({ y: -30, maxHp: options.maxHp, hp: options.hp, layer: 'hud' })
     this.add(this.#hpBar)
 
     if (debugMode) {
       this.add(new RectangleNode({ ...options.collider, stroke: 'yellow', alpha: 0.5, layer: 'hud' }))
-      this.add(new RectangleNode({ ...this.hitbox, stroke: 'red', alpha: 0.5, layer: 'hud' }))
-      this.add(new RectangleNode({ ...this.hurtbox, stroke: 'green', alpha: 0.5, layer: 'hud' }))
+      this.#hitboxDebugNode = new RectangleNode({ ...this.#hitbox, stroke: 'red', alpha: 0.5, layer: 'hud' })
+      this.add(this.#hitboxDebugNode)
+      this.add(new RectangleNode({ ...this.#hurtbox, stroke: 'green', alpha: 0.5, layer: 'hud' }))
     }
   }
 
-  protected override update(dt: number) {
-    super.update(dt)
-
-    if (this._sprite && this.x !== this.#prevX) {
-      const scale = Math.abs(this._sprite.scaleX)
-      this._sprite.scaleX = this.x > this.#prevX ? scale : -scale
-    }
-    this.#prevX = this.x
+  set hitboxX(x: number) {
+    this.#hitbox.x = x
+    if (this.#hitboxDebugNode) this.#hitboxDebugNode.x = x
   }
 }
