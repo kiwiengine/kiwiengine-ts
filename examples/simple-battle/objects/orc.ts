@@ -1,11 +1,12 @@
 import { AnimatedSpriteNode, ColliderType, GameObjectOptions } from '../../../src/index'
-import { Character } from './character'
 import orcAtlas from '../assets/spritesheets/orc-atlas.json'
+import { Character } from './character'
 
 const ORC_MOVE_VELOCITY = 3 as const
 
 export class Orc extends Character {
-  #sprite: AnimatedSpriteNode
+  protected _sprite: AnimatedSpriteNode
+
   #cachedVelX = 0
   #cachedVelY = 0
 
@@ -19,7 +20,7 @@ export class Orc extends Character {
       hurtbox: { type: ColliderType.Rectangle, width: 24, height: 32, x: 0, y: 0 },
     })
 
-    this.#sprite = new AnimatedSpriteNode({
+    this._sprite = new AnimatedSpriteNode({
       src: 'assets/spritesheets/orc.png',
       atlas: orcAtlas,
       animation: 'idle',
@@ -27,7 +28,7 @@ export class Orc extends Character {
       loop: true,
       scale: 2
     })
-    this.add(this.#sprite)
+    this.add(this._sprite)
   }
 
   moveTo(x: number, y: number) {

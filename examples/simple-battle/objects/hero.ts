@@ -1,11 +1,12 @@
 import { AnimatedSpriteNode, ColliderType, GameObjectOptions } from '../../../src/index'
-import { Character } from './character'
 import heroAtlas from '../assets/spritesheets/hero-atlas.json'
+import { Character } from './character'
 
 const HERO_MOVE_SPEED = 300 as const
 
 export class Hero extends Character {
-  #sprite: AnimatedSpriteNode
+  protected _sprite: AnimatedSpriteNode
+
   #cachedVelX = 0
   #cachedVelY = 0
 
@@ -20,7 +21,7 @@ export class Hero extends Character {
       isStatic: true
     })
 
-    this.#sprite = new AnimatedSpriteNode({
+    this._sprite = new AnimatedSpriteNode({
       src: 'assets/spritesheets/hero.png',
       atlas: heroAtlas,
       animation: 'idle',
@@ -28,7 +29,7 @@ export class Hero extends Character {
       loop: true,
       scale: 2
     })
-    this.add(this.#sprite)
+    this.add(this._sprite)
   }
 
   move(radian: number, distance: number) {

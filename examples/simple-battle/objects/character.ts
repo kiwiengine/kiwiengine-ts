@@ -1,4 +1,4 @@
-import { PhysicsObject, PhysicsObjectOptions, RectangleCollider, RectangleNode } from '../../../src'
+import { AnimatedSpriteNode, PhysicsObject, PhysicsObjectOptions, RectangleCollider, RectangleNode } from '../../../src'
 import { debugMode } from '../../../src/debug'
 import { HpBar } from '../hud/hp-bar'
 
@@ -17,6 +17,9 @@ export class Character extends PhysicsObject {
   hurtbox: RectangleCollider
 
   #hpBar: HpBar
+  protected _sprite?: AnimatedSpriteNode
+
+  #prevX = this.x
 
   constructor(options: CharacterOptions) {
     super({ ...options, fixedRotation: true })
@@ -33,5 +36,15 @@ export class Character extends PhysicsObject {
       this.add(new RectangleNode({ ...this.hitbox, stroke: 'red', alpha: 0.5, layer: 'hud' }))
       this.add(new RectangleNode({ ...this.hurtbox, stroke: 'green', alpha: 0.5, layer: 'hud' }))
     }
+  }
+
+  protected override update(dt: number) {
+    super.update(dt)
+
+    if (this._sprite && this.x !== this.#prevX) {
+      const scale = Math.abs(this._sprite.scaleX)
+      this._sprite.scaleX = this.x > this.#prevX ? scale : -scale
+    }
+    this.#prevX = this.x
   }
 }
