@@ -83,16 +83,26 @@ export class Joystick extends GameObject {
   }
 
   protected override set renderer(renderer: Renderer | undefined) {
+    const prev = super.renderer
+    if (prev) {
+      const pc = prev.container
+      pc.removeEventListener('touchstart', this.#onTouchStart)
+      pc.removeEventListener('touchmove', this.#onTouchMove)
+      pc.removeEventListener('touchend', this.#onTouchEnd)
+      pc.removeEventListener('touchcancel', this.#onTouchEnd)
+    }
+
     super.renderer = renderer
     if (renderer) {
       const c = renderer.container
-      c.addEventListener('touchstart', this.#onTouchStart)
-      c.addEventListener('touchmove', this.#onTouchMove)
+      c.addEventListener('touchstart', this.#onTouchStart, { passive: false })
+      c.addEventListener('touchmove', this.#onTouchMove, { passive: false })
       c.addEventListener('touchend', this.#onTouchEnd)
       c.addEventListener('touchcancel', this.#onTouchEnd)
 
       if (this.#joystickImage) {
         setStyle(this.#joystickImage, {
+          position: 'absolute',
           left: `${this.#imageDefaultPosition.left}px`,
           top: `${this.#imageDefaultPosition.top}px`,
           zIndex: '999998',
@@ -103,9 +113,10 @@ export class Joystick extends GameObject {
 
       if (this.#knobImage) {
         setStyle(this.#knobImage, {
+          position: 'absolute',
           left: `${this.#imageDefaultPosition.left}px`,
           top: `${this.#imageDefaultPosition.top}px`,
-          zIndex: '999998',
+          zIndex: '999999',
           transform: 'translate(-50%, -50%)',
         })
         c.appendChild(this.#knobImage)
@@ -223,6 +234,11 @@ export class Joystick extends GameObject {
     this.#onKeydown?.(code)
 
     if (isArrow(code)) {
+      const target = event.target as HTMLElement | null
+      const isEditing =
+        !!target?.closest('input, textarea, [contenteditable=""], [contenteditable="true"]')
+      if (!isEditing) event.preventDefault()
+
       this.#arrowCodesPressed.add(code)
       this.#calculateRadianFromArrows()
     }
@@ -287,7 +303,16 @@ export class Joystick extends GameObject {
       c.removeEventListener('touchend', this.#onTouchEnd)
       c.removeEventListener('touchcancel', this.#onTouchEnd)
     }
+
+    // 윈도우 리스너 정리
     window.removeEventListener('keydown', this.#onKeyDown)
+    window.removeEventListener('keyup', this.#onKeyUp)
+    window.removeEventListener('blur', this.#onBlur)
+
+    // DOM 노드 제거
+    this.#joystickImage?.remove()
+    this.#knobImage?.remove()
+
     super.remove()
   }
 }
