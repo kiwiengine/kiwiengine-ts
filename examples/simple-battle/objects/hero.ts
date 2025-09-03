@@ -14,7 +14,7 @@ export class Hero extends Character {
       ...options,
       maxHp: 1000,
       hp: 1000,
-      collider: { type: ColliderType.Rectangle, width: 24, height: 12, y: 12 },
+      collider: { type: ColliderType.Rectangle, width: 30, height: 30, y: 12 },
       hitbox: { type: ColliderType.Rectangle, width: 32, height: 52, x: 24, y: -8 },
       hurtbox: { type: ColliderType.Rectangle, width: 24, height: 40, x: 0, y: -4 },
       isStatic: true
