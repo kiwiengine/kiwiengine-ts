@@ -1,13 +1,13 @@
-import { AnimatedSpriteNode, ColliderType, GameObjectOptions } from '../../../src/index'
+import { AnimatedSpriteNode, ColliderType, DelayNode, GameObjectOptions } from '../../../src/index'
 import heroAtlas from '../assets/spritesheets/hero-atlas.json'
 import { Character } from './character'
 
 const HERO_MOVE_SPEED = 300 as const
 const HERO_HITBOX_X = 24 as const
-const HERO_ATTACK_DAMAGE = 300 as const
+const HERO_ATTACK_DAMAGE = 60 as const
 
 export class Hero extends Character<{
-  attack: (damage: number) => void
+  hit: (damage: number) => void
   dead: () => void
 }> {
   protected _sprite: AnimatedSpriteNode
@@ -62,6 +62,8 @@ export class Hero extends Character<{
     this.#attacking = true
 
     this._sprite.animation = Math.floor(Math.random() * 2) ? 'attack1' : 'attack2'
+
+    this.add(new DelayNode(0.3, () => this.emit('hit', HERO_ATTACK_DAMAGE)))
   }
 
   protected override update(dt: number) {

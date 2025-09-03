@@ -65,6 +65,18 @@ export class Stage extends PhysicsWorld {
     this.#hpText.style.left = '50%'
     this.#hpText.style.transform = 'translate(-50%, 0)'
     this.#scoreText.style.right = '10px'
+
+    this.#hero.on('hit', (damage) => {
+      for (const o of this.#orcs) {
+        if (checkCollision(this.#hero.hitbox, this.#hero.worldTransform, o.hurtbox, o.worldTransform)) {
+          o.takeDamage(damage)
+        }
+      }
+    })
+
+    this.#hero.on('takeDamage', () => {
+      this.#hpText.textContent = `HP: ${this.#hero.hp}`
+    })
   }
 
   protected override set renderer(renderer) {
@@ -84,6 +96,11 @@ export class Stage extends PhysicsWorld {
     const o = new Orc()
     o.x = Math.random() * 800 - 400
     o.y = Math.random() * 600 - 300
+    o.on('hit', (damage) => {
+      if (checkCollision(this.#hero.hurtbox, this.#hero.worldTransform, o.hitbox, o.worldTransform)) {
+        this.#hero.takeDamage(damage)
+      }
+    })
     this.add(o)
     this.#orcs.add(o)
   }

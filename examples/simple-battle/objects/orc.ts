@@ -1,4 +1,4 @@
-import { AnimatedSpriteNode, ColliderType, GameObjectOptions } from '../../../src/index'
+import { AnimatedSpriteNode, ColliderType, DelayNode, GameObjectOptions } from '../../../src/index'
 import orcAtlas from '../assets/spritesheets/orc-atlas.json'
 import { Character } from './character'
 
@@ -7,7 +7,7 @@ const ORC_HITBOX_X = 24 as const
 const ORC_ATTACK_DAMAGE = 1 as const
 
 export class Orc extends Character<{
-  attack: (damage: number) => void
+  hit: (damage: number) => void
   dead: () => void
 }> {
   protected _sprite: AnimatedSpriteNode
@@ -65,6 +65,8 @@ export class Orc extends Character<{
     this.#cachedVelY = 0
 
     this._sprite.animation = Math.floor(Math.random() * 2) ? 'attack1' : 'attack2'
+
+    this.add(new DelayNode(0.3, () => this.emit('hit', ORC_ATTACK_DAMAGE)))
   }
 
   protected override update(dt: number) {

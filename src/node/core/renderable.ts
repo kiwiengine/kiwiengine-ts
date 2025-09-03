@@ -59,4 +59,7 @@ export abstract class RenderableNode<C extends PixiContainer, E extends EventMap
     }
     this.worldTransform.resetDirty()
   }
+
+  set tint(t) { this._pixiContainer.tint = t }
+  get tint() { return this._pixiContainer.tint }
 }

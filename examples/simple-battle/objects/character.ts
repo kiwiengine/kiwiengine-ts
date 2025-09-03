@@ -1,5 +1,5 @@
 import { EventMap } from '@webtaku/event-emitter'
-import { AnimatedSpriteNode, PhysicsObject, PhysicsObjectOptions, RectangleCollider, RectangleNode } from '../../../src'
+import { AnimatedSpriteNode, DelayNode, PhysicsObject, PhysicsObjectOptions, RectangleCollider, RectangleNode } from '../../../src'
 import { debugMode } from '../../../src/debug'
 import { HpBar } from '../hud/hp-bar'
 
@@ -11,7 +11,9 @@ export type CharacterOptions = {
   hurtbox: RectangleCollider
 } & PhysicsObjectOptions
 
-export class Character<E extends EventMap = EventMap> extends PhysicsObject<E> {
+export class Character<E extends EventMap = EventMap> extends PhysicsObject<E & {
+  takeDamage: (damage: number) => void
+}> {
   maxHp: number
   hp: number
 
@@ -21,6 +23,7 @@ export class Character<E extends EventMap = EventMap> extends PhysicsObject<E> {
   #hpBar: HpBar
   protected _sprite?: AnimatedSpriteNode
   #hitboxDebugNode?: RectangleNode
+  #tintDelay?: DelayNode
 
   constructor(options: CharacterOptions) {
     super({ ...options, fixedRotation: true })
@@ -43,5 +46,18 @@ export class Character<E extends EventMap = EventMap> extends PhysicsObject<E> {
   set hitboxX(x: number) {
     this.hitbox.x = x
     if (this.#hitboxDebugNode) this.#hitboxDebugNode.x = x
+  }
+
+  takeDamage(damage: number) {
+    this.hp -= damage
+    this.#hpBar.hp = this.hp
+
+    if (this._sprite) {
+      this._sprite.tint = 0xff0000
+      this.#tintDelay?.remove()
+      this.#tintDelay = new DelayNode(0.1, () => this._sprite!.tint = 0xffffff)
+      this.add(this.#tintDelay)
+    }
+    (this as any).emit('takeDamage', damage)
   }
 }
