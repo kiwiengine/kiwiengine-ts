@@ -41,11 +41,15 @@ export type PhysicsObjectOptions = {
   velocityX?: number
   velocityY?: number
   isStatic?: boolean
+
+  useYSort?: boolean
 }
 
 export class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode<PixiContainer, E> {
   #localTransform = new LocalTransform()
   #matterBody: Matter.Body
+
+  #useYSort = false
 
   constructor(options: PhysicsObjectOptions) {
     super(new PixiContainer({ sortableChildren: true }))
@@ -79,6 +83,8 @@ export class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode
     } else {
       throw new Error('Invalid collider type')
     }
+
+    this.#useYSort = options.useYSort ?? false
   }
 
   protected override set parent(parent: GameNode<EventMap> | undefined) {
@@ -101,6 +107,7 @@ export class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode
 
     const pc = this._pixiContainer
     pc.position.set(mb.position.x, mb.position.y)
+    if (this.#useYSort) pc.zIndex = mb.position.y
     pc.rotation = mb.angle
 
     const lt = this.#localTransform

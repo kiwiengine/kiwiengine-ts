@@ -30,7 +30,7 @@ export abstract class Character<E extends EventMap = EventMap> extends PhysicsOb
   #tintDelay?: DelayNode
 
   constructor(options: CharacterOptions) {
-    super({ ...options, fixedRotation: true })
+    super({ ...options, fixedRotation: true, useYSort: true })
     this.maxHp = options.maxHp
     this.hp = options.hp
     this.hitbox = options.hitbox

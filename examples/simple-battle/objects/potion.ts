@@ -12,7 +12,7 @@ export class Potion extends GameObject {
   healAmount: number
 
   constructor(options?: PotionOptions) {
-    super(options)
+    super({ ...options, useYSort: true })
     this.healAmount = options?.healAmount ?? 100
 
     this.add(new AnimatedSpriteNode({
