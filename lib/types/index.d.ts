@@ -15,4 +15,5 @@ export { SpriteNode, SpriteNodeOptions } from './node/ext/sprite';
 export { PhysicsObject, PhysicsObjectOptions } from './node/physics/physics-object';
 export { PhysicsWorld } from './node/physics/physics-world';
 export { Renderer, RendererOptions } from './renderer/renderer';
+export { isMobile } from './utils/device';
 //# sourceMappingURL=index.d.ts.map

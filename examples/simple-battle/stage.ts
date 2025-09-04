@@ -1,4 +1,4 @@
-import { checkCollision, IntervalNode, Joystick, PhysicsWorld } from '../../src'
+import { checkCollision, IntervalNode, isMobile, Joystick, PhysicsWorld } from '../../src'
 import { Hero } from './objects/hero'
 import { Orc } from './objects/orc'
 import { Potion } from './objects/potion'
@@ -123,6 +123,10 @@ export class Stage extends PhysicsWorld {
         o.attack()
       } else {
         o.moveTo(this.#hero.x, this.#hero.y)
+      }
+
+      if (isMobile && checkCollision(h.hitbox, h.worldTransform, o.hurtbox, o.worldTransform)) {
+        h.attack()
       }
     }
   }
