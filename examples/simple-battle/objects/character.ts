@@ -1,8 +1,9 @@
 import { EventMap } from '@webtaku/event-emitter'
 import { AnimatedSpriteNode, DelayNode, PhysicsObject, PhysicsObjectOptions, RectangleCollider, RectangleNode } from '../../../src'
 import { debugMode } from '../../../src/debug'
-import { HpBar } from '../hud/hp-bar'
 import { DamageText } from '../hud/damage-text'
+import { HealText } from '../hud/heal-text'
+import { HpBar } from '../hud/hp-bar'
 
 export type CharacterOptions = {
   maxHp: number
@@ -12,11 +13,13 @@ export type CharacterOptions = {
   hurtbox: RectangleCollider
 } & PhysicsObjectOptions
 
-export class Character<E extends EventMap = EventMap> extends PhysicsObject<E & {
-  takeDamage: (damage: number) => void
+export abstract class Character<E extends EventMap = EventMap> extends PhysicsObject<E & {
+  changeHp: (damage: number) => void
+  dead: () => void
 }> {
   maxHp: number
   hp: number
+  dead = false
 
   hitbox: RectangleCollider
   hurtbox: RectangleCollider
@@ -50,6 +53,8 @@ export class Character<E extends EventMap = EventMap> extends PhysicsObject<E & 
   }
 
   takeDamage(damage: number) {
+    if (this.dead) return
+
     this.hp -= damage
     this.#hpBar.hp = this.hp
 
@@ -59,8 +64,33 @@ export class Character<E extends EventMap = EventMap> extends PhysicsObject<E & 
       this.#tintDelay = new DelayNode(0.1, () => this._sprite!.tint = 0xffffff)
       this.add(this.#tintDelay)
     }
-    (this as any).emit('takeDamage', damage)
+    (this as any).emit('changeHp', damage)
 
     this.add(new DamageText({ y: -20, damage, layer: 'hud' }))
+
+    if (this.hp <= 0) {
+      this.dead = true
+      this.onDie();
+      (this as any).emit('dead')
+    }
   }
+
+  heal(amount: number) {
+    if (this.dead) return
+
+    this.hp = Math.min(this.maxHp, this.hp + amount)
+    this.#hpBar.hp = this.hp
+
+    if (this._sprite) {
+      this._sprite.tint = 0x00ff00
+      this.#tintDelay?.remove()
+      this.#tintDelay = new DelayNode(0.1, () => this._sprite!.tint = 0xffffff)
+      this.add(this.#tintDelay)
+    }
+    (this as any).emit('changeHp', amount)
+
+    this.add(new HealText({ y: -20, hp: amount, layer: 'hud' }))
+  }
+
+  protected abstract onDie(): void
 }

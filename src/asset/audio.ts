@@ -210,6 +210,10 @@ class SfxPlayer {
   play(src: string) {
     new Audio(src, this.#volume, false)
   }
+
+  playRandom(...srcs: string[]) {
+    this.play(srcs[Math.floor(Math.random() * srcs.length)])
+  }
 }
 
 export const musicPlayer = new MusicPlayer()

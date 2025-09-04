@@ -32,5 +32,6 @@ export declare class PhysicsObject<E extends EventMap = EventMap> extends Render
     get velocityY(): number;
     set isStatic(v: boolean);
     get isStatic(): boolean;
+    disableCollisions(): void;
 }
 //# sourceMappingURL=physics-object.d.ts.map

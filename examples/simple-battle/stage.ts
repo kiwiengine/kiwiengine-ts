@@ -1,4 +1,4 @@
-import { checkCollision, IntervalNode, isMobile, Joystick, PhysicsWorld } from '../../src'
+import { checkCollision, IntervalNode, isMobile, Joystick, musicPlayer, PhysicsWorld } from '../../src'
 import { Hero } from './objects/hero'
 import { Orc } from './objects/orc'
 import { Potion } from './objects/potion'
@@ -12,6 +12,8 @@ function createTextElement() {
   return el
 }
 
+const SCORE_PER_ORC = 100
+
 export class Stage extends PhysicsWorld {
   #hero = new Hero();
   #orcs: Set<Orc> = new Set();
@@ -19,16 +21,22 @@ export class Stage extends PhysicsWorld {
 
   #time = 0
   #score = 0
+  #isGameOver = false
 
   #timeText: HTMLDivElement
   #hpText: HTMLDivElement
   #scoreText: HTMLDivElement
 
+  #spawnOrcInterval: IntervalNode
+  #spawnPotionInterval: IntervalNode
+
   constructor() {
     super()
+    musicPlayer.play('assets/bgm/battle.mp3')
+
     this.add(this.#hero)
-    this.add(new IntervalNode(1, () => this.#spawnOrc()))
-    this.add(new IntervalNode(3, () => this.#spawnPotion()))
+    this.add(this.#spawnOrcInterval = new IntervalNode(1, () => this.#spawnOrc()))
+    this.add(this.#spawnPotionInterval = new IntervalNode(3, () => this.#spawnPotion()))
 
     //for (let i = 0; i < 1000; i++) {
     //this.#spawnOrc()
@@ -74,9 +82,29 @@ export class Stage extends PhysicsWorld {
       }
     })
 
-    this.#hero.on('takeDamage', () => {
+    this.#hero.on('changeHp', () => {
       this.#hpText.textContent = `HP: ${this.#hero.hp}`
     })
+
+    this.#hero.on('dead', () => {
+      this.#gameOver()
+    })
+  }
+
+  #gameOver() {
+    this.#isGameOver = true
+    this.#spawnOrcInterval.remove()
+    this.#spawnPotionInterval.remove()
+    for (const o of this.#orcs) {
+      o.stop()
+    }
+
+    const gameOverText = createTextElement()
+    gameOverText.textContent = 'Game Over'
+    gameOverText.style.left = '50%'
+    gameOverText.style.top = '50%'
+    gameOverText.style.transform = 'translate(-50%, -50%)'
+    this.renderer?.container.append(gameOverText)
   }
 
   protected override set renderer(renderer) {
@@ -103,6 +131,11 @@ export class Stage extends PhysicsWorld {
     })
     this.add(o)
     this.#orcs.add(o)
+    o.on('dead', () => {
+      this.#orcs.delete(o)
+      this.#score += SCORE_PER_ORC
+      this.#scoreText.textContent = `Score: ${this.#score}`
+    })
   }
 
   #spawnPotion() {
@@ -111,12 +144,15 @@ export class Stage extends PhysicsWorld {
     p.y = Math.random() * 600 - 300
     this.add(p)
     this.#potions.add(p)
+    p.on('remove', () => this.#potions.delete(p))
   }
 
   protected override update(dt: number) {
     super.update(dt)
+    if (this.#isGameOver) return
 
     const h = this.#hero
+    if (h.dead) return
 
     for (const o of this.#orcs) {
       if (checkCollision(h.hurtbox, h.worldTransform, o.hitbox, o.worldTransform)) {
@@ -127,6 +163,13 @@ export class Stage extends PhysicsWorld {
 
       if (isMobile && checkCollision(h.hitbox, h.worldTransform, o.hurtbox, o.worldTransform)) {
         h.attack()
+      }
+    }
+
+    for (const p of this.#potions) {
+      if (checkCollision(h.hitbox, h.worldTransform, p.triggerCollider, p.worldTransform)) {
+        h.heal(p.healAmount)
+        p.remove()
       }
     }
   }

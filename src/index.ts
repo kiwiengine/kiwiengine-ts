@@ -1,3 +1,4 @@
+export { musicPlayer, sfxPlayer } from './asset/audio'
 export { AssetSource, preload } from './asset/preload'
 export { checkCollision } from './collision/check-collision'
 export { CircleCollider, Collider, ColliderType, EllipseCollider, PolygonCollider, RectangleCollider } from './collision/colliders'

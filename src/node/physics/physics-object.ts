@@ -116,8 +116,12 @@ export class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode
     super._updateWorldTransform()
   }
 
-  override remove() {
+  #removeFromWorld() {
     (this.parent as PhysicsWorld)?.removeBody(this.#matterBody)
+  }
+
+  override remove() {
+    this.#removeFromWorld()
     super.remove()
   }
 
@@ -138,4 +142,8 @@ export class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode
 
   set isStatic(v) { Matter.Body.setStatic(this.#matterBody, v) }
   get isStatic() { return this.#matterBody.isStatic }
+
+  disableCollisions() {
+    this.#removeFromWorld()
+  }
 }

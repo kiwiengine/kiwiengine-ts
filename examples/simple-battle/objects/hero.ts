@@ -1,8 +1,8 @@
-import { AnimatedSpriteNode, ColliderType, DelayNode, GameObjectOptions } from '../../../src/index'
+import { AnimatedSpriteNode, ColliderType, DelayNode, GameObjectOptions, sfxPlayer } from '../../../src/index'
 import heroAtlas from '../assets/spritesheets/hero-atlas.json'
 import { Character } from './character'
 
-const HERO_MOVE_SPEED = 300 as const
+const HERO_MOVE_SPEED = 200 as const
 const HERO_HITBOX_X = 24 as const
 const HERO_ATTACK_DAMAGE = 60 as const
 
@@ -48,6 +48,7 @@ export class Hero extends Character<{
   }
 
   move(radian: number, distance: number) {
+    if (this.dead) return
     this.#cachedVelX = Math.cos(radian) * distance * HERO_MOVE_SPEED
     this.#cachedVelY = Math.sin(radian) * distance * HERO_MOVE_SPEED
   }
@@ -58,12 +59,18 @@ export class Hero extends Character<{
   }
 
   attack() {
-    if (this.#attacking) return
+    if (this.dead || this.#attacking) return
     this.#attacking = true
 
     this._sprite.animation = Math.floor(Math.random() * 2) ? 'attack1' : 'attack2'
 
     this.add(new DelayNode(0.3, () => this.emit('hit', HERO_ATTACK_DAMAGE)))
+
+    sfxPlayer.playRandom(
+      'assets/sfx/hero/miss/miss1.wav',
+      'assets/sfx/hero/miss/miss2.wav',
+      'assets/sfx/hero/miss/miss3.wav',
+    )
   }
 
   protected override update(dt: number) {
@@ -78,5 +85,29 @@ export class Hero extends Character<{
       this.hitboxX = this.x > this.#prevX ? HERO_HITBOX_X : -HERO_HITBOX_X
     }
     this.#prevX = this.x
+  }
+
+  override takeDamage(damage: number) {
+    super.takeDamage(damage)
+    sfxPlayer.playRandom(
+      'assets/sfx/hero/hit/hit1.wav',
+      'assets/sfx/hero/hit/hit2.wav',
+      'assets/sfx/hero/hit/hit3.wav'
+    )
+  }
+
+  override heal(amount: number) {
+    super.heal(amount)
+    sfxPlayer.play('assets/sfx/hero/heal/heal.wav')
+  }
+
+  protected override onDie() {
+    this._sprite.animation = 'die'
+    this._sprite.loop = false
+    this.#cachedVelX = 0
+    this.#cachedVelY = 0
+    this.disableCollisions()
+
+    sfxPlayer.play('assets/sfx/hero/die/die.wav')
   }
 }

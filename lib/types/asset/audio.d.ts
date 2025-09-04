@@ -14,6 +14,7 @@ declare class SfxPlayer {
     get volume(): number;
     set volume(volume: number);
     play(src: string): void;
+    playRandom(...srcs: string[]): void;
 }
 export declare const musicPlayer: MusicPlayer;
 export declare const sfxPlayer: SfxPlayer;
