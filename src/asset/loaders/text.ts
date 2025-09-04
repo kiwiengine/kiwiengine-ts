@@ -14,10 +14,10 @@ class TextLoader extends Loader<string> {
       this.loadingPromises.delete(src)
 
       if (this.hasActiveRef(src)) {
-        if (this.loadedAssets.has(src)) {
+        if (this.cachedAssets.has(src)) {
           console.error(`Text already exists: ${src}`)
         } else {
-          this.loadedAssets.set(src, text)
+          this.cachedAssets.set(src, text)
           return text
         }
       }

@@ -8,47 +8,72 @@ class BitmapFontLoader extends Loader<BitmapFont> {
   protected override async doLoad(fnt: string, src: string) {
     this.#fntToSrc.set(fnt, src)
 
-    const loadPromise = (async () => {
+    const loadingPromise = (async () => {
       const texture = await textureLoader.load(src)
-      if (!texture) throw new Error(`Failed to load texture: ${src}`)
-
-      const response = await fetch(fnt)
-      if (!response.ok) throw new Error(`Failed to load font xml: ${fnt}`)
-      const text = await response.text()
-
-      const parser = new DOMParser()
-      const xmlDoc = parser.parseFromString(text, 'application/xml')
-
-      const infoEl = xmlDoc.getElementsByTagName('info')[0]
-      const commonEl = xmlDoc.getElementsByTagName('common')[0]
-      const charEls = xmlDoc.getElementsByTagName('char')
-
-      const size = parseInt(infoEl.getAttribute('size') || '16', 10)
-      const lineHeight = parseInt(commonEl.getAttribute('lineHeight') || '32', 10)
-
-      const chars: Record<number, Char> = {}
-
-      for (let i = 0; i < charEls.length; i++) {
-        const charEl = charEls[i]
-
-        const id = parseInt(charEl.getAttribute('id')!, 10)
-        const x = parseInt(charEl.getAttribute('x')!, 10)
-        const y = parseInt(charEl.getAttribute('y')!, 10)
-        const width = parseInt(charEl.getAttribute('width')!, 10)
-        const height = parseInt(charEl.getAttribute('height')!, 10)
-        const xoffset = parseInt(charEl.getAttribute('xoffset')!, 10)
-        const yoffset = parseInt(charEl.getAttribute('yoffset')!, 10)
-        const xadvance = parseInt(charEl.getAttribute('xadvance')!, 10)
-
-        chars[id] = { x, y, width, height, xoffset, yoffset, xadvance }
+      if (!texture) {
+        console.error(`Failed to load texture: ${src}`)
+        return
       }
 
-      this.loadingPromises.delete(fnt)
-      return { src, chars, texture, size, lineHeight }
+      const response = await fetch(fnt)
+      if (!response.ok) {
+        console.error(`Failed to load font xml: ${fnt}`)
+        return
+      }
+
+      try {
+        const text = await response.text()
+
+        const parser = new DOMParser()
+        const xmlDoc = parser.parseFromString(text, 'application/xml')
+
+        const infoEl = xmlDoc.getElementsByTagName('info')[0]
+        const commonEl = xmlDoc.getElementsByTagName('common')[0]
+        const charEls = xmlDoc.getElementsByTagName('char')
+
+        const size = parseInt(infoEl.getAttribute('size') || '16', 10)
+        const lineHeight = parseInt(commonEl.getAttribute('lineHeight') || '32', 10)
+
+        const chars: Record<number, Char> = {}
+
+        for (let i = 0; i < charEls.length; i++) {
+          const charEl = charEls[i]
+
+          const id = parseInt(charEl.getAttribute('id')!, 10)
+          const x = parseInt(charEl.getAttribute('x')!, 10)
+          const y = parseInt(charEl.getAttribute('y')!, 10)
+          const width = parseInt(charEl.getAttribute('width')!, 10)
+          const height = parseInt(charEl.getAttribute('height')!, 10)
+          const xoffset = parseInt(charEl.getAttribute('xoffset')!, 10)
+          const yoffset = parseInt(charEl.getAttribute('yoffset')!, 10)
+          const xadvance = parseInt(charEl.getAttribute('xadvance')!, 10)
+
+          chars[id] = { x, y, width, height, xoffset, yoffset, xadvance }
+        }
+
+        this.loadingPromises.delete(fnt)
+
+        const bitmapFont = { src, chars, texture, size, lineHeight }
+        if (this.hasActiveRef(fnt)) {
+          if (this.cachedAssets.has(fnt)) {
+            textureLoader.release(src)
+            console.error(`Bitmap font already exists: ${fnt}`)
+          } else {
+            this.cachedAssets.set(fnt, bitmapFont)
+            return bitmapFont
+          }
+        } else {
+          textureLoader.release(src)
+        }
+
+      } catch (error) {
+        console.error(`Failed to decode font xml: ${fnt}`, error)
+        this.loadingPromises.delete(fnt)
+      }
     })()
 
-    this.loadingPromises.set(fnt, loadPromise)
-    return await loadPromise
+    this.loadingPromises.set(fnt, loadingPromise)
+    return await loadingPromise
   }
 
   protected override cleanup(fnt: string) {

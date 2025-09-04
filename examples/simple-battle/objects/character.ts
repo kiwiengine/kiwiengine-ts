@@ -2,6 +2,7 @@ import { EventMap } from '@webtaku/event-emitter'
 import { AnimatedSpriteNode, DelayNode, PhysicsObject, PhysicsObjectOptions, RectangleCollider, RectangleNode } from '../../../src'
 import { debugMode } from '../../../src/debug'
 import { HpBar } from '../hud/hp-bar'
+import { DamageText } from '../hud/damage-text'
 
 export type CharacterOptions = {
   maxHp: number
@@ -59,5 +60,7 @@ export class Character<E extends EventMap = EventMap> extends PhysicsObject<E & 
       this.add(this.#tintDelay)
     }
     (this as any).emit('takeDamage', damage)
+
+    this.add(new DamageText({ y: -20, damage, layer: 'hud' }))
   }
 }

@@ -24,8 +24,8 @@ export class BitmapTextNode<E extends EventMap = EventMap> extends GameObject<E>
 
   async #load() {
     let font
-    if (bitmapFontLoader.checkLoaded(this.#fnt)) {
-      font = bitmapFontLoader.get(this.#fnt)
+    if (bitmapFontLoader.checkCached(this.#fnt)) {
+      font = bitmapFontLoader.getCached(this.#fnt)
     } else {
       console.info(`Bitmap font not preloaded. Loading now: ${this.#fnt}`)
       font = await bitmapFontLoader.load(this.#fnt, this.#src)
@@ -34,13 +34,9 @@ export class BitmapTextNode<E extends EventMap = EventMap> extends GameObject<E>
 
     const sprites: PixiSprite[] = []
 
-    let xPos = 0
-    let yPos = 0
-
-    let minX = Infinity
-    let minY = Infinity
-    let maxX = -Infinity
-    let maxY = -Infinity
+    let xPos = 0, yPos = 0
+    let minX = Infinity, minY = Infinity
+    let maxX = -Infinity, maxY = -Infinity
 
     for (let i = 0; i < this.#text.length; i++) {
       const charCode = this.#text.charCodeAt(i)

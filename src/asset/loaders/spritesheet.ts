@@ -38,11 +38,11 @@ class SpritesheetLoader extends Loader<Spritesheet> {
       this.loadingPromises.delete(id)
 
       if (this.hasActiveRef(id)) {
-        if (this.loadedAssets.has(id)) {
+        if (this.cachedAssets.has(id)) {
           textureLoader.release(src)
           console.error(`Spritesheet already exists: ${src}`)
         } else {
-          this.loadedAssets.set(id, spritesheet)
+          this.cachedAssets.set(id, spritesheet)
           return spritesheet
         }
       } else {

@@ -8,7 +8,7 @@ declare class BitmapFontLoader extends Loader<BitmapFont> {
         texture: import("pixi.js").Texture<import("pixi.js").TextureSource<any>>;
         size: number;
         lineHeight: number;
-    }>;
+    } | undefined>;
     protected cleanup(fnt: string): void;
 }
 export declare const bitmapFontLoader: BitmapFontLoader;

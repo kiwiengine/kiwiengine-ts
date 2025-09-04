@@ -12,6 +12,7 @@ await preload([
   { src: 'assets/spritesheets/hero.png', atlas: heroAtlas },
   { src: 'assets/spritesheets/orc.png', atlas: orcAtlas },
   { src: 'assets/spritesheets/potion.png', atlas: potionAtlas },
+  { fnt: 'assets/bitmap-fonts/white-peaberry.fnt', src: 'assets/bitmap-fonts/white-peaberry.png' },
 ])
 
 const renderer = new Renderer(document.body, {

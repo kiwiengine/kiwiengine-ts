@@ -18,10 +18,10 @@ class AudioLoader extends Loader<AudioBuffer> {
         this.loadingPromises.delete(src)
 
         if (this.hasActiveRef(src)) {
-          if (this.loadedAssets.has(src)) {
+          if (this.cachedAssets.has(src)) {
             console.error(`Audio buffer already exists: ${src}`)
           } else {
-            this.loadedAssets.set(src, audioBuffer)
+            this.cachedAssets.set(src, audioBuffer)
             return audioBuffer
           }
         }

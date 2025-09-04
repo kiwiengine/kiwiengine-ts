@@ -5,6 +5,7 @@ export { enableDebug } from './debug';
 export { Joystick } from './input/joystick';
 export { GameObject, GameObjectOptions } from './node/core/game-object';
 export { AnimatedSpriteNode, AnimatedSpriteNodeOptions } from './node/ext/animated-sprite';
+export { BitmapTextNode, BitmapTextNodeOptions } from './node/ext/bitmap-text';
 export { CircleNode, CircleNodeOptions } from './node/ext/circle';
 export { DelayNode } from './node/ext/deplay';
 export { DomContainerNode, DomContainerNodeOptions } from './node/ext/dom-container';

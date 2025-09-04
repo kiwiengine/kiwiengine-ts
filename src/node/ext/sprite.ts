@@ -19,8 +19,8 @@ export class SpriteNode<E extends EventMap = EventMap> extends GameObject<E> {
 
   async #load() {
     let texture
-    if (textureLoader.checkLoaded(this.#src)) {
-      texture = textureLoader.get(this.#src)
+    if (textureLoader.checkCached(this.#src)) {
+      texture = textureLoader.getCached(this.#src)
     } else {
       console.info(`Texture not preloaded. Loading now: ${this.#src}`)
       texture = await textureLoader.load(this.#src)

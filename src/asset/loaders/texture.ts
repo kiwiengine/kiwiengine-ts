@@ -16,7 +16,7 @@ class TextureLoader extends Loader<Texture> {
           return
         }
 
-        if (this.loadedAssets.has(src)) {
+        if (this.cachedAssets.has(src)) {
           console.error(`Texture already loaded: ${src}`)
           resolve(undefined)
           return
@@ -24,7 +24,7 @@ class TextureLoader extends Loader<Texture> {
 
         const texture = Texture.from(image)
         texture.source.scaleMode = 'nearest'
-        this.loadedAssets.set(src, texture)
+        this.cachedAssets.set(src, texture)
         resolve(texture)
       }
 

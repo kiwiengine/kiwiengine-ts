@@ -15,10 +15,10 @@ class BinaryLoader extends Loader<Uint8Array> {
       this.loadingPromises.delete(src)
 
       if (this.hasActiveRef(src)) {
-        if (this.loadedAssets.has(src)) {
+        if (this.cachedAssets.has(src)) {
           console.error(`Binary data already exists: ${src}`)
         } else {
-          this.loadedAssets.set(src, data)
+          this.cachedAssets.set(src, data)
           return data
         }
       }
