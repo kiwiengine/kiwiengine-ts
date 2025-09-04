@@ -26,13 +26,13 @@ export class SpriteNode<E extends EventMap = EventMap> extends GameObject<E> {
       texture = await textureLoader.load(this.#src)
     }
 
-    this.#sprite?.destroy({ children: true })
+    this.#sprite?.destroy()
     this.#sprite = undefined
 
     if (texture) {
-      const sprite = new PixiSprite({ texture, anchor: 0.5, zIndex: -999999 })
-      this._pixiContainer.addChild(sprite)
-      this.#sprite = sprite
+      const s = new PixiSprite({ texture, anchor: 0.5, zIndex: -999999 })
+      this._pixiContainer.addChild(s)
+      this.#sprite = s
     }
   }
 

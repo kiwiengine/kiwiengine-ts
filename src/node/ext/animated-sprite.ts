@@ -57,15 +57,15 @@ export class AnimatedSpriteNode<E extends EventMap = EventMap> extends GameObjec
         return
       }
 
-      const sprite = new PixiAnimatedSprite(this.#sheet.animations[this.#animation])
-      sprite.anchor.set(0.5, 0.5)
-      sprite.loop = this.#loop
-      sprite.animationSpeed = (this.#fps ?? 0) / 60
-      sprite.play()
-      sprite.onLoop = () => (this as any).emit('animationend', this.#animation)
-      sprite.onComplete = () => (this as any).emit('animationend', this.#animation)
-      this._pixiContainer.addChild(sprite)
-      this.#sprite = sprite
+      const s = new PixiAnimatedSprite(this.#sheet.animations[this.#animation])
+      s.anchor.set(0.5, 0.5)
+      s.loop = this.#loop
+      s.animationSpeed = (this.#fps ?? 0) / 60
+      s.play()
+      s.onLoop = () => (this as any).emit('animationend', this.#animation)
+      s.onComplete = () => (this as any).emit('animationend', this.#animation)
+      this._pixiContainer.addChild(s)
+      this.#sprite = s
     }
   }
 
