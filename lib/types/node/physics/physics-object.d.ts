@@ -12,6 +12,7 @@ export type PhysicsObjectOptions = {
     velocityX?: number;
     velocityY?: number;
     isStatic?: boolean;
+    useYSort?: boolean;
 };
 export declare class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode<PixiContainer, E> {
     #private;
