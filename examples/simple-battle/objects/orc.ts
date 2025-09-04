@@ -4,7 +4,7 @@ import { Character } from './character'
 
 const ORC_MOVE_VELOCITY = 3 as const
 const ORC_HITBOX_X = 24 as const
-const ORC_ATTACK_DAMAGE = 25 as const
+const ORC_ATTACK_DAMAGE = 15 as const
 
 export class Orc extends Character<{
   hit: (damage: number) => void
