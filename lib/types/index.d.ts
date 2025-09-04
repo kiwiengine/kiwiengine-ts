@@ -13,6 +13,7 @@ export { DelayNode } from './node/ext/deplay';
 export { DomContainerNode, DomContainerNodeOptions } from './node/ext/dom-container';
 export { IntervalNode } from './node/ext/interval';
 export { RectangleNode, RectangleNodeOptions } from './node/ext/rectangle';
+export { SpineNode, SpineNodeOptions } from './node/ext/spine';
 export { SpriteNode, SpriteNodeOptions } from './node/ext/sprite';
 export { PhysicsObject, PhysicsObjectOptions } from './node/physics/physics-object';
 export { PhysicsWorld } from './node/physics/physics-world';
