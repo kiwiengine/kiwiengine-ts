@@ -1,6 +1,7 @@
 import { SpritesheetData } from 'pixi.js'
 import { audioLoader } from './loaders/audio'
 import { binaryLoader } from './loaders/binary'
+import { bitmapFontLoader } from './loaders/bitmap-font'
 import { fontFamilyLoader } from './loaders/font'
 import { Loader } from './loaders/loader'
 import { getCachedAtlasId, spritesheetLoader } from './loaders/spritesheet'
@@ -10,6 +11,9 @@ import { textureLoader } from './loaders/texture'
 export type AssetSource = string | {
   src: string
   atlas: SpritesheetData
+} | {
+  fnt: string
+  src: string
 }
 
 const loaderForPathMap: Array<{ check: (path: string) => boolean, loader: Loader<any> }> = [
@@ -32,9 +36,13 @@ async function loadAsset(asset: AssetSource): Promise<void> {
       return
     }
     await loader.load(asset)
-  } else {
+  } else if ('atlas' in asset) {
     const id = getCachedAtlasId(asset.src, asset.atlas)
     await spritesheetLoader.load(id, asset.src, asset.atlas)
+  } else if ('fnt' in asset) {
+    await bitmapFontLoader.load(asset.fnt, asset.src)
+  } else {
+    console.warn(`Unknown asset type: ${asset}`)
   }
 }
 
@@ -46,9 +54,13 @@ function releaseAsset(asset: AssetSource): void {
       return
     }
     loader.release(asset)
-  } else {
+  } else if ('atlas' in asset) {
     const id = getCachedAtlasId(asset.src, asset.atlas)
     spritesheetLoader.release(id)
+  } else if ('fnt' in asset) {
+    bitmapFontLoader.release(asset.fnt)
+  } else {
+    console.warn(`Unknown asset type: ${asset}`)
   }
 }
 

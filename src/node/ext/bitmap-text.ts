@@ -1,0 +1,113 @@
+import { EventMap } from '@webtaku/event-emitter'
+import { Rectangle as PixiRectangle, Sprite as PixiSprite, Texture as PixiTexture } from 'pixi.js'
+import { bitmapFontLoader } from '../../asset/loaders/bitmap-font'
+import { GameObject, GameObjectOptions } from '../core/game-object'
+
+export type BitmapTextNodeOptions = {
+  fnt: string
+  src: string
+  text: string
+} & GameObjectOptions
+
+export class BitmapTextNode<E extends EventMap = EventMap> extends GameObject<E> {
+  #fnt: string
+  #src: string
+  #text: string
+
+  constructor(options: BitmapTextNodeOptions) {
+    super(options)
+    this.#fnt = options.fnt
+    this.#src = options.src
+    this.#text = options.text
+    this.#load()
+  }
+
+  async #load() {
+    let font
+    if (bitmapFontLoader.checkLoaded(this.#fnt)) {
+      font = bitmapFontLoader.get(this.#fnt)
+    } else {
+      console.info(`Bitmap font not preloaded. Loading now: ${this.#fnt}`)
+      font = await bitmapFontLoader.load(this.#fnt, this.#src)
+    }
+    if (!font) return
+
+    const sprites: PixiSprite[] = []
+
+    let xPos = 0
+    let yPos = 0
+
+    let minX = Infinity
+    let minY = Infinity
+    let maxX = -Infinity
+    let maxY = -Infinity
+
+    for (let i = 0; i < this.#text.length; i++) {
+      const charCode = this.#text.charCodeAt(i)
+
+      if (charCode === 10) {
+        xPos = 0
+        yPos += font.lineHeight
+        continue
+      }
+
+      const c = font.chars[charCode]
+      if (!c) continue
+
+      const frame = new PixiRectangle(c.x, c.y, c.width, c.height)
+      const texture = new PixiTexture({ source: font.texture.source, frame })
+      const sprite = new PixiSprite(texture)
+
+      const x0 = xPos + c.xoffset
+      const y0 = yPos + c.yoffset
+
+      sprite.x = x0
+      sprite.y = y0
+
+      sprites.push(sprite)
+
+      const x1 = x0 + c.width
+      const y1 = y0 + c.height
+
+      if (x0 < minX) minX = x0
+      if (y0 < minY) minY = y0
+      if (x1 > maxX) maxX = x1
+      if (y1 > maxY) maxY = y1
+
+      xPos += c.xadvance
+    }
+
+    if (minX === Infinity) {
+      minX = 0
+      minY = 0
+    }
+
+    if (maxX === -Infinity) {
+      maxX = 0
+      maxY = 0
+    }
+
+    const width = maxX - minX
+    const height = maxY - minY
+
+    for (const s of sprites) {
+      s.x -= width / 2
+      s.y -= height / 2
+      this._pixiContainer.addChild(s)
+    }
+  }
+
+  changeFont(fnt: string, src: string) {
+    if (this.#fnt !== fnt || this.#src !== src) {
+      bitmapFontLoader.release(this.#fnt)
+      this.#fnt = fnt
+      this.#src = src
+      this.#load()
+    }
+  }
+
+  override remove() {
+    bitmapFontLoader.release(this.#fnt)
+    super.remove()
+  }
+}

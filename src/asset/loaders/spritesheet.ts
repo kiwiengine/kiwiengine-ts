@@ -20,7 +20,7 @@ export function getCachedAtlasId(src: string, atlas: SpritesheetData): string {
 }
 
 class SpritesheetLoader extends Loader<Spritesheet> {
-  #idToSrc: Map<string, string> = new Map();
+  #idToSrc = new Map<string, string>();
 
   protected override async doLoad(id: string, src: string, atlas: SpritesheetData) {
     this.#idToSrc.set(id, src)
