@@ -1,4 +1,4 @@
-import { BLEND_MODES, Texture as PixiTexture } from 'pixi.js'
+import { BLEND_MODES, Sprite as PixiSprite, Texture as PixiTexture } from 'pixi.js'
 import { textureLoader } from '../../asset/loaders/texture'
 import { GameObject, GameObjectOptions } from '../core/game-object'
 
@@ -21,7 +21,7 @@ export type ParticleSystemOptions = {
 } & GameObjectOptions
 
 interface Particle {
-  el: HTMLDivElement
+  sprite: PixiSprite
 
   age: number
   lifespan: number
@@ -78,17 +78,38 @@ export class ParticleSystem extends GameObject {
     }
   }
 
-  burst({ x, y }: { x: number; y: number }) {
+  async burst({ x, y }: { x: number; y: number }) {
+    if (!this.#texture) await this.#loadTexturePromise
+
     const count = random(this.#count.min, this.#count.max)
     for (let i = 0; i < count; i++) {
-      const lifetime = random(this.#lifespan.min, this.#lifespan.max)
+      const lifespan = random(this.#lifespan.min, this.#lifespan.max)
       const angle = random(this.#angle.min, this.#angle.max)
       const sin = Math.sin(angle)
       const cos = Math.cos(angle)
       const velocity = random(this.#velocity.min, this.#velocity.max)
       const scale = random(this.#scale.min, this.#scale.max)
 
-      //TODO
+      const sprite = new PixiSprite({
+        x, y,
+        texture: this.#texture,
+        anchor: { x: 0.5, y: 0.5 },
+        scale: { x: scale, y: scale },
+        alpha: this.#startAlpha,
+        blendMode: this.#blendMode,
+        rotation: this.#orientToVelocity ? angle : undefined,
+      })
+
+      this.#particles.push({
+        sprite,
+        age: 0,
+        lifespan,
+        velocityX: velocity * cos,
+        velocityY: velocity * sin,
+        fadeRate: this.#fadeRate,
+      })
+
+      this._pixiContainer.addChild(sprite)
     }
   }
 

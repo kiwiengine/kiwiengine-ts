@@ -22,7 +22,7 @@ export declare class ParticleSystem extends GameObject {
     burst({ x, y }: {
         x: number;
         y: number;
-    }): void;
+    }): Promise<void>;
     protected update(dt: number): void;
     remove(): void;
 }

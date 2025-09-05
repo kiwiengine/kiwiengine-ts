@@ -22,7 +22,7 @@ export declare class DomParticleSystem extends DomGameObject {
     burst({ x, y }: {
         x: number;
         y: number;
-    }): void;
+    }): Promise<void>;
     protected update(dt: number): void;
     remove(): void;
 }
