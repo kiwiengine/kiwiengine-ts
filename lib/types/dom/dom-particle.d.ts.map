@@ -1,1 +1,1 @@
-{"version":3,"file":"dom-particle.d.ts","sourceRoot":"","sources":["../../../src/dom/dom-particle.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,aAAa,EAAE,MAAM,mBAAmB,CAAA;AAEjD,qBAAa,WAAY,SAAQ,aAAa;CAAI"}
+{"version":3,"file":"dom-particle.d.ts","sourceRoot":"","sources":["../../../src/dom/dom-particle.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,wBAAwB,CAAA;AACjD,OAAO,EAAE,aAAa,EAAE,MAAM,mBAAmB,CAAA;AAEjD,qBAAa,iBAAiB,CAAC,CAAC,SAAS,QAAQ,GAAG,QAAQ,CAAE,SAAQ,aAAa,CAAC,CAAC,CAAC;CAAI"}

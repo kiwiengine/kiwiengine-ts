@@ -1,1 +1,1 @@
-{"version":3,"file":"dom-animated-sprite.d.ts","sourceRoot":"","sources":["../../../src/dom/dom-animated-sprite.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,aAAa,EAAE,MAAM,mBAAmB,CAAA;AAEjD,qBAAa,iBAAkB,SAAQ,aAAa;CAAI"}
+{"version":3,"file":"dom-animated-sprite.d.ts","sourceRoot":"","sources":["../../../src/dom/dom-animated-sprite.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,QAAQ,EAAE,MAAM,wBAAwB,CAAA;AACjD,OAAO,EAAE,aAAa,EAAE,MAAM,mBAAmB,CAAA;AAEjD,qBAAa,qBAAqB,CAAC,CAAC,SAAS,QAAQ,GAAG,QAAQ,CAAE,SAAQ,aAAa,CAAC,CAAC,CAAC;IAC/E,MAAM,CAAC,EAAE,EAAE,MAAM;CAG3B"}

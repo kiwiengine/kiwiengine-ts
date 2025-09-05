@@ -1,3 +1,4 @@
+import { setStyle } from '../dom/dom-utils'
 import { GameObject } from '../node/core/game-object'
 import { Renderer } from '../renderer/renderer'
 
@@ -12,12 +13,6 @@ function clampVector(dx: number, dy: number, maxR: number) {
   if (dist <= maxR || dist === 0) return { x: dx, y: dy, dist }
   const s = maxR / dist
   return { x: dx * s, y: dy * s, dist: maxR }
-}
-
-function setStyle(el: HTMLElement | undefined, styles: Partial<CSSStyleDeclaration>) {
-  if (!el) return
-  Object.assign(el.style, styles)
-  return el
 }
 
 function setPosition(el: HTMLElement | undefined, left: number, top: number) {

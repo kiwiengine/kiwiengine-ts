@@ -1,6 +1,7 @@
 import { EventMap } from '@webtaku/event-emitter'
 import { autoDetectRenderer, ColorSource, Container as PixiContainer, Renderer as PixiRenderer } from 'pixi.js'
 import { debugMode } from '../debug'
+import { setStyle } from '../dom/dom-utils'
 import { RenderableNode } from '../node/core/renderable'
 import { Camera } from './camera'
 import { RendererContainerManager } from './container-manager'
@@ -85,10 +86,11 @@ export class Renderer extends RenderableNode<PixiContainer, {
       resolution: window.devicePixelRatio,
     })
 
-    const canvas = pr.canvas
-    canvas.style.position = 'absolute'
-    canvas.style.touchAction = 'auto'
-    this.container.appendChild(canvas)
+    setStyle(pr.canvas, {
+      position: 'absolute',
+      touchAction: 'auto',
+    })
+    this.container.appendChild(pr.canvas)
 
     this.#pixiRenderer = pr
   }
@@ -126,11 +128,12 @@ export class Renderer extends RenderableNode<PixiContainer, {
     if (this.#pixiRenderer) {
       this.#pixiRenderer.resize(canvasWidth, canvasHeight)
 
-      const canvas = this.#pixiRenderer.canvas
-      canvas.style.width = `${displayWidth}px`
-      canvas.style.height = `${displayHeight}px`
-      canvas.style.left = `${canvasLeft}px`
-      canvas.style.top = `${canvasTop}px`
+      setStyle(this.#pixiRenderer.canvas, {
+        width: `${displayWidth}px`,
+        height: `${displayHeight}px`,
+        left: `${canvasLeft}px`,
+        top: `${canvasTop}px`,
+      })
 
       this.emit('resize', canvasWidth, canvasHeight)
     }

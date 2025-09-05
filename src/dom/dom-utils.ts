@@ -11,3 +11,9 @@ export function textStroke<T extends HTMLElement>(target: T, width: number, colo
   target.style.textShadow = shadow
   return target
 }
+
+export function setStyle(el: HTMLElement | undefined, styles: Partial<CSSStyleDeclaration>) {
+  if (!el) return
+  Object.assign(el.style, styles)
+  return el
+}
