@@ -1,9 +1,9 @@
-import { BLEND_MODES, Sprite as PixiSprite } from 'pixi.js'
-import { DomGameObject, DomGameObjectOptions } from './dom-game-object'
+import { BLEND_MODES } from 'pixi.js'
+import { GameObject, GameObjectOptions } from '../core/game-object'
 
 type RandomRange = { min: number, max: number }
 
-export type DomParticleSystemOptions = {
+export type ParticleSystemOptions = {
   texture: string
 
   count: RandomRange
@@ -17,10 +17,10 @@ export type DomParticleSystemOptions = {
   orientToVelocity: boolean
 
   blendMode?: BLEND_MODES // ex) 'screen', 'multiply'
-} & DomGameObjectOptions
+} & GameObjectOptions
 
 interface Particle {
-  sprite: PixiSprite
+  el: HTMLDivElement
 
   age: number
   lifespan: number
@@ -35,11 +35,10 @@ function random(min: number, max: number) {
   return Math.random() * (max - min) + min
 }
 
-export class DomParticleSystem extends DomGameObject {
+export class ParticleSystem extends GameObject {
   #particles: Particle[] = []
 
-  constructor(options: DomParticleSystemOptions) {
+  constructor(options: ParticleSystemOptions) {
     super(options)
-    this.el.style.pointerEvents = 'none'
   }
 }

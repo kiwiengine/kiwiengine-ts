@@ -1,10 +1,10 @@
 import { BLEND_MODES } from 'pixi.js';
-import { DomGameObject, DomGameObjectOptions } from './dom-game-object';
+import { GameObject, GameObjectOptions } from '../core/game-object';
 type RandomRange = {
     min: number;
     max: number;
 };
-export type DomParticleSystemOptions = {
+export type ParticleSystemOptions = {
     texture: string;
     count: RandomRange;
     lifespan: RandomRange;
@@ -15,10 +15,10 @@ export type DomParticleSystemOptions = {
     fadeRate: number;
     orientToVelocity: boolean;
     blendMode?: BLEND_MODES;
-} & DomGameObjectOptions;
-export declare class DomParticleSystem extends DomGameObject {
+} & GameObjectOptions;
+export declare class ParticleSystem extends GameObject {
     #private;
-    constructor(options: DomParticleSystemOptions);
+    constructor(options: ParticleSystemOptions);
 }
 export {};
-//# sourceMappingURL=dom-particle.d.ts.map
+//# sourceMappingURL=particle.d.ts.map
