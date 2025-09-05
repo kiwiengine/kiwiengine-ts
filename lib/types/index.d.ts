@@ -21,8 +21,8 @@ export { DomAnimatedSpriteNode } from './dom/dom-animated-sprite';
 export { DomParticleSystem, DomParticleSystemOptions } from './dom/dom-particle';
 export { domPreload } from './dom/dom-preload';
 export { DomSpriteNode, DomSpriteNodeOptions } from './dom/dom-sprite';
-export { textStroke } from './dom/dom-utils';
+export { setStyle, textStroke } from './dom/dom-utils';
 export { Joystick } from './input/joystick';
 export { isMobile } from './utils/device';
-export { enableDebug } from './debug';
+export { debugMode, enableDebug } from './debug';
 //# sourceMappingURL=index.d.ts.map
