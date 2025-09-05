@@ -20,21 +20,6 @@
 
 ## API
 
-### Delay 노드
-
-`Delay` 노드는 일정 시간이 지난 후에 콜백 함수를 실행하는 노드입니다.
-
-```typescript
-const delayNode = new Delay(2, () => {
-  console.log('2초가 지났습니다.');
-});
-parent.add(delayNode);
-```
-
-* `Delay` 노드는 실행 후 자동으로 부모 노드에서 제거됩니다.
-
----
-
 ### Ticker (게임 루프)
 
 `Ticker`는 **requestAnimationFrame 기반의 게임 루프 관리자**입니다. 매 프레임(또는 특정 상황에서 제한된 프레임)마다 `onTick(dt)` 콜백을 호출하여, **시간 기반 업데이트**를 수행할 수 있게 합니다. `Renderer` 내부 루프 또한 `Ticker`로 구동됩니다.
@@ -207,6 +192,350 @@ root.add(parent)
 const a = new GameObject({ y: -50, useYSort: true })
 const b = new GameObject({ y:  30, useYSort: true })
 // 같은 부모에 있다면 b가 a보다 앞(drawOrder가 큼)에 렌더링됩니다.
+```
+
+---
+
+### Assets
+
+#### `preload(assets, progressCallback?) => () => void`
+
+지정한 에셋(텍스처/오디오/폰트/스프라이트시트)을 **선로딩**합니다. 완료 후 반환하는 함수는 캐시에서 해제합니다.
+
+```ts
+import { preload } from 'kiwiengine'
+
+const release = await preload(
+  [
+    'assets/player.png',
+    { src: 'assets/atlas.png', atlas: atlasJson },
+    { fnt: 'myFont', src: 'assets/myFont.fnt' },
+    'assets/bgm.mp3',
+  ],
+  (p) => console.log(`loading: ${(p*100)|0}%`)
+)
+
+// 필요 없을 때
+release()
+```
+
+#### `musicPlayer`
+
+BGM 전용 간단 플레이어.
+
+```ts
+import { musicPlayer } from 'kiwiengine'
+
+musicPlayer.volume = 0.5        // 0~1 (localStorage에 보존)
+musicPlayer.play('bgm.mp3')     // 같은 src면 중복 재생 안 함
+musicPlayer.pause()
+musicPlayer.stop()
+```
+
+#### `sfxPlayer`
+
+효과음 전용. 매 호출시 경량 인스턴스를 만들어 1회 재생합니다.
+
+```ts
+import { sfxPlayer } from 'kiwiengine'
+
+sfxPlayer.volume = 0.8          // 0~1 (localStorage에 보존)
+sfxPlayer.play('click.wav')
+sfxPlayer.playRandom('hit1.ogg','hit2.ogg','hit3.ogg')
+```
+
+---
+
+### Collision
+
+#### Collider & Types
+
+```ts
+import {
+  ColliderType,
+  type RectangleCollider, type CircleCollider,
+  type EllipseCollider,   type PolygonCollider,
+  type Collider
+} from 'kiwiengine'
+```
+
+* `RectangleCollider`: `{ type: Rectangle, width, height, x?, y? }`
+* `CircleCollider`: `{ type: Circle, radius, x?, y? }`
+* `EllipseCollider`: `{ type: Ellipse, width, height, x?, y? }`
+* `PolygonCollider`: `{ type: Polygon, vertices: {x,y}[], x?, y? }`
+
+#### `checkCollision(ca, ta, cb, tb): boolean`
+
+사각/원/타원/폴리곤 간 **충돌 판정**. 폴리곤·타원도 지원합니다. `ta/tb`는 월드 변환(위치/회전/스케일).
+
+```ts
+import { checkCollision } from 'kiwiengine'
+
+const hit = checkCollision(colA, worldTransformA, colB, worldTransformB)
+```
+
+---
+
+### Node Extensions (Pixi 기반)
+
+#### `AnimatedSpriteNode`
+
+스프라이트시트 애니메이션.
+
+```ts
+import { AnimatedSpriteNode } from 'kiwiengine'
+
+const run = new AnimatedSpriteNode({
+  src: 'atlas.png',
+  atlas: atlasJson,
+  animation: 'run',
+  fps: 12,
+  loop: true,
+  x: 0, y: 0, layer: 'game'
+})
+run.on('animationend', (name) => console.log(name, 'end'))
+```
+
+#### `BitmapTextNode`
+
+비트맵 폰트로 텍스트 렌더링.
+
+```ts
+import { BitmapTextNode } from 'kiwiengine'
+const txt = new BitmapTextNode({ fnt: 'myFont', src: 'myFont.fnt', text: 'HELLO', layer:'ui' })
+txt.changeFont('myFont2','myFont2.fnt')
+```
+
+#### `CircleNode` / `RectangleNode`
+
+도형 드로잉 노드.
+
+```ts
+new CircleNode({ radius: 40, fill: 0xffffff, layer:'game' })
+new RectangleNode({ width: 200, height: 80, stroke: { color: 0x00ff00, width: 2 } })
+```
+
+#### `SpriteNode`
+
+단일 텍스처 스프라이트.
+
+```ts
+import { SpriteNode } from 'kiwiengine'
+const logo = new SpriteNode({ src: 'logo.png', layer:'ui' })
+```
+
+#### `SpineNode`
+
+Spine(Pixi v8) 애니메이션 지원. `animationend` 이벤트 제공.
+
+```ts
+import { SpineNode } from 'kiwiengine'
+const spine = new SpineNode({
+  atlas: 'spine.atlas',
+  texture: { 'page0': 'spine_page0.png' }, // 단일 또는 다중 텍스처
+  json: 'spine.json',                       // 또는 skel/rawSkeletonData
+  skins: ['base','hat'],
+  animation: 'idle',
+  loop: true
+})
+spine.on('animationend', (a) => console.log(a, 'done'))
+```
+
+#### `ParticleSystem`
+
+간단한 파티클 버스트.
+
+```ts
+import { ParticleSystem } from 'kiwiengine'
+const ps = new ParticleSystem({
+  texture: 'spark.png',
+  count: { min: 12, max: 20 },
+  lifespan: { min: 0.4, max: 0.8 },
+  angle: { min: 0, max: Math.PI*2 },
+  velocity: { min: 200, max: 400 },
+  particleScale: { min: 0.5, max: 1.2 },
+  startAlpha: 1, fadeRate: -1.5, orientToVelocity: true
+})
+await ps.burst({ x: 0, y: 0 })
+```
+
+### `DelayNode`
+
+`Delay` 노드는 일정 시간이 지난 후에 콜백 함수를 실행하는 노드입니다.
+
+```typescript
+const delayNode = new DelayNode(2, () => {
+  console.log('2초가 지났습니다.');
+});
+parent.add(delayNode);
+```
+
+* `Delay` 노드는 실행 후 자동으로 부모 노드에서 제거됩니다.
+
+#### `IntervalNode`
+
+고정 간격으로 콜백 호출(게임 루프 기반 `setInterval` 유사).
+
+```ts
+import { IntervalNode } from 'kiwiengine'
+const repeater = new IntervalNode(1, () => console.log('매 1초'))
+```
+
+#### `DomContainerNode`
+
+DOM 엘리먼트를 **게임 좌표계에 맞춰** 함께 배치/변환.
+
+```ts
+import { DomContainerNode } from 'kiwiengine'
+const el = document.createElement('div')
+const dom = new DomContainerNode(el, { x: 0, y: 0, layer: 'ui' })
+```
+
+---
+
+### Physics
+
+#### `PhysicsWorld({ gravity? })`
+
+Matter.js 기반 물리 월드. 같은 씬 내에서 **PhysicsObject만 자식으로** 둘 수 있습니다.
+
+```ts
+import { PhysicsWorld } from 'kiwiengine'
+const world = new PhysicsWorld({ gravity: 1000 })
+world.gravity = 800
+```
+
+#### `PhysicsObject(options)`
+
+Collider로 물리 바디를 만들고 **렌더/좌표를 동기화**합니다.
+
+```ts
+import { PhysicsObject, ColliderType } from 'kiwiengine'
+
+const ball = new PhysicsObject({
+  collider: { type: ColliderType.Circle, radius: 20 },
+  x: 0, y: 200, velocityY: -600, useYSort: true
+})
+// 프로퍼티 동기화
+ball.x += 10
+ball.isStatic = false
+ball.disableCollisions() // 월드에서 제거(렌더는 유지)
+```
+
+---
+
+### DOM Nodes (CSS 렌더)
+
+#### `DomSpriteNode`
+
+이미지를 DOM으로 렌더.
+
+```ts
+import { DomSpriteNode } from 'kiwiengine'
+new DomSpriteNode({ src: 'ui/button.png', layer: 'ui' })
+```
+
+#### `DomAnimatedSpriteNode`
+
+스프라이트시트 기반 DOM 애니메이션.
+
+```ts
+import { DomAnimatedSpriteNode } from 'kiwiengine'
+const anim = new DomAnimatedSpriteNode({
+  src: 'atlas.png', atlas: atlasJson,
+  animation: 'blink', fps: 8, loop: true
+})
+anim.on('animationend', () => {})
+```
+
+#### `DomParticleSystem`
+
+CSS로 구현된 경량 파티클.
+
+```ts
+import { DomParticleSystem } from 'kiwiengine'
+const dps = new DomParticleSystem({ /* ParticleSystem과 유사 옵션 */ })
+await dps.burst({ x: 300, y: 100 })
+```
+
+#### `domPreload(assets, progressCallback?)`
+
+DOM 렌더용 이미지/폰트를 선로딩.
+
+```ts
+import { domPreload } from 'kiwiengine'
+const releaseDom = await domPreload(['ui/button.png','Pretendard'])
+releaseDom()
+```
+
+---
+
+### Input
+
+#### `Joystick`
+
+모바일 터치 조이스틱 + 키보드 방향키 입력을 **하나의 벡터 입력**으로 통합.
+
+```ts
+import { Joystick } from 'kiwiengine'
+
+const joy = new Joystick({
+  onMove: (rad, strength) => { /* 방향(rad)과 세기(0~1) */ },
+  onRelease: () => { /* 입력 종료 */ },
+  // (옵션) 터치 전용 스킨
+  joystickImage: document.getElementById('joy') as HTMLDivElement,
+  knobImage: document.getElementById('knob') as HTMLDivElement,
+  maxKnobDistance: 80,
+  moveThreshold: 6
+})
+// 화면 크기 바뀌면 숨김 위치 갱신
+joy.setIdlePosition({ left: -999999, top: -999999 })
+```
+
+---
+
+### Utils
+
+#### `isMobile: boolean`
+
+간단한 UA 기반 모바일 감지.
+
+```ts
+import { isMobile } from 'kiwiengine'
+if (isMobile) { /* 모바일 전용 처리 */ }
+```
+
+#### `setStyle(el, styles)`
+
+DOM 스타일 유틸.
+
+```ts
+import { setStyle } from 'kiwiengine'
+setStyle(div, { opacity: '0.8', pointerEvents: 'none' })
+```
+
+#### `textStroke(target, width, color)`
+
+텍스트 외곽선(다중 `text-shadow`) 적용.
+
+```ts
+import { textStroke } from 'kiwiengine'
+textStroke(h1, 2, '#000')
+```
+
+---
+
+### Debug
+
+#### `debugMode: boolean` / `enableDebug()`
+
+디버그 모드 토글. **비포커스 탭에서 6FPS 고정 스텝 제한** 등이 활성화됩니다.
+(예: `Ticker`/`Renderer`의 디버그 동작 연동)
+
+```ts
+import { enableDebug, debugMode } from 'kiwiengine'
+enableDebug()
+console.log(debugMode) // true
 ```
 
 ---
