@@ -2,6 +2,8 @@
 
 키위엔진은 **TypeScript 기반 2D 웹 게임 엔진**입니다.
 
+---
+
 ## 특이사항
 
 ### 좌표계
@@ -33,6 +35,66 @@ parent.add(delayNode);
 
 ---
 
+### Ticker (게임 루프)
+
+`Ticker`는 **requestAnimationFrame 기반의 게임 루프 관리자**입니다. 매 프레임(또는 특정 상황에서 제한된 프레임)마다 `onTick(dt)` 콜백을 호출하여, **시간 기반 업데이트**를 수행할 수 있게 합니다. `Renderer` 내부 루프 또한 `Ticker`로 구동됩니다.
+
+```ts
+import { Ticker } from 'kiwiengine'
+
+// dt: 직전 틱 이후 경과한 초(Seconds)
+const ticker = new Ticker((dt) => {
+  player.x += speed * dt
+})
+
+// 더 이상 필요 없을 때 정리
+ticker.remove()
+```
+
+#### 생성자
+
+```ts
+new Ticker(onTick: (dt: number) => void)
+```
+
+* **`dt`(seconds)**: 이전 틱과의 시간 차를 초 단위로 전달합니다. 보통 60FPS 환경에서는 약 `0.0167`이 됩니다.
+* 첫 프레임에서도 유효한 `dt`가 전달되며, 매 프레임마다 한 번 이상 호출됩니다.
+
+#### 고정 스텝 & FPS 제한(디버그 전용)
+
+* `debugMode`가 활성화된 상태에서 **브라우저 탭이 비활성화**되거나 포커스를 잃으면, 내부적으로 **6FPS로 제한**하여 CPU/GPU 점유를 낮춥니다.
+* 이때 루프는 \*\*고정 스텝(fixed step)\*\*으로 동작합니다.
+
+  * 고정 스텝 크기: `1 / fpsCap` (디폴트 6FPS인 경우 ≈ `0.1667s`).
+  * 한 프레임에서 누적 지연(`lag`)이 고정 스텝을 초과하면 **고정 스텝 크기로 한 번** 업데이트합니다.
+  * 지연이 더 커서 고정 스텝의 **두 배 이상**이면, 누적 보정용으로 **추가 한 번** 더 `onTick(dt 누적값)`을 호출해 상태를 따라잡습니다.
+* 탭이 다시 포커스를 얻으면 제한이 해제되어 **정상 rAF 루프**로 복귀합니다.
+* **페이지 복귀(`pageshow`)** 시 `bfcache`에서 돌아오는 경우를 감지하여, 제한을 초기화하고 정상 루프로 복귀합니다.
+
+> 참고: FPS 제한 값(`fpsCap`)은 외부에서 설정하지 않으며, **디버그 모드 + 비포커스 상태**에서만 내부적으로 활성화됩니다.
+
+#### 수명주기
+
+```ts
+Ticker#remove(): void
+```
+
+* 루프를 중지하고, 등록된 포커스/블러/페이지 이벤트 리스너를 해제합니다.
+* `Renderer.remove()`는 내부적으로 자신이 보유한 `Ticker`까지 함께 제거합니다.
+
+#### 사용 팁
+
+* **시간기반 업데이트**: 물리/이동/애니메이션은 가능한 `dt`를 곱해 프레임레이트에 독립적으로 만드세요.
+
+  ```ts
+  velocity.y += GRAVITY * dt
+  position.x += velocity.x * dt
+  ```
+* **이중 루프 지양**: 동일한 씬에 `Renderer`의 루프가 이미 있다면, 별도의 `Ticker`를 추가로 돌리지 말고 **업데이트 훅**(예: `GameObject`의 `update`)을 활용하는 쪽이 단순합니다.
+* **정리 필수**: 씬 전환이나 페이지 언마운트 시 `remove()`를 호출해 메모리 누수를 예방하세요.
+
+---
+
 ## Renderer
 
 `Renderer`는 화면에 오브젝트를 그리는 **렌더링 관리자**로, 전체 게임의 **카메라, 레이어, 캔버스 리사이징, 렌더 루프** 등을 통합적으로 관리합니다.
@@ -55,6 +117,7 @@ const renderer = new Renderer(document.body, {
 * **카메라 이동/줌**: `Renderer.camera`를 통해 게임 화면의 위치와 확대/축소를 조절할 수 있습니다.
 * **FPS 디스플레이 (디버그용)**: `debugMode`가 활성화된 경우 FPS 정보가 표시됩니다.
 * **화면 좌표 → 월드 좌표 변환** 기능을 지원합니다.
+* **렌더 루프 관리**: 내부적으로 `Ticker`를 사용해 루프를 구동하며, 디버그 모드에서 탭 비활성화 시 **자동 6FPS 제한**으로 성능을 보호합니다.
 
 ### 옵션 (`RendererOptions`)
 
@@ -69,8 +132,6 @@ type RendererOptions = {
 
 * `logicalWidth`와 `logicalHeight`를 지정하면, 논리 해상도를 설정할 수 있으며, 실제 화면에 비례해 자동 스케일링됩니다.
 
----
-
 ### 주요 메서드
 
 #### `screenToWorld(x: number, y: number): { x: number, y: number }`
@@ -83,7 +144,7 @@ const worldPos = renderer.screenToWorld(event.clientX, event.clientY);
 
 #### `remove()`
 
-렌더러 및 관련 리소스를 정리하고 DOM에서 제거합니다. (티커, 캔버스, FPS 디스플레이 포함)
+렌더러 및 관련 리소스를 정리하고 DOM에서 제거합니다. (**Ticker**, 캔버스, FPS 디스플레이 포함)
 
 ---
 
@@ -96,7 +157,7 @@ const worldPos = renderer.screenToWorld(event.clientX, event.clientY);
 
 ---
 
-### GameObject
+## GameObject
 
 `GameObject`는 씬 내에서 **위치/회전/스케일 등의 변환**을 갖고, 자식 노드를 포함할 수 있는 기본 렌더러블 노드입니다.
 
@@ -116,7 +177,7 @@ const player = new GameObject({
 root.add(player)
 ```
 
-#### 옵션 (`GameObjectOptions`)
+### 옵션 (`GameObjectOptions`)
 
 * `x`, `y`: 로컬 좌표(기본 0).
 * `scale`, `scaleX`, `scaleY`: 스케일.
@@ -126,7 +187,7 @@ root.add(player)
 * `layer`: 이 오브젝트를 그릴 레이어 이름.
 * `useYSort`: `true`면 컨테이너의 `drawOrder`를 현재 `y`값으로 설정합니다.
 
-#### 자식 관리
+### 자식 관리
 
 ```typescript
 const parent = new GameObject({ x: -100, y: 0, layer: 'game' })
@@ -140,7 +201,7 @@ root.add(parent)
 * `remove()`: 자신과 자식이 모두 제거됨.
 * `pause() / resume()`: 일시정지/재개가 계층적으로 전파됨.
 
-#### Y-정렬 (`useYSort`)
+### Y-정렬 (`useYSort`)
 
 ```typescript
 const a = new GameObject({ y: -50, useYSort: true })
