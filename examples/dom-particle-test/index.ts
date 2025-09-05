@@ -1,4 +1,4 @@
-import { DomParticleSystem, domPreload, enableDebug } from '../../src'
+import { DomParticleSystem, domPreload, enableDebug, Ticker } from '../../src'
 
 enableDebug()
 
@@ -17,6 +17,8 @@ const ps = new DomParticleSystem({
   blendMode: 'screen',
 })
 ps.attachTo(document.body)
+
+new Ticker(dt => ps.render(dt))
 
 window.addEventListener('click', (e) => {
   ps.burst({ x: e.clientX, y: e.clientY })
