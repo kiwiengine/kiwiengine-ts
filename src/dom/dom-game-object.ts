@@ -102,6 +102,7 @@ export class DomGameObject<E extends EventMap = EventMap> extends GameNode<E> {
     target.appendChild(this.el)
     this.parent = new DomRootNode()
     this._updateWorldTransform()
+    return this
   }
 
   set x(v) { this.#localTransform.x = v }

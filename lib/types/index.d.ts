@@ -3,6 +3,7 @@ export { AssetSource, preload } from './asset/preload';
 export { checkCollision } from './collision/check-collision';
 export { CircleCollider, Collider, ColliderType, EllipseCollider, PolygonCollider, RectangleCollider } from './collision/colliders';
 export { enableDebug } from './debug';
+export { DomAnimatedSpriteNode } from './dom/dom-animated-sprite';
 export { domPreload } from './dom/dom-preload';
 export { DomSpriteNode, DomSpriteNodeOptions } from './dom/dom-sprite';
 export { textStroke } from './dom/dom-utils';

@@ -23,7 +23,7 @@ export declare class DomGameObject<E extends EventMap = EventMap> extends GameNo
     constructor(options?: DomGameObjectOptions);
     render(dt: number): void;
     protected _updateWorldTransform(): void;
-    attachTo(target: HTMLElement): void;
+    attachTo(target: HTMLElement): this;
     set x(v: number);
     get x(): number;
     set y(v: number);
