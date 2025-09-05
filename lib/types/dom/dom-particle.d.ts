@@ -19,6 +19,12 @@ export type DomParticleSystemOptions = {
 export declare class DomParticleSystem extends DomGameObject {
     #private;
     constructor(options: DomParticleSystemOptions);
+    burst({ x, y }: {
+        x: number;
+        y: number;
+    }): void;
+    protected update(dt: number): void;
+    remove(): void;
 }
 export {};
 //# sourceMappingURL=dom-particle.d.ts.map

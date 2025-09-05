@@ -19,6 +19,12 @@ export type ParticleSystemOptions = {
 export declare class ParticleSystem extends GameObject {
     #private;
     constructor(options: ParticleSystemOptions);
+    burst({ x, y }: {
+        x: number;
+        y: number;
+    }): void;
+    protected update(dt: number): void;
+    remove(): void;
 }
 export {};
 //# sourceMappingURL=particle.d.ts.map
