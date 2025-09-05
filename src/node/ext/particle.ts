@@ -11,7 +11,7 @@ export type ParticleSystemOptions = {
   lifespan: RandomRange
   angle: RandomRange
   velocity: RandomRange
-  scale: RandomRange
+  particleScale: RandomRange
 
   startAlpha?: number
   fadeRate: number
@@ -60,7 +60,7 @@ export class ParticleSystem extends GameObject {
     this.#lifespan = options.lifespan
     this.#angle = options.angle
     this.#velocity = options.velocity
-    this.#scale = options.scale
+    this.#scale = options.particleScale
     this.#startAlpha = options.startAlpha
     this.#fadeRate = options.fadeRate
     this.#orientToVelocity = options.orientToVelocity

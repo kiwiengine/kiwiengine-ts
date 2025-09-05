@@ -10,7 +10,7 @@ export type DomParticleSystemOptions = {
     lifespan: RandomRange;
     angle: RandomRange;
     velocity: RandomRange;
-    scale: RandomRange;
+    particleScale: RandomRange;
     startAlpha?: number;
     fadeRate: number;
     orientToVelocity: boolean;
