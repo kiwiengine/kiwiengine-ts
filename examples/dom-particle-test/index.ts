@@ -21,5 +21,7 @@ ps.attachTo(document.body)
 new Ticker(dt => ps.render(dt))
 
 window.addEventListener('click', (e) => {
-  ps.burst({ x: e.clientX, y: e.clientY })
+  const x = e.clientX - window.innerWidth / 2
+  const y = e.clientY - window.innerHeight / 2
+  ps.burst({ x, y })
 })

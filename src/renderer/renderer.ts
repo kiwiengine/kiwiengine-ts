@@ -163,4 +163,10 @@ export class Renderer extends RenderableNode<PixiContainer, {
     this.fpsDisplay?.remove()
     super.remove()
   }
+
+  screenToWorld(screenX: number, screenY: number) {
+    const x = (screenX - this.canvasLeft) / this.viewportScale - this.canvasWidth / 2
+    const y = (screenY - this.canvasTop) / this.viewportScale - this.canvasHeight / 2
+    return { x, y }
+  }
 }

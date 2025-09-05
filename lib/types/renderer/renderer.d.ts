@@ -31,5 +31,9 @@ export declare class Renderer extends RenderableNode<PixiContainer, {
     private init;
     _addToLayer(node: RenderableNode<PixiContainer, EventMap>, layerName: string): void;
     remove(): void;
+    screenToWorld(screenX: number, screenY: number): {
+        x: number;
+        y: number;
+    };
 }
 //# sourceMappingURL=renderer.d.ts.map

@@ -25,5 +25,6 @@ const ps = new ParticleSystem({
 renderer.add(ps)
 
 window.addEventListener('click', (e) => {
-  ps.burst({ x: e.clientX, y: e.clientY })
+  const { x, y } = renderer.screenToWorld(e.clientX, e.clientY)
+  ps.burst({ x, y })
 })
