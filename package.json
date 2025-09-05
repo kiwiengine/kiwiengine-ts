@@ -5,6 +5,7 @@
   "main": "./lib/index.js",
   "dependencies": {
     "@esotericsoftware/spine-pixi-v8": "^4.2.88",
+    "@webtaku/event-emitter": "^0.0.2",
     "matter-js": "^0.20.0",
     "pixi.js": "^8.11.0",
     "stats.js": "^0.17.0"

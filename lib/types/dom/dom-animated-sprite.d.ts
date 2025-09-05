@@ -1,0 +1,1 @@
+//# sourceMappingURL=dom-animated-sprite.d.ts.map
