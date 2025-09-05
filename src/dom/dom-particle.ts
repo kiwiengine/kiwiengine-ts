@@ -123,7 +123,25 @@ export class DomParticleSystem extends DomGameObject {
   protected update(dt: number) {
     super.update(dt)
 
-    //TODO
+    const ps = this.#particles
+    for (let i = 0; i < ps.length; i++) {
+      const p = ps[i]
+      const e = p.el
+
+      p.age += dt
+      if (p.age > p.lifespan) {
+        e.remove()
+        ps.splice(i, 1)
+        i--
+        continue
+      }
+
+      const x = parseFloat(e.style.left) + p.velocityX * dt
+      const y = parseFloat(e.style.top) + p.velocityY * dt
+      const opacity = parseFloat(e.style.opacity) + p.fadeRate * dt
+
+      setStyle(e, { left: `${x}px`, top: `${y}px`, opacity: `${opacity}` })
+    }
   }
 
   override remove() {

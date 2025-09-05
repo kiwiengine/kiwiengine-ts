@@ -116,7 +116,23 @@ export class ParticleSystem extends GameObject {
   protected update(dt: number) {
     super.update(dt)
 
-    //TODO
+    const ps = this.#particles
+    for (let i = 0; i < ps.length; i++) {
+      const p = ps[i]
+      const g = p.sprite
+
+      p.age += dt
+      if (p.age > p.lifespan) {
+        g.destroy({ children: true })
+        ps.splice(i, 1)
+        i--
+        continue
+      }
+
+      g.x += p.velocityX * dt
+      g.y += p.velocityY * dt
+      g.alpha += p.fadeRate * dt
+    }
   }
 
   override remove() {
