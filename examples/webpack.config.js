@@ -8,6 +8,7 @@ module.exports = {
     'sprite-test': './sprite-test/index.ts',
     'collision-test': './collision-test/index.ts',
     'spine-test': './spine-test/index.ts',
+    'dom-sprite-test': './dom-sprite-test/index.ts',
 
     'flappy-cat': './flappy-cat/index.ts',
     'simple-battle': './simple-battle/index.ts',

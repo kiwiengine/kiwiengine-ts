@@ -1,1 +1,1 @@
-{"version":3,"file":"dom-animated-sprite.js","sourceRoot":"","sources":["../../src/dom/dom-animated-sprite.ts"],"names":[],"mappings":"","sourcesContent":[""]}
+{"version":3,"file":"dom-animated-sprite.js","sourceRoot":"","sources":["../../src/dom/dom-animated-sprite.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,aAAa,EAAE,MAAM,mBAAmB,CAAA;AAEjD,MAAM,OAAO,iBAAkB,SAAQ,aAAa;CAAI","sourcesContent":["import { DomGameObject } from './dom-game-object'\n\nexport class DomAnimatedSprite extends DomGameObject { }\n"]}

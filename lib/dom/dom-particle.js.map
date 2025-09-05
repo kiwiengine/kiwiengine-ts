@@ -1,1 +1,1 @@
-{"version":3,"file":"dom-particle.js","sourceRoot":"","sources":["../../src/dom/dom-particle.ts"],"names":[],"mappings":"","sourcesContent":[""]}
+{"version":3,"file":"dom-particle.js","sourceRoot":"","sources":["../../src/dom/dom-particle.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,aAAa,EAAE,MAAM,mBAAmB,CAAA;AAEjD,MAAM,OAAO,WAAY,SAAQ,aAAa;CAAI","sourcesContent":["import { DomGameObject } from './dom-game-object'\n\nexport class DomParticle extends DomGameObject { }\n"]}

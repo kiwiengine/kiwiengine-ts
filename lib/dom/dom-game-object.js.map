@@ -1,0 +1,1 @@
+{"version":3,"file":"dom-game-object.js","sourceRoot":"","sources":["../../src/dom/dom-game-object.ts"],"names":[],"mappings":"AAAA,MAAM,OAAO,aAAa;IACxB,MAAM,KAAK,CAAC;CACb","sourcesContent":["export class DomGameObject {\n  render() { }\n}\n"]}
