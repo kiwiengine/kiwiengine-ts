@@ -1,15 +1,19 @@
+// Core
+export { GameObject, GameObjectOptions } from './node/core/game-object'
+
+// Renderer
+export { Renderer, RendererOptions } from './renderer/renderer'
+export { Ticker } from './renderer/ticker'
+
+// Assets
 export { musicPlayer, sfxPlayer } from './asset/audio'
 export { AssetSource, preload } from './asset/preload'
+
+// Collision
 export { checkCollision } from './collision/check-collision'
 export { CircleCollider, Collider, ColliderType, EllipseCollider, PolygonCollider, RectangleCollider } from './collision/colliders'
-export { enableDebug } from './debug'
-export { DomAnimatedSpriteNode } from './dom/dom-animated-sprite'
-export { DomParticleSystem, DomParticleSystemOptions } from './dom/dom-particle'
-export { domPreload } from './dom/dom-preload'
-export { DomSpriteNode, DomSpriteNodeOptions } from './dom/dom-sprite'
-export { textStroke } from './dom/dom-utils'
-export { Joystick } from './input/joystick'
-export { GameObject, GameObjectOptions } from './node/core/game-object'
+
+// Node Extensions
 export { AnimatedSpriteNode, AnimatedSpriteNodeOptions } from './node/ext/animated-sprite'
 export { BitmapTextNode, BitmapTextNodeOptions } from './node/ext/bitmap-text'
 export { CircleNode, CircleNodeOptions } from './node/ext/circle'
@@ -20,9 +24,23 @@ export { ParticleSystem, ParticleSystemOptions } from './node/ext/particle'
 export { RectangleNode, RectangleNodeOptions } from './node/ext/rectangle'
 export { SpineNode, SpineNodeOptions } from './node/ext/spine'
 export { SpriteNode, SpriteNodeOptions } from './node/ext/sprite'
+
+// Physics
 export { PhysicsObject, PhysicsObjectOptions } from './node/physics/physics-object'
 export { PhysicsWorld } from './node/physics/physics-world'
-export { Renderer, RendererOptions } from './renderer/renderer'
-export { Ticker } from './renderer/ticker'
+
+// DOM Nodes
+export { DomAnimatedSpriteNode } from './dom/dom-animated-sprite'
+export { DomParticleSystem, DomParticleSystemOptions } from './dom/dom-particle'
+export { domPreload } from './dom/dom-preload'
+export { DomSpriteNode, DomSpriteNodeOptions } from './dom/dom-sprite'
+export { textStroke } from './dom/dom-utils'
+
+// Input
+export { Joystick } from './input/joystick'
+
+// Utils
 export { isMobile } from './utils/device'
 
+// Debug
+export { enableDebug } from './debug'

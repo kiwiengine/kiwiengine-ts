@@ -33,7 +33,7 @@ parent.add(delayNode);
 
 ### Renderer
 
-The `Renderer` is responsible for managing rendering and drawing objects on the screen.
+The `Renderer` is the **rendering manager** responsible for handling the canvas, drawing objects, camera, layers, and the rendering loop.
 
 ```typescript
 const renderer = new Renderer(document.body, {
@@ -45,7 +45,39 @@ const renderer = new Renderer(document.body, {
 });
 ```
 
-* `layers`: Defines layer names and their drawing order.
+#### Key Features
+
+* **Layer System**: Define layers with names and draw order. Each `GameObject` can be assigned to a layer with the `layer` property.
+* **Automatic Resizing**: The canvas automatically resizes to match its parent element. Object positions are updated accordingly, based on the center-origin coordinate system.
+* **Center-Based Coordinates**: `(0, 0)` always represents the center of the canvas. The top-left corner is at `(-width/2, -height/2)`.
+* **Camera Control**: The `Renderer.camera` object allows panning and zooming of the entire game view.
+* **FPS Display (Debug Mode)**: When `debugMode` is enabled, an FPS counter is shown for performance monitoring.
+* **Coordinate Conversion**: Provides functionality to convert screen coordinates (e.g., mouse position) to world coordinates.
+
+#### Options (`RendererOptions`)
+
+```typescript
+type RendererOptions = {
+  logicalWidth?: number        // logical canvas width
+  logicalHeight?: number       // logical canvas height
+  backgroundColor?: ColorSource  // canvas background color
+  layers?: { name: string; drawOrder: number }[] // layer definitions
+}
+```
+
+* `logicalWidth` and `logicalHeight`: Define a logical resolution for the canvas. The canvas will scale proportionally to fit the screen.
+
+#### Main Methods
+
+* **`screenToWorld(x: number, y: number): { x: number, y: number }`**
+  Converts screen coordinates (such as mouse position from `event.clientX` and `event.clientY`) into world coordinates.
+
+  ```typescript
+  const worldPos = renderer.screenToWorld(event.clientX, event.clientY);
+  ```
+
+* **`remove()`**
+  Cleans up and removes the renderer along with associated resources (ticker, canvas, FPS display, etc.) from the DOM.
 
 ---
 

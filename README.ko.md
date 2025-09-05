@@ -33,9 +33,9 @@ parent.add(delayNode);
 
 ---
 
-### Renderer
+## Renderer
 
-`Renderer`는 화면에 오브젝트를 그리기 위한 렌더링 관리 클래스입니다.
+`Renderer`는 화면에 오브젝트를 그리는 **렌더링 관리자**로, 전체 게임의 **카메라, 레이어, 캔버스 리사이징, 렌더 루프** 등을 통합적으로 관리합니다.
 
 ```typescript
 const renderer = new Renderer(document.body, {
@@ -47,7 +47,52 @@ const renderer = new Renderer(document.body, {
 });
 ```
 
-* `layers`: 레이어 이름과 그리는 순서를 지정할 수 있습니다.
+### 주요 기능
+
+* **레이어 시스템**: 레이어 이름과 그리는 순서를 지정할 수 있으며, 각 `GameObject`는 `layer` 속성으로 어느 레이어에 그릴지 지정합니다.
+* **자동 리사이징**: 캔버스는 부모 엘리먼트의 크기를 따라 자동으로 리사이징되며, 중심 기준 좌표계에 맞춰 위치가 갱신됩니다.
+* **중심 좌표계**: `(0, 0)`은 항상 **캔버스 중심**입니다. 화면 좌측 상단은 `(-width/2, -height/2)`가 됩니다.
+* **카메라 이동/줌**: `Renderer.camera`를 통해 게임 화면의 위치와 확대/축소를 조절할 수 있습니다.
+* **FPS 디스플레이 (디버그용)**: `debugMode`가 활성화된 경우 FPS 정보가 표시됩니다.
+* **화면 좌표 → 월드 좌표 변환** 기능을 지원합니다.
+
+### 옵션 (`RendererOptions`)
+
+```ts
+type RendererOptions = {
+  logicalWidth?: number        // 논리적 캔버스 너비
+  logicalHeight?: number       // 논리적 캔버스 높이
+  backgroundColor?: ColorSource  // 캔버스 배경색
+  layers?: { name: string; drawOrder: number }[] // 레이어 정의
+}
+```
+
+* `logicalWidth`와 `logicalHeight`를 지정하면, 논리 해상도를 설정할 수 있으며, 실제 화면에 비례해 자동 스케일링됩니다.
+
+---
+
+### 주요 메서드
+
+#### `screenToWorld(x: number, y: number): { x: number, y: number }`
+
+브라우저상의 마우스 좌표 등을 **월드 좌표계로 변환**합니다.
+
+```ts
+const worldPos = renderer.screenToWorld(event.clientX, event.clientY);
+```
+
+#### `remove()`
+
+렌더러 및 관련 리소스를 정리하고 DOM에서 제거합니다. (티커, 캔버스, FPS 디스플레이 포함)
+
+---
+
+### 좌표계 설명
+
+* 캔버스 중앙이 `(0, 0)`입니다.
+* 좌측 상단은 `(-width/2, -height/2)`입니다.
+* 마우스 위치를 오브젝트 위치로 사용하려면 `screenToWorld`를 통해 변환해야 합니다.
+* `camera`를 통해 전체 화면을 이동하거나 확대/축소할 수 있습니다.
 
 ---
 
