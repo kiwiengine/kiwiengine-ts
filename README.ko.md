@@ -276,7 +276,7 @@ const hit = checkCollision(colA, worldTransformA, colB, worldTransformB)
 
 ---
 
-### Node Extensions (Pixi 기반)
+### Node Extensions
 
 #### `AnimatedSpriteNode`
 
@@ -326,7 +326,7 @@ const logo = new SpriteNode({ src: 'logo.png', layer:'ui' })
 
 #### `SpineNode`
 
-Spine(Pixi v8) 애니메이션 지원. `animationend` 이벤트 제공.
+Spine 애니메이션 지원. `animationend` 이벤트 제공.
 
 ```ts
 import { SpineNode } from 'kiwiengine'
@@ -397,7 +397,7 @@ const dom = new DomContainerNode(el, { x: 0, y: 0, layer: 'ui' })
 
 #### `PhysicsWorld({ gravity? })`
 
-Matter.js 기반 물리 월드. 같은 씬 내에서 **PhysicsObject만 자식으로** 둘 수 있습니다.
+물리 월드. 같은 씬 내에서 **PhysicsObject만 자식으로** 둘 수 있습니다.
 
 ```ts
 import { PhysicsWorld } from 'kiwiengine'
