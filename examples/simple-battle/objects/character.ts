@@ -1,6 +1,5 @@
 import { EventMap } from '@webtaku/event-emitter'
-import { AnimatedSpriteNode, DelayNode, PhysicsObject, PhysicsObjectOptions, RectangleCollider, RectangleNode } from '../../../src'
-import { debugMode } from '../../../src/debug'
+import { AnimatedSpriteNode, debugMode, DelayNode, PhysicsObject, PhysicsObjectOptions, RectangleCollider, RectangleNode } from '../../../src'
 import { DamageText } from '../hud/damage-text'
 import { HealText } from '../hud/heal-text'
 import { HpBar } from '../hud/hp-bar'

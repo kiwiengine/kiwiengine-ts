@@ -1,6 +1,4 @@
-import { debugMode } from '../../../src/debug'
-import { AnimatedSpriteNode, CircleCollider, CircleNode, ColliderType } from '../../../src/index'
-import { GameObject, GameObjectOptions } from '../../../src/node/core/game-object'
+import { AnimatedSpriteNode, CircleCollider, CircleNode, ColliderType, debugMode, GameObject, GameObjectOptions } from '../../../src'
 import potionAtlas from '../assets/spritesheets/potion-atlas.json'
 
 export type PotionOptions = {

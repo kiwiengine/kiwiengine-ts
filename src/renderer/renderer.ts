@@ -1,5 +1,5 @@
 import { EventMap } from '@webtaku/event-emitter'
-import { autoDetectRenderer, ColorSource, Container as PixiContainer, Renderer as PixiRenderer } from 'pixi.js'
+import { AutoDetectOptions, autoDetectRenderer, ColorSource, Container as PixiContainer, Renderer as PixiRenderer } from 'pixi.js'
 import { debugMode } from '../debug'
 import { setStyle } from '../dom/dom-utils'
 import { RenderableNode } from '../node/core/renderable'
@@ -79,14 +79,17 @@ export class Renderer extends RenderableNode<PixiContainer, {
   }
 
   private async init() {
-    const pr = await autoDetectRenderer({
-      width: this.#logicalWidth,
-      height: this.#logicalHeight,
-      backgroundColor: this.#backgroundColor,
-      backgroundAlpha: this.#backgroundAlpha,
+    const options: Partial<AutoDetectOptions> = {
       eventMode: 'none',
       resolution: window.devicePixelRatio,
-    })
+    }
+
+    if (this.#logicalWidth) options.width = this.#logicalWidth
+    if (this.#logicalHeight) options.height = this.#logicalHeight
+    if (this.#backgroundColor) options.backgroundColor = this.#backgroundColor
+    if (this.#backgroundAlpha) options.backgroundAlpha = this.#backgroundAlpha
+
+    const pr = await autoDetectRenderer(options)
 
     setStyle(pr.canvas, {
       position: 'absolute',
