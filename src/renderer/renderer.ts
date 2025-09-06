@@ -13,6 +13,7 @@ export type RendererOptions = {
   logicalWidth?: number
   logicalHeight?: number
   backgroundColor?: ColorSource
+  backgroundAlpha?: number
   layers?: { name: string; drawOrder: number }[]
 }
 
@@ -27,6 +28,7 @@ export class Renderer extends RenderableNode<PixiContainer, {
   #logicalWidth?: number
   #logicalHeight?: number
   #backgroundColor?: ColorSource
+  #backgroundAlpha?: number
 
   #pixiRenderer?: PixiRenderer
   #layers: { [name: string]: Layer } = {}
@@ -58,6 +60,7 @@ export class Renderer extends RenderableNode<PixiContainer, {
       if (options.logicalWidth !== undefined) this.#logicalWidth = options.logicalWidth
       if (options.logicalHeight !== undefined) this.#logicalHeight = options.logicalHeight
       if (options.backgroundColor !== undefined) this.#backgroundColor = options.backgroundColor
+      if (options.backgroundAlpha !== undefined) this.#backgroundAlpha = options.backgroundAlpha
 
       if (options.layers) {
         for (const layerOption of options.layers) {
@@ -72,8 +75,6 @@ export class Renderer extends RenderableNode<PixiContainer, {
       this.fpsDisplay = new FpsDisplay(container)
     }
 
-    const cr = this.container.getBoundingClientRect()
-    this.#updateSize(cr.width, cr.height)
     this.init()
   }
 
@@ -82,6 +83,7 @@ export class Renderer extends RenderableNode<PixiContainer, {
       width: this.#logicalWidth,
       height: this.#logicalHeight,
       backgroundColor: this.#backgroundColor,
+      backgroundAlpha: this.#backgroundAlpha,
       eventMode: 'none',
       resolution: window.devicePixelRatio,
     })
@@ -93,6 +95,9 @@ export class Renderer extends RenderableNode<PixiContainer, {
     this.container.appendChild(pr.canvas)
 
     this.#pixiRenderer = pr
+
+    const cr = this.container.getBoundingClientRect()
+    this.#updateSize(cr.width, cr.height)
   }
 
   #updatePosition() {

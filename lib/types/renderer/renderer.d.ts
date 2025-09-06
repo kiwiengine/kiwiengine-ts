@@ -7,6 +7,7 @@ export type RendererOptions = {
     logicalWidth?: number;
     logicalHeight?: number;
     backgroundColor?: ColorSource;
+    backgroundAlpha?: number;
     layers?: {
         name: string;
         drawOrder: number;
