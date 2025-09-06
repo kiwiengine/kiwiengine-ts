@@ -111,6 +111,7 @@ type RendererOptions = {
   logicalWidth?: number        // 논리적 캔버스 너비
   logicalHeight?: number       // 논리적 캔버스 높이
   backgroundColor?: ColorSource  // 캔버스 배경색
+  backgroundAlpha?: number     // 캔버스 배경 투명도
   layers?: { name: string; drawOrder: number }[] // 레이어 정의
 }
 ```
