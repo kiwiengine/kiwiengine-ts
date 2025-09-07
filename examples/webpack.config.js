@@ -12,7 +12,6 @@ module.exports = {
     'dom-sprite-test': './dom-sprite-test/index.ts',
     'dom-particle-test': './dom-particle-test/index.ts',
 
-    'flappy-cat': './flappy-cat/index.ts',
     'simple-battle': './simple-battle/index.ts',
     'auto-battle': './auto-battle/index.ts',
     'battle-benchmark-matterjs': './battle-benchmark-matterjs/index.ts',
