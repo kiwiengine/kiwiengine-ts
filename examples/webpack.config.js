@@ -14,6 +14,9 @@ module.exports = {
 
     'flappy-cat': './flappy-cat/index.ts',
     'simple-battle': './simple-battle/index.ts',
+    'auto-battle': './auto-battle/index.ts',
+    'battle-benchmark-matterjs': './battle-benchmark-matterjs/index.ts',
+    'battle-benchmark-separation': './battle-benchmark-separation/index.ts',
   },
   output: {
     filename: '[name]/dist/game.js',

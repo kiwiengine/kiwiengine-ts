@@ -1,4 +1,4 @@
-import { checkCollision, IntervalNode, isMobile, Joystick, musicPlayer, PhysicsWorld } from '../../src'
+import { checkCollision, GameObject, IntervalNode, isMobile, Joystick, musicPlayer } from '../../src'
 import { Hero } from './objects/hero'
 import { Orc } from './objects/orc'
 import { Potion } from './objects/potion'
@@ -14,7 +14,7 @@ function createTextElement() {
 
 const SCORE_PER_ORC = 100
 
-export class Stage extends PhysicsWorld {
+export class Stage extends GameObject {
   #hero = new Hero();
   #orcs: Set<Orc> = new Set();
   #potions: Set<Potion> = new Set();
@@ -37,6 +37,10 @@ export class Stage extends PhysicsWorld {
     this.add(this.#hero)
     this.add(this.#spawnOrcInterval = new IntervalNode(1, () => this.#spawnOrc()))
     this.add(this.#spawnPotionInterval = new IntervalNode(3, () => this.#spawnPotion()))
+
+    for (let i = 0; i < 1000; i++) {
+      this.#spawnOrc()
+    }
 
     const joystickImage = new Image()
     joystickImage.src = 'assets/joystick/joystick.png'
