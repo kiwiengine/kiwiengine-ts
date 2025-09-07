@@ -47,10 +47,18 @@ export class Hero extends Character<{
     this.add(this._sprite)
   }
 
-  move(radian: number, distance: number) {
+  moveTo(x: number, y: number) {
     if (this.dead) return
-    this.#cachedVelX = Math.cos(radian) * distance * HERO_MOVE_SPEED
-    this.#cachedVelY = Math.sin(radian) * distance * HERO_MOVE_SPEED
+
+    const dx = x - this.x
+    const dy = y - this.y
+    const radian = Math.atan2(dy, dx)
+    this.#cachedVelX = Math.cos(radian) * HERO_MOVE_SPEED
+    this.#cachedVelY = Math.sin(radian) * HERO_MOVE_SPEED
+
+    const scale = Math.abs(this._sprite.scaleX)
+    this._sprite.scaleX = dx > 0 ? scale : -scale
+    this.hitboxX = dx > 0 ? HERO_HITBOX_X : -HERO_HITBOX_X
   }
 
   stop() {
