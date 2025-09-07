@@ -10,7 +10,6 @@ class BinaryLoader extends Loader<Uint8Array> {
       }
 
       const arrayBuffer = await response.arrayBuffer()
-      const data = new Uint8Array(arrayBuffer)
 
       this.loadingPromises.delete(src)
 
@@ -18,6 +17,7 @@ class BinaryLoader extends Loader<Uint8Array> {
         if (this.cachedAssets.has(src)) {
           console.error(`Binary data already exists: ${src}`)
         } else {
+          const data = new Uint8Array(arrayBuffer)
           this.cachedAssets.set(src, data)
           return data
         }

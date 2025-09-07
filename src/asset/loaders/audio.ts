@@ -10,9 +10,8 @@ class AudioLoader extends Loader<AudioBuffer> {
         return
       }
 
-      const arrayBuffer = await response.arrayBuffer()
-
       try {
+        const arrayBuffer = await response.arrayBuffer()
         const audioBuffer = await audioContext.decodeAudioData(arrayBuffer)
 
         this.loadingPromises.delete(src)
