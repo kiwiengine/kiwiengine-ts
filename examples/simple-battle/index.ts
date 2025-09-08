@@ -8,6 +8,8 @@ if (process.env.NODE_ENV === 'development') {
   enableDebug()
 }
 
+console.log('test')
+
 await preload([
   { src: 'assets/spritesheets/hero.png', atlas: heroAtlas },
   { src: 'assets/spritesheets/orc.png', atlas: orcAtlas },

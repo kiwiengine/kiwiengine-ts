@@ -28,6 +28,7 @@ export { SpriteNode, SpriteNodeOptions } from './node/ext/sprite'
 // Physics
 export { PhysicsObject, PhysicsObjectOptions } from './node/physics/physics-object'
 export { PhysicsWorld } from './node/physics/physics-world'
+export { CircleRigidbody, PolygonRigidbody, RectangleRigidbody, Rigidbody, RigidbodyType } from './node/physics/rigidbodies'
 
 // DOM Nodes
 export { DomAnimatedSpriteNode } from './dom/dom-animated-sprite'

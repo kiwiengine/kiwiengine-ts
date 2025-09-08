@@ -1,4 +1,4 @@
-import { AnimatedSpriteNode, ColliderType, DelayNode, GameObjectOptions, sfxPlayer } from '../../../src/index'
+import { AnimatedSpriteNode, ColliderType, DelayNode, GameObjectOptions, RigidbodyType, sfxPlayer } from '../../../src/index'
 import orcAtlas from '../assets/spritesheets/orc-atlas.json'
 import { Character } from './character'
 
@@ -21,7 +21,7 @@ export class Orc extends Character<{
       ...options,
       maxHp: 100,
       hp: 100,
-      collider: { type: ColliderType.Rectangle, width: 30, height: 30, y: 12 },
+      rigidbody: { type: RigidbodyType.Rectangle, width: 30, height: 30 },
       hitbox: { type: ColliderType.Rectangle, width: 32, height: 52, x: ORC_HITBOX_X, y: -8 },
       hurtbox: { type: ColliderType.Rectangle, width: 24, height: 32, x: 0, y: 0 },
     })
@@ -30,8 +30,6 @@ export class Orc extends Character<{
       src: 'assets/spritesheets/orc.png',
       atlas: orcAtlas,
       animation: 'idle',
-      fps: 10,
-      loop: true,
       scale: 2
     })
     this._sprite.on('animationend', (animation) => {
@@ -99,7 +97,6 @@ export class Orc extends Character<{
 
   protected override onDie() {
     this._sprite.animation = 'die'
-    this._sprite.loop = false
     this.#cachedVelX = 0
     this.#cachedVelY = 0
     this.disableCollisions()

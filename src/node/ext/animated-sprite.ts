@@ -56,7 +56,7 @@ export class AnimatedSpriteNode<E extends EventMap = EventMap> extends GameObjec
       const s = new PixiAnimatedSprite(this.#sheet.animations[this.#animation])
 
       s.anchor.set(0.5, 0.5)
-      s.loop = a.loop ?? true
+      s.loop = a.loop
       s.animationSpeed = a.fps / 60
       s.play()
       s.onLoop = () => (this as any).emit('animationend', this.#animation)

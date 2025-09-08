@@ -30,7 +30,7 @@ export class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode
   constructor(options: PhysicsObjectOptions) {
     super(new PixiContainer({ sortableChildren: true }))
 
-    const c = options.rigidbody
+    const r = options.rigidbody
     const x = options.x ?? 0
     const y = options.y ?? 0
 
@@ -45,12 +45,12 @@ export class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode
       bodyOptions.angularVelocity = 0
     }
 
-    if (c.type === RigidbodyType.Rectangle) {
-      this.#matterBody = Matter.Bodies.rectangle(x, y, c.width, c.height, bodyOptions)
-    } else if (c.type === RigidbodyType.Circle) {
-      this.#matterBody = Matter.Bodies.circle(x, y, c.radius, bodyOptions)
-    } else if (c.type === RigidbodyType.Polygon) {
-      this.#matterBody = Matter.Bodies.fromVertices(x, y, [c.vertices], bodyOptions)
+    if (r.type === RigidbodyType.Rectangle) {
+      this.#matterBody = Matter.Bodies.rectangle(x, y, r.width, r.height, bodyOptions)
+    } else if (r.type === RigidbodyType.Circle) {
+      this.#matterBody = Matter.Bodies.circle(x, y, r.radius, bodyOptions)
+    } else if (r.type === RigidbodyType.Polygon) {
+      this.#matterBody = Matter.Bodies.fromVertices(x, y, [r.vertices], bodyOptions)
     } else {
       throw new Error('Invalid rigidbody type')
     }
