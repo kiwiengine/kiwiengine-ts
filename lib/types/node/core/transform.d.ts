@@ -1,4 +1,4 @@
-import { DirtyNumber, DirtyRadian } from './dirty-number';
+import { DirtyNumber } from './dirty-number';
 export declare class LocalTransform {
     #private;
     x: number;
@@ -17,7 +17,9 @@ export declare class WorldTransform {
     y: DirtyNumber;
     scaleX: DirtyNumber;
     scaleY: DirtyNumber;
-    rotation: DirtyRadian;
+    rotation: DirtyNumber;
+    cos: number;
+    sin: number;
     update(parent: WorldTransform, local: LocalTransform): void;
     get dirty(): boolean;
     resetDirty(): void;

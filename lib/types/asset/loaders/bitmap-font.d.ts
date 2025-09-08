@@ -10,6 +10,7 @@ declare class BitmapFontLoader extends Loader<BitmapFont> {
         lineHeight: number;
     } | undefined>;
     protected cleanup(fnt: string): void;
+    load(fnt: string, src: string): Promise<BitmapFont | undefined>;
 }
 export declare const bitmapFontLoader: BitmapFontLoader;
 export {};

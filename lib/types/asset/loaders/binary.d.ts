@@ -1,6 +1,7 @@
 import { Loader } from './loader';
 declare class BinaryLoader extends Loader<Uint8Array> {
     protected doLoad(src: string): Promise<Uint8Array<ArrayBuffer> | undefined>;
+    load(src: string): Promise<Uint8Array<ArrayBufferLike> | undefined>;
 }
 export declare const binaryLoader: BinaryLoader;
 export {};

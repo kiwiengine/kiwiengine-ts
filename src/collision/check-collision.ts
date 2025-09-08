@@ -47,7 +47,7 @@ function checkRectRectCollision(
   const asx = ta.scaleX.v, asy = ta.scaleY.v
   const ahx = abs(ca.width * asx) * 0.5
   const ahy = abs(ca.height * asy) * 0.5
-  const cA = ta.rotation.cos, sA = ta.rotation.sin
+  const cA = ta.cos, sA = ta.sin
   const aux = cA, auy = sA
   const avx = -sA, avy = cA
   // apply rotated local offset for center
@@ -60,7 +60,7 @@ function checkRectRectCollision(
   const bsx = tb.scaleX.v, bsy = tb.scaleY.v
   const bhx = abs(cb.width * bsx) * 0.5
   const bhy = abs(cb.height * bsy) * 0.5
-  const cB = tb.rotation.cos, sB = tb.rotation.sin
+  const cB = tb.cos, sB = tb.sin
   const bux = cB, buy = sB
   const bvx = -sB, bvy = cB
   const box = (cb.x || 0) * bsx
@@ -98,7 +98,7 @@ let _ccx = 0, _ccy = 0
 function circleCenterScratch(c: CircleCollider, t: WorldTransform): void {
   // No object/array allocation; scalar math only
   const sx = t.scaleX.v, sy = t.scaleY.v
-  const cos = t.rotation.cos, sin = t.rotation.sin
+  const cos = t.cos, sin = t.sin
   // local axes
   const ux = cos, uy = sin
   const vx = -sin, vy = cos
@@ -138,7 +138,7 @@ function checkRectCircleCollision(
   const rsx = tr.scaleX.v, rsy = tr.scaleY.v
   const rhx = abs(r.width * rsx) * 0.5
   const rhy = abs(r.height * rsy) * 0.5
-  const rc = tr.rotation.cos, rs = tr.rotation.sin
+  const rc = tr.cos, rs = tr.sin
   const rux = rc, ruy = rs
   const rvx = -rs, rvy = rc
   const rox = (r.x || 0) * rsx
@@ -186,7 +186,7 @@ function checkPolyPolyCollision(
 
   // Frame A
   const asx = ta.scaleX.v, asy = ta.scaleY.v
-  const acs = ta.rotation.cos, asn = ta.rotation.sin
+  const acs = ta.cos, asn = ta.sin
   const aux = acs, auy = asn
   const avx = -asn, avy = acs
   const aox = ((a as any).x || 0) * asx
@@ -196,7 +196,7 @@ function checkPolyPolyCollision(
 
   // Frame B
   const bsx = tb.scaleX.v, bsy = tb.scaleY.v
-  const bcs = tb.rotation.cos, bsn = tb.rotation.sin
+  const bcs = tb.cos, bsn = tb.sin
   const bux = bcs, buy = bsn
   const bvx = -bsn, bvy = bcs
   const box = ((b as any).x || 0) * bsx
@@ -284,7 +284,7 @@ function checkPolyCircleCollision(poly: PolygonCollider, tp: WorldTransform, c: 
 
   // Poly frame
   const psx = tp.scaleX.v, psy = tp.scaleY.v
-  const pcs = tp.rotation.cos, psn = tp.rotation.sin
+  const pcs = tp.cos, psn = tp.sin
   const pux = pcs, puy = psn
   const pvx = -psn, pvy = pcs
   const pox = ((poly as any).x || 0) * psx
@@ -361,7 +361,7 @@ function checkPolyRectCollision(poly: PolygonCollider, tp: WorldTransform, r: Re
 
   // Poly frame
   const psx = tp.scaleX.v, psy = tp.scaleY.v
-  const pcs = tp.rotation.cos, psn = tp.rotation.sin
+  const pcs = tp.cos, psn = tp.sin
   const pux = pcs, puy = psn
   const pvx = -psn, pvy = pcs
   const pox = ((poly as any).x || 0) * psx
@@ -373,7 +373,7 @@ function checkPolyRectCollision(poly: PolygonCollider, tp: WorldTransform, r: Re
   const rsx = tr.scaleX.v, rsy = tr.scaleY.v
   const rhx = abs(r.width * rsx) * 0.5
   const rhy = abs(r.height * rsy) * 0.5
-  const rc = tr.rotation.cos, rs = tr.rotation.sin
+  const rc = tr.cos, rs = tr.sin
   const rux = rc, ruy = rs
   const rvx = -rs, rvy = rc
   const rox = (r.x || 0) * rsx, roy = (r.y || 0) * rsy
@@ -651,7 +651,7 @@ function checkEllipseRectCollision(
   const esx = te.scaleX.v, esy = te.scaleY.v
   _Arx = abs(e.width * esx) * 0.5
   _Ary = abs(e.height * esy) * 0.5
-  const ecs = te.rotation.cos, esn = te.rotation.sin
+  const ecs = te.cos, esn = te.sin
   _Aux = ecs; _Auy = esn; _Avx = -esn; _Avy = ecs
   const eox = (e.x || 0) * esx, eoy = (e.y || 0) * esy
   _Acx = te.x.v + _Aux * eox + _Avx * eoy
@@ -663,7 +663,7 @@ function checkEllipseRectCollision(
   const rsx = tr.scaleX.v, rsy = tr.scaleY.v
   _Bhx = abs(r.width * rsx) * 0.5
   _Bhy = abs(r.height * rsy) * 0.5
-  const rcs = tr.rotation.cos, rsn = tr.rotation.sin
+  const rcs = tr.cos, rsn = tr.sin
   _Bux = rcs; _Buy = rsn; _Bvx = -rsn; _Bvy = rcs
   const rox = (r.x || 0) * rsx, roy = (r.y || 0) * rsy
   _Bcx = tr.x.v + _Bux * rox + _Bvx * roy
@@ -682,7 +682,7 @@ function checkEllipseCircleCollision(
   const esx = te.scaleX.v, esy = te.scaleY.v
   _Arx = abs(e.width * esx) * 0.5
   _Ary = abs(e.height * esy) * 0.5
-  const ecs = te.rotation.cos, esn = te.rotation.sin
+  const ecs = te.cos, esn = te.sin
   _Aux = ecs; _Auy = esn; _Avx = -esn; _Avy = ecs
   const eox = (e.x || 0) * esx, eoy = (e.y || 0) * esy
   _Acx = te.x.v + _Aux * eox + _Avx * eoy
@@ -708,7 +708,7 @@ function checkEllipseEllipseCollision(
   const asx = ta.scaleX.v, asy = ta.scaleY.v
   _Arx = abs(a.width * asx) * 0.5
   _Ary = abs(a.height * asy) * 0.5
-  const acs = ta.rotation.cos, asn = ta.rotation.sin
+  const acs = ta.cos, asn = ta.sin
   _Aux = acs; _Auy = asn; _Avx = -asn; _Avy = acs
   const aox = (a.x || 0) * asx, aoy = (a.y || 0) * asy
   _Acx = ta.x.v + _Aux * aox + _Avx * aoy
@@ -720,7 +720,7 @@ function checkEllipseEllipseCollision(
   const bsx = tb.scaleX.v, bsy = tb.scaleY.v
   _Brx = abs(b.width * bsx) * 0.5
   _Bry = abs(b.height * bsy) * 0.5
-  const bcs = tb.rotation.cos, bsn = tb.rotation.sin
+  const bcs = tb.cos, bsn = tb.sin
   _Bux = bcs; _Buy = bsn; _Bvx = -bsn; _Bvy = bcs
   const box = (b.x || 0) * bsx, boy = (b.y || 0) * bsy
   _Bcx = tb.x.v + _Bux * box + _Bvx * boy
@@ -735,7 +735,7 @@ function checkEllipseEllipseCollision(
 function checkPolyEllipseCollision(poly: PolygonCollider, tp: WorldTransform, e: EllipseCollider, te: WorldTransform): boolean {
   // A = Poly (LOCAL + Transform) → use PolyLocal support; reuse A scratch slots
   const psx = tp.scaleX.v, psy = tp.scaleY.v
-  const pcs = tp.rotation.cos, psn = tp.rotation.sin
+  const pcs = tp.cos, psn = tp.sin
   const pux = pcs, puy = psn
   const pvx = -psn, pvy = pcs
   const pox = ((poly as any).x || 0) * psx
@@ -751,7 +751,7 @@ function checkPolyEllipseCollision(poly: PolygonCollider, tp: WorldTransform, e:
   const esx = te.scaleX.v, esy = te.scaleY.v
   _Brx = abs(e.width * esx) * 0.5
   _Bry = abs(e.height * esy) * 0.5
-  const ecs = te.rotation.cos, esn = te.rotation.sin
+  const ecs = te.cos, esn = te.sin
   _Bux = ecs; _Buy = esn; _Bvx = -esn; _Bvy = ecs
   const eox = (e.x || 0) * esx, eoy = (e.y || 0) * esy
   _Bcx = te.x.v + _Bux * eox + _Bvx * eoy

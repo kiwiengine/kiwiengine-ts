@@ -12,6 +12,7 @@ declare class SpritesheetLoader extends Loader<Spritesheet> {
         animations: Dict<string[]>;
     }> | undefined>;
     protected cleanup(id: string, spritesheet: Spritesheet): void;
+    load(id: string, src: string, atlas: Atlas): Promise<Spritesheet<import("pixi.js").SpritesheetData> | undefined>;
 }
 export declare const spritesheetLoader: SpritesheetLoader;
 export {};
