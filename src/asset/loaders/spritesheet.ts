@@ -69,6 +69,10 @@ class SpritesheetLoader extends Loader<Spritesheet> {
     const src = this.#idToSrc.get(id)
     if (src) textureLoader.release(src)
   }
+
+  override async load(id: string, src: string, atlas: Atlas) {
+    return await super.load(id, src, atlas)
+  }
 }
 
 export const spritesheetLoader = new SpritesheetLoader()

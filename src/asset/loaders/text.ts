@@ -26,6 +26,10 @@ class TextLoader extends Loader<string> {
     this.loadingPromises.set(src, loadingPromise)
     return await loadingPromise
   }
+
+  override async load(src: string) {
+    return await super.load(src)
+  }
 }
 
 export const textLoader = new TextLoader()

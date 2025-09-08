@@ -27,6 +27,10 @@ class BinaryLoader extends Loader<Uint8Array> {
     this.loadingPromises.set(src, loadingPromise)
     return await loadingPromise
   }
+
+  override async load(src: string) {
+    return await super.load(src)
+  }
 }
 
 export const binaryLoader = new BinaryLoader()

@@ -22,6 +22,10 @@ class FontFamilyLoader extends Loader<boolean> {
     this.loadingPromises.set(fontName, loadingPromise)
     return await loadingPromise
   }
+
+  override async load(fontName: string) {
+    return await super.load(fontName)
+  }
 }
 
 export const fontFamilyLoader = new FontFamilyLoader()

@@ -82,6 +82,10 @@ class BitmapFontLoader extends Loader<BitmapFont> {
     const src = this.#fntToSrc.get(fnt)
     if (src) textureLoader.release(src)
   }
+
+  override async load(fnt: string, src: string) {
+    return await super.load(fnt, src)
+  }
 }
 
 export const bitmapFontLoader = new BitmapFontLoader()
