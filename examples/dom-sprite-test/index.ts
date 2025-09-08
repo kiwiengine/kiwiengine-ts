@@ -25,7 +25,6 @@ const animatedSprite = new DomAnimatedSpriteNode({
       fire4: { frame: { x: 192, y: 0, w: 64, h: 64 } },
       fire5: { frame: { x: 256, y: 0, w: 64, h: 64 } },
     },
-    meta: { scale: 1 },
     animations: {
       fire: ['fire1', 'fire2', 'fire3', 'fire4', 'fire5'],
     },

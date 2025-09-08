@@ -1,11 +1,12 @@
-import { Spritesheet, SpritesheetData } from 'pixi.js'
+import { Spritesheet } from 'pixi.js'
+import { Atlas } from '../../types/atlas'
 import { Loader } from './loader'
 import { textureLoader } from './texture'
 
-const atlasIdCache = new WeakMap<SpritesheetData, Map<string, string>>()
+const atlasIdCache = new WeakMap<Atlas, Map<string, string>>()
 let idCounter = 0
 
-export function getCachedAtlasId(src: string, atlas: SpritesheetData): string {
+export function getCachedAtlasId(src: string, atlas: Atlas): string {
   let innerMap = atlasIdCache.get(atlas)
   if (!innerMap) {
     innerMap = new Map<string, string>()
@@ -22,7 +23,7 @@ export function getCachedAtlasId(src: string, atlas: SpritesheetData): string {
 class SpritesheetLoader extends Loader<Spritesheet> {
   #idToSrc = new Map<string, string>();
 
-  protected override async doLoad(id: string, src: string, atlas: SpritesheetData) {
+  protected override async doLoad(id: string, src: string, atlas: Atlas) {
     this.#idToSrc.set(id, src)
 
     const loadingPromise = (async () => {
@@ -32,7 +33,7 @@ class SpritesheetLoader extends Loader<Spritesheet> {
         return
       }
 
-      const spritesheet = new Spritesheet(texture, atlas)
+      const spritesheet = new Spritesheet(texture, { ...atlas, meta: { scale: 1 } })
       await spritesheet.parse()
 
       this.loadingPromises.delete(id)

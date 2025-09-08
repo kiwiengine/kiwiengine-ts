@@ -1,12 +1,12 @@
 import { EventMap } from '@webtaku/event-emitter'
-import { SpritesheetData } from 'pixi.js'
+import { Atlas } from '../types/atlas'
 import { DomGameObject, DomGameObjectOptions } from './dom-game-object'
 import { domTextureLoader } from './dom-texture-loader'
 import { setStyle } from './dom-utils'
 
 export type DomAnimatedSpriteNodeOptions = {
   src: string
-  atlas: SpritesheetData
+  atlas: Atlas
   animation: string
   fps: number
   loop?: boolean
@@ -16,14 +16,13 @@ export class DomAnimatedSpriteNode<E extends EventMap = EventMap> extends DomGam
   animationend: (animation: string) => void
 }> {
   #src: string
-  #atlas: SpritesheetData
+  #atlas: Atlas
   #animation: string
   #fps: number
   #loop: boolean
 
   #frames: string[] = []
   #frameDuration?: number
-  #textureScale = 1
   #elapsedTime = 0
   #currentFrameIdx = 0
 
@@ -46,21 +45,18 @@ export class DomAnimatedSpriteNode<E extends EventMap = EventMap> extends DomGam
       texture = await domTextureLoader.load(this.#src)
     }
 
-    const S = this.#atlas.meta.scale === 'auto' ? 1 : Number(this.#atlas.meta.scale)
-
     this.#frameDuration = 1 / this.#fps
     this.#frames = this.#atlas.animations?.[this.#animation] ?? []
-    this.#textureScale = S
 
     const frameName = this.#frames[this.#currentFrameIdx]
     const frame = this.#atlas.frames[frameName].frame
 
     setStyle(this.el, !frameName || !texture ? { backgroundImage: 'none' } : {
       backgroundImage: `url(${this.#src})`,
-      width: `${frame.w * S}px`,
-      height: `${frame.h * S}px`,
-      backgroundSize: `${texture.width * S}px ${texture.height * S}px`,
-      backgroundPosition: `-${frame.x * S}px -${frame.y * S}px`
+      width: `${frame.w}px`,
+      height: `${frame.h}px`,
+      backgroundSize: `${texture.width}px ${texture.height}px`,
+      backgroundPosition: `-${frame.x}px -${frame.y}px`
     })
   }
 
@@ -92,14 +88,13 @@ export class DomAnimatedSpriteNode<E extends EventMap = EventMap> extends DomGam
       }
     }
 
-    const S = this.#textureScale
     const frameName = this.#frames[this.#currentFrameIdx]
     const frame = this.#atlas.frames[frameName].frame
 
     setStyle(this.el, {
-      width: `${frame.w * S}px`,
-      height: `${frame.h * S}px`,
-      backgroundPosition: `-${frame.x * S}px -${frame.y * S}px`
+      width: `${frame.w}px`,
+      height: `${frame.h}px`,
+      backgroundPosition: `-${frame.x}px -${frame.y}px`
     })
   }
 

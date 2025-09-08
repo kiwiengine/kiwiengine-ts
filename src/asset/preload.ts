@@ -1,4 +1,4 @@
-import { SpritesheetData } from 'pixi.js'
+import { Atlas } from '../types/atlas'
 import { audioLoader } from './loaders/audio'
 import { binaryLoader } from './loaders/binary'
 import { bitmapFontLoader } from './loaders/bitmap-font'
@@ -8,13 +8,9 @@ import { getCachedAtlasId, spritesheetLoader } from './loaders/spritesheet'
 import { textLoader } from './loaders/text'
 import { textureLoader } from './loaders/texture'
 
-export type AssetSource = string | {
-  src: string
-  atlas: SpritesheetData
-} | {
-  fnt: string
-  src: string
-}
+export type AssetSource = string
+  | { src: string, atlas: Atlas }
+  | { fnt: string, src: string }
 
 const loaderForPathMap: Array<{ check: (path: string) => boolean, loader: Loader<any> }> = [
   { check: (p) => p.endsWith('.json') || p.endsWith('.atlas'), loader: textLoader },

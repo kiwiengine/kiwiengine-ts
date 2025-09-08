@@ -1,9 +1,9 @@
 import { EventMap } from '@webtaku/event-emitter';
-import { SpritesheetData } from 'pixi.js';
+import { Atlas } from '../../types/atlas';
 import { GameObject, GameObjectOptions } from '../core/game-object';
 export type AnimatedSpriteNodeOptions = {
     src: string;
-    atlas: SpritesheetData;
+    atlas: Atlas;
     animation: string;
     fps: number;
     loop?: boolean;
@@ -15,8 +15,8 @@ export declare class AnimatedSpriteNode<E extends EventMap = EventMap> extends G
     constructor(options: AnimatedSpriteNodeOptions);
     set src(src: string);
     get src(): string;
-    set atlas(atlas: SpritesheetData);
-    get atlas(): SpritesheetData;
+    set atlas(atlas: Atlas);
+    get atlas(): Atlas;
     set animation(animation: string);
     get animation(): string;
     set fps(fps: number);

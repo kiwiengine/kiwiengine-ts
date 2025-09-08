@@ -1,9 +1,9 @@
 import { EventMap } from '@webtaku/event-emitter';
-import { SpritesheetData } from 'pixi.js';
+import { Atlas } from '../types/atlas';
 import { DomGameObject, DomGameObjectOptions } from './dom-game-object';
 export type DomAnimatedSpriteNodeOptions = {
     src: string;
-    atlas: SpritesheetData;
+    atlas: Atlas;
     animation: string;
     fps: number;
     loop?: boolean;
@@ -16,8 +16,8 @@ export declare class DomAnimatedSpriteNode<E extends EventMap = EventMap> extend
     render(dt: number): void;
     set src(src: string);
     get src(): string;
-    set atlas(atlas: SpritesheetData);
-    get atlas(): SpritesheetData;
+    set atlas(atlas: Atlas);
+    get atlas(): Atlas;
     set animation(animation: string);
     get animation(): string;
     set fps(fps: number);

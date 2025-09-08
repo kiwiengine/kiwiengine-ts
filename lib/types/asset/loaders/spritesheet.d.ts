@@ -1,9 +1,23 @@
-import { Spritesheet, SpritesheetData } from 'pixi.js';
+import { Spritesheet } from 'pixi.js';
+import { Atlas } from '../../types/atlas';
 import { Loader } from './loader';
-export declare function getCachedAtlasId(src: string, atlas: SpritesheetData): string;
+export declare function getCachedAtlasId(src: string, atlas: Atlas): string;
 declare class SpritesheetLoader extends Loader<Spritesheet> {
     #private;
-    protected doLoad(id: string, src: string, atlas: SpritesheetData): Promise<Spritesheet<SpritesheetData> | undefined>;
+    protected doLoad(id: string, src: string, atlas: Atlas): Promise<Spritesheet<{
+        meta: {
+            scale: number;
+        };
+        frames: Record<string, {
+            frame: {
+                x: number;
+                y: number;
+                w: number;
+                h: number;
+            };
+        }>;
+        animations: Record<string, string[]>;
+    }> | undefined>;
     protected cleanup(id: string, spritesheet: Spritesheet): void;
 }
 export declare const spritesheetLoader: SpritesheetLoader;

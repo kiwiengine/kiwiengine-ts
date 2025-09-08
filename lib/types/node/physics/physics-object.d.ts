@@ -1,10 +1,10 @@
 import { EventMap } from '@webtaku/event-emitter';
 import { Container as PixiContainer } from 'pixi.js';
-import { Collider } from '../../collision/colliders';
 import { GameNode } from '../core/game-node';
 import { RenderableNode } from '../core/renderable';
+import { Rigidbody } from './rigidbodies';
 export type PhysicsObjectOptions = {
-    collider: Collider;
+    rigidbody: Rigidbody;
     x?: number;
     y?: number;
     rotation?: number;
