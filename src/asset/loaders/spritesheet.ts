@@ -1,4 +1,4 @@
-import { Spritesheet } from 'pixi.js'
+import { Dict, Spritesheet, SpritesheetFrameData } from 'pixi.js'
 import { Atlas } from '../../types/atlas'
 import { Loader } from './loader'
 import { textureLoader } from './texture'
@@ -33,7 +33,15 @@ class SpritesheetLoader extends Loader<Spritesheet> {
         return
       }
 
-      const spritesheet = new Spritesheet(texture, { ...atlas, meta: { scale: 1 } })
+      const frames: Dict<SpritesheetFrameData> = {}
+      for (const [key, value] of Object.entries(atlas.frames)) {
+        frames[key] = { frame: value }
+      }
+      const animations: Dict<string[]> = {}
+      for (const [key, value] of Object.entries(atlas.animations)) {
+        animations[key] = value.frames
+      }
+      const spritesheet = new Spritesheet(texture, { frames, meta: { scale: 1 }, animations })
       await spritesheet.parse()
 
       this.loadingPromises.delete(id)

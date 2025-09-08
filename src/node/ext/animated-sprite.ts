@@ -8,8 +8,6 @@ export type AnimatedSpriteNodeOptions = {
   src: string
   atlas: Atlas
   animation: string
-  fps: number
-  loop?: boolean
 } & GameObjectOptions
 
 export class AnimatedSpriteNode<E extends EventMap = EventMap> extends GameObject<E & {
@@ -18,8 +16,6 @@ export class AnimatedSpriteNode<E extends EventMap = EventMap> extends GameObjec
   #src: string
   #atlas: Atlas
   #animation: string
-  #fps: number
-  #loop: boolean
 
   #atlasId!: string
   #sheet?: Spritesheet
@@ -30,8 +26,6 @@ export class AnimatedSpriteNode<E extends EventMap = EventMap> extends GameObjec
     this.#src = options.src
     this.#atlas = options.atlas
     this.#animation = options.animation
-    this.#fps = options.fps
-    this.#loop = options.loop ?? true
     this.#load()
   }
 
@@ -58,13 +52,16 @@ export class AnimatedSpriteNode<E extends EventMap = EventMap> extends GameObjec
         return
       }
 
+      const a = this.#atlas.animations[this.#animation]
       const s = new PixiAnimatedSprite(this.#sheet.animations[this.#animation])
+
       s.anchor.set(0.5, 0.5)
-      s.loop = this.#loop
-      s.animationSpeed = (this.#fps ?? 0) / 60
+      s.loop = a.loop ?? true
+      s.animationSpeed = a.fps / 60
       s.play()
       s.onLoop = () => (this as any).emit('animationend', this.#animation)
       s.onComplete = () => (this as any).emit('animationend', this.#animation)
+
       this._pixiContainer.addChild(s)
       this.#sprite = s
     }
@@ -98,24 +95,6 @@ export class AnimatedSpriteNode<E extends EventMap = EventMap> extends GameObjec
   }
 
   get animation() { return this.#animation }
-
-  set fps(fps) {
-    if (this.#fps !== fps) {
-      this.#fps = fps
-      if (this.#sprite) this.#sprite.animationSpeed = (fps ?? 0) / 60
-    }
-  }
-
-  get fps() { return this.#fps }
-
-  set loop(loop) {
-    if (this.#loop !== loop) {
-      this.#loop = loop
-      if (this.#sprite) this.#sprite.loop = loop
-    }
-  }
-
-  get loop() { return this.#loop }
 
   remove() {
     spritesheetLoader.release(this.#atlasId)

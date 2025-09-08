@@ -5,8 +5,6 @@ export type AnimatedSpriteNodeOptions = {
     src: string;
     atlas: Atlas;
     animation: string;
-    fps: number;
-    loop?: boolean;
 } & GameObjectOptions;
 export declare class AnimatedSpriteNode<E extends EventMap = EventMap> extends GameObject<E & {
     animationend: (animation: string) => void;
@@ -19,10 +17,6 @@ export declare class AnimatedSpriteNode<E extends EventMap = EventMap> extends G
     get atlas(): Atlas;
     set animation(animation: string);
     get animation(): string;
-    set fps(fps: number);
-    get fps(): number;
-    set loop(loop: boolean);
-    get loop(): boolean;
     remove(): void;
 }
 //# sourceMappingURL=animated-sprite.d.ts.map

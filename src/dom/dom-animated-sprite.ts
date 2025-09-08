@@ -1,5 +1,5 @@
 import { EventMap } from '@webtaku/event-emitter'
-import { Atlas } from '../types/atlas'
+import { Animation, Atlas } from '../types/atlas'
 import { DomGameObject, DomGameObjectOptions } from './dom-game-object'
 import { domTextureLoader } from './dom-texture-loader'
 import { setStyle } from './dom-utils'
@@ -8,8 +8,6 @@ export type DomAnimatedSpriteNodeOptions = {
   src: string
   atlas: Atlas
   animation: string
-  fps: number
-  loop?: boolean
 } & DomGameObjectOptions
 
 export class DomAnimatedSpriteNode<E extends EventMap = EventMap> extends DomGameObject<E & {
@@ -18,10 +16,8 @@ export class DomAnimatedSpriteNode<E extends EventMap = EventMap> extends DomGam
   #src: string
   #atlas: Atlas
   #animation: string
-  #fps: number
-  #loop: boolean
 
-  #frames: string[] = []
+  #animationData?: Animation
   #frameDuration?: number
   #elapsedTime = 0
   #currentFrameIdx = 0
@@ -31,8 +27,6 @@ export class DomAnimatedSpriteNode<E extends EventMap = EventMap> extends DomGam
     this.#src = options.src
     this.#atlas = options.atlas
     this.#animation = options.animation
-    this.#fps = options.fps
-    this.#loop = options.loop ?? true
     this.#load()
   }
 
@@ -45,11 +39,12 @@ export class DomAnimatedSpriteNode<E extends EventMap = EventMap> extends DomGam
       texture = await domTextureLoader.load(this.#src)
     }
 
-    this.#frameDuration = 1 / this.#fps
-    this.#frames = this.#atlas.animations?.[this.#animation] ?? []
+    const a = this.#atlas.animations[this.#animation]
+    this.#animationData = a
+    this.#frameDuration = 1 / a.fps
 
-    const frameName = this.#frames[this.#currentFrameIdx]
-    const frame = this.#atlas.frames[frameName].frame
+    const frameName = a.frames[this.#currentFrameIdx]
+    const frame = this.#atlas.frames[frameName]
 
     setStyle(this.el, !frameName || !texture ? { backgroundImage: 'none' } : {
       backgroundImage: `url(${this.#src})`,
@@ -63,10 +58,11 @@ export class DomAnimatedSpriteNode<E extends EventMap = EventMap> extends DomGam
   override render(dt: number) {
     super.render(dt)
 
-    if (this.#frameDuration === undefined || this.#frames.length === 0) return
+    const a = this.#animationData
+    if (!a || a.frames.length === 0 || this.#frameDuration === undefined) return
 
-    const lastIndex = this.#frames.length - 1
-    if (!this.#loop && this.#currentFrameIdx === lastIndex) return
+    const lastIndex = a.frames.length - 1
+    if (!a.loop && this.#currentFrameIdx === lastIndex) return
 
     this.#elapsedTime += dt
     if (this.#elapsedTime < this.#frameDuration) return
@@ -77,7 +73,7 @@ export class DomAnimatedSpriteNode<E extends EventMap = EventMap> extends DomGam
       if (this.#currentFrameIdx === lastIndex) {
         (this as any).emit('animationend', this.#animation)
 
-        if (this.#loop) {
+        if (a.loop) {
           this.#currentFrameIdx = 0
         } else {
           this.#elapsedTime = 0
@@ -88,8 +84,8 @@ export class DomAnimatedSpriteNode<E extends EventMap = EventMap> extends DomGam
       }
     }
 
-    const frameName = this.#frames[this.#currentFrameIdx]
-    const frame = this.#atlas.frames[frameName].frame
+    const frameName = a.frames[this.#currentFrameIdx]
+    const frame = this.#atlas.frames[frameName]
 
     setStyle(this.el, {
       width: `${frame.w}px`,
@@ -121,25 +117,13 @@ export class DomAnimatedSpriteNode<E extends EventMap = EventMap> extends DomGam
   set animation(animation) {
     if (this.#animation !== animation) {
       this.#animation = animation
-      this.#frames = this.#atlas.animations?.[animation] ?? []
+      this.#animationData = this.#atlas.animations[animation]
       this.#currentFrameIdx = 0
       this.#elapsedTime = 0
     }
   }
 
   get animation() { return this.#animation }
-
-  set fps(fps) {
-    if (this.#fps !== fps) {
-      this.#fps = fps
-      this.#frameDuration = 1 / fps
-    }
-  }
-
-  get fps() { return this.#fps }
-
-  set loop(loop) { this.#loop = loop }
-  get loop() { return this.#loop }
 
   override remove() {
     domTextureLoader.release(this.#src)
