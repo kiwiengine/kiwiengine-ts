@@ -13,6 +13,7 @@ export class BitmapTextNode<E extends EventMap = EventMap> extends GameObject<E>
   #fnt: string
   #src: string
   #text: string
+  #sprites: PixiSprite[] = []
 
   constructor(options: BitmapTextNodeOptions) {
     super(options)
@@ -32,7 +33,10 @@ export class BitmapTextNode<E extends EventMap = EventMap> extends GameObject<E>
     }
     if (!font) return
 
-    const sprites: PixiSprite[] = []
+    for (const sprite of this.#sprites) {
+      sprite.destroy()
+    }
+    this.#sprites = []
 
     let xPos = 0, yPos = 0
     let minX = Infinity, minY = Infinity
@@ -60,7 +64,7 @@ export class BitmapTextNode<E extends EventMap = EventMap> extends GameObject<E>
       sprite.x = x0
       sprite.y = y0
 
-      sprites.push(sprite)
+      this.#sprites.push(sprite)
 
       const x1 = x0 + c.width
       const y1 = y0 + c.height
@@ -86,7 +90,7 @@ export class BitmapTextNode<E extends EventMap = EventMap> extends GameObject<E>
     const width = maxX - minX
     const height = maxY - minY
 
-    for (const s of sprites) {
+    for (const s of this.#sprites) {
       s.x -= width / 2
       s.y -= height / 2
       this._pixiContainer.addChild(s)
