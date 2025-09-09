@@ -72,6 +72,7 @@ export class Hero extends Character<{
   }
 
   protected override update(dt: number) {
+    if (this.paused) return
     super.update(dt)
 
     this.x += this.#cachedVelX * dt

@@ -148,7 +148,9 @@ export class Stage extends GameObject {
   }
 
   protected override update(dt: number) {
+    if (this.paused) return
     super.update(dt)
+
     if (this.#isGameOver) return
 
     const h = this.#hero

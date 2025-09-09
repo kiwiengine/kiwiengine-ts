@@ -212,7 +212,9 @@ export class Stage extends PhysicsWorld {
 
   // ==== 메인 업데이트 ====
   protected override update(dt: number) {
+    if (this.paused) return
     super.update(dt)
+
     if (this.#isGameOver) return
 
     const h = this.#hero

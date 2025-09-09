@@ -55,8 +55,8 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
 
     // collider 기반 처리
     this.collider = { ...options.collider }   // 원본 참조 대신 복사해 안전하게 사용
-    this.hitbox   = { ...options.hitbox }
-    this.hurtbox  = { ...options.hurtbox }
+    this.hitbox = { ...options.hitbox }
+    this.hurtbox = { ...options.hurtbox }
 
     this.separationStrength = options.separationStrength ?? 1.0
 
@@ -97,13 +97,13 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
       this.#tintDelay = new DelayNode(0.1, () => this._sprite!.tint = 0xffffff)
       this.add(this.#tintDelay)
     }
-    ;(this as any).emit('changeHp', damage)
+    ; (this as any).emit('changeHp', damage)
     this.add(new DamageText({ y: -20, damage, layer: 'hud' }))
 
     if (this.hp <= 0) {
       this.dead = true
       this.onDie()
-      ;(this as any).emit('dead')
+        ; (this as any).emit('dead')
     }
   }
 
@@ -119,7 +119,7 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
       this.#tintDelay = new DelayNode(0.1, () => this._sprite!.tint = 0xffffff)
       this.add(this.#tintDelay)
     }
-    ;(this as any).emit('changeHp', amount)
+    ; (this as any).emit('changeHp', amount)
     this.add(new HealText({ y: -20, hp: amount, layer: 'hud' }))
   }
 
@@ -128,18 +128,18 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
     if (this.separationStrength <= 0) return
 
     // A의 월드 기준 collider 사각형
-    const aLeft   = this.x + (this.collider?.x ?? 0)
-    const aTop    = this.y + (this.collider?.y ?? 0)
-    const aRight  = aLeft + (this.collider?.width ?? 0)
-    const aBottom = aTop  + (this.collider?.height ?? 0)
+    const aLeft = this.x + (this.collider?.x ?? 0)
+    const aTop = this.y + (this.collider?.y ?? 0)
+    const aRight = aLeft + (this.collider?.width ?? 0)
+    const aBottom = aTop + (this.collider?.height ?? 0)
 
     for (const other of Character.all) {
       if (!this.canSeparateWith(other)) continue
 
-      const bLeft   = other.x + (other.collider?.x ?? 0)
-      const bTop    = other.y + (other.collider?.y ?? 0)
-      const bRight  = bLeft + (other.collider?.width ?? 0)
-      const bBottom = bTop  + (other.collider?.height ?? 0)
+      const bLeft = other.x + (other.collider?.x ?? 0)
+      const bTop = other.y + (other.collider?.y ?? 0)
+      const bRight = bLeft + (other.collider?.width ?? 0)
+      const bBottom = bTop + (other.collider?.height ?? 0)
 
       // AABB 교차 판정
       const intersect =
@@ -180,6 +180,8 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
 
   /** 엔진의 업데이트 훅 이름이 다르면 여기를 맞춰주세요 */
   protected override update(dt: number) {
+    if (this.paused) return
+
     // 원래 업데이트
     // @ts-ignore
     super.update?.(dt)

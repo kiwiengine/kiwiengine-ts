@@ -13,6 +13,7 @@ export class DelayNode extends GameNode<EventMap> {
   }
 
   protected override update(dt: number) {
+    if (this.paused) return
     super.update(dt)
 
     this.#accumulated += dt

@@ -27,6 +27,7 @@ export class PhysicsWorld<E extends EventMap = EventMap> extends RenderableNode<
   removeBody(body: Matter.Body) { Matter.World.remove(this.#matterEngine.world, body) }
 
   protected override update(dt: number) {
+    if (this.paused) return
     super.update(dt)
 
     const matterDt = dt * 1000

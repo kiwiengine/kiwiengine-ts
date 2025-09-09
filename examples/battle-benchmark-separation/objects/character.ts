@@ -125,6 +125,7 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
 
   // ── 매 프레임: 이동/전투 처리 후 겹침 분리 수행 ────────────────────
   protected override update(dt: number) {
+    if (this.paused) return
     super.update(dt)
 
     // 워밍업 동안: 더 자주(간격 0 → 매 프레임), 조금 더 강하게(β↑)

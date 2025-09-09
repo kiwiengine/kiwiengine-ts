@@ -128,7 +128,9 @@ export class Orc extends Character<{
 
   // ── 루프 ─────────────────────────────────────────────────────────
   protected override update(dt: number) {
+    if (this.paused) return
     super.update(dt)
+
     if (this.dead || this.#attacking) return
     if (this.#tx === null || this.#ty === null) return
 

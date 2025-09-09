@@ -83,6 +83,7 @@ export class Orc extends Character<{
   }
 
   protected override update(dt: number) {
+    if (this.paused) return
     super.update(dt)
     this.velocityX = this.#cachedVelX
     this.velocityY = this.#cachedVelY

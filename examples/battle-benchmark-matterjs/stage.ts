@@ -148,6 +148,7 @@ export class Stage extends PhysicsWorld {
   }
 
   protected override update(dt: number) {
+    if (this.paused) return
     super.update(dt)
     if (this.#isGameOver) return
 
