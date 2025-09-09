@@ -26,8 +26,8 @@ export class LocalTransform {
 }
 
 export class WorldTransform {
-  x = new DirtyNumber(Number.NEGATIVE_INFINITY)
-  y = new DirtyNumber(Number.NEGATIVE_INFINITY)
+  x = new DirtyNumber(NaN)
+  y = new DirtyNumber(NaN)
   scaleX = new DirtyNumber(1)
   scaleY = new DirtyNumber(1)
   rotation = new DirtyNumber(0)
