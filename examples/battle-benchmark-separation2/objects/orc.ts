@@ -3,6 +3,7 @@ import {
   ColliderType,
   DelayNode,
   GameObjectOptions,
+  RigidbodyType,
   sfxPlayer,
 } from '../../../src/index'
 import orcAtlas from '../assets/spritesheets/orc-atlas.json'
@@ -35,7 +36,7 @@ export class Orc extends Character<{
       ...options,
       maxHp: 100,
       hp: 100,
-      collider: { type: ColliderType.Rectangle, width: 30, height: 30, y: 12 },
+      rigidbody: { type: RigidbodyType.Rectangle, width: 30, height: 30 },
       hitbox: { type: ColliderType.Rectangle, width: 32, height: 52, x: ORC_HITBOX_X, y: -8 },
       hurtbox: { type: ColliderType.Rectangle, width: 24, height: 32, x: 0, y: 0 },
     })
@@ -44,8 +45,6 @@ export class Orc extends Character<{
       src: 'assets/spritesheets/orc.png',
       atlas: orcAtlas,
       animation: 'idle',
-      fps: 10,
-      loop: true,
       scale: 2,
     })
 
@@ -112,7 +111,6 @@ export class Orc extends Character<{
     const nextAnim = (Math.random() < 0.5) ? 'attack1' : 'attack2'
     if (this._sprite.animation !== nextAnim) {
       this._sprite.animation = nextAnim
-      this._sprite.loop = false
     }
 
     // 타격 타이밍
@@ -194,7 +192,6 @@ export class Orc extends Character<{
     this.#dirY = 0
     if (this._sprite.animation !== 'die') {
       this._sprite.animation = 'die'
-      this._sprite.loop = false
     }
     sfxPlayer.play('assets/sfx/orc/die/die.wav')
   }
@@ -206,13 +203,11 @@ export class Orc extends Character<{
   #setWalk() {
     if (this._sprite.animation !== 'walk') {
       this._sprite.animation = 'walk'
-      this._sprite.loop = true
     }
   }
   #setIdle() {
     if (this._sprite.animation !== 'idle') {
       this._sprite.animation = 'idle'
-      this._sprite.loop = true
     }
   }
 }

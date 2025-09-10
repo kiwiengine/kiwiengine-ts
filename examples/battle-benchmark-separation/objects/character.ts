@@ -6,7 +6,8 @@ import {
   GameObject,
   PhysicsObjectOptions,
   RectangleCollider,
-  RectangleNode
+  RectangleNode,
+  RectangleRigidbody
 } from '../../../src'
 import { DamageText } from '../hud/damage-text'
 import { HealText } from '../hud/heal-text'
@@ -15,7 +16,7 @@ import { HpBar } from '../hud/hp-bar'
 export type CharacterOptions = {
   maxHp: number
   hp: number
-  collider: RectangleCollider
+  rigidbody: RectangleRigidbody
   hitbox: RectangleCollider
   hurtbox: RectangleCollider
 } & PhysicsObjectOptions
@@ -32,7 +33,7 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
   hp: number
   dead = false
 
-  collider: RectangleCollider
+  rigidbody: RectangleRigidbody
   hitbox: RectangleCollider
   hurtbox: RectangleCollider
 
@@ -57,7 +58,7 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
     super({ ...options, useYSort: true })
     this.maxHp = options.maxHp
     this.hp = options.hp
-    this.collider = options.collider
+    this.rigidbody = options.rigidbody
     this.hitbox = options.hitbox
     this.hurtbox = options.hurtbox
 
@@ -71,7 +72,7 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
     this.add(this.#hpBar)
 
     if (debugMode) {
-      this.add(new RectangleNode({ ...options.collider, stroke: 'yellow', alpha: 0.5, layer: 'hud' }))
+      this.add(new RectangleNode({ ...options.rigidbody, stroke: 'yellow', alpha: 0.5, layer: 'hud' }))
       this.#hitboxDebugNode = new RectangleNode({ ...this.hitbox, stroke: 'red', alpha: 0.5, layer: 'hud' })
       this.add(this.#hitboxDebugNode)
       this.add(new RectangleNode({ ...this.hurtbox, stroke: 'green', alpha: 0.5, layer: 'hud' }))
@@ -156,10 +157,10 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
       this.#sepTimerSec = 0
     }
 
-    const cx = this.x + (this.collider.x ?? 0)
-    const cy = this.y + (this.collider.y ?? 0)
-    const hw = (this.collider.width ?? 0) * 0.5
-    const hh = (this.collider.height ?? 0) * 0.5
+    const cx = this.x
+    const cy = this.y
+    const hw = (this.rigidbody.width ?? 0) * 0.5
+    const hh = (this.rigidbody.height ?? 0) * 0.5
     const radius2 = radius * radius
     const eps = this.#eps
     const maxPush = this.#maxPushPerPair
@@ -173,11 +174,11 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
         // 한 페어는 uid 작은 쪽만 처리 → 동시 되밀기 방지
         if (this.uid > (other as Character).uid) continue
 
-        const oc = other.collider as RectangleCollider
-        if (!oc) continue
+        const or = other.rigidbody
+        if (!or) continue
 
-        const ocx = other.x + (oc.x ?? 0)
-        const ocy = other.y + (oc.y ?? 0)
+        const ocx = other.x
+        const ocy = other.y
 
         // 원거리 프리체크
         const dx0 = ocx - cx
@@ -185,8 +186,8 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
         if (dx0 * dx0 + dy0 * dy0 > radius2) continue
 
         // AABB 침투량
-        const ohw = (oc.width ?? 0) * 0.5
-        const ohh = (oc.height ?? 0) * 0.5
+        const ohw = (or.width ?? 0) * 0.5
+        const ohh = (or.height ?? 0) * 0.5
 
         const dx = ocx - cx
         const px = (hw + ohw) - Math.abs(dx)

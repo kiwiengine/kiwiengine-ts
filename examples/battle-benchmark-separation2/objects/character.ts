@@ -1,7 +1,8 @@
 import { EventMap } from '@webtaku/event-emitter'
 import {
   AnimatedSpriteNode, debugMode, DelayNode, GameObject,
-  PhysicsObjectOptions, RectangleCollider, RectangleNode
+  PhysicsObjectOptions, RectangleCollider, RectangleNode,
+  RectangleRigidbody
 } from '../../../src'
 import { DamageText } from '../hud/damage-text'
 import { HealText } from '../hud/heal-text'
@@ -10,7 +11,7 @@ import { HpBar } from '../hud/hp-bar'
 export type CharacterOptions = {
   maxHp: number
   hp: number
-  collider: RectangleCollider
+  rigidbody: RectangleRigidbody
   hitbox: RectangleCollider
   hurtbox: RectangleCollider
   /** 밀어내기 강도 (프레임 보정 전), 0으로 두면 비활성화 */
@@ -36,7 +37,7 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
   dead = false
 
   /** 충돌은 collider 기준으로만 처리 */
-  collider: RectangleCollider
+  rigidbody: RectangleRigidbody
   hitbox: RectangleCollider
   hurtbox: RectangleCollider
 
@@ -54,7 +55,7 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
     this.hp = options.hp
 
     // collider 기반 처리
-    this.collider = { ...options.collider }   // 원본 참조 대신 복사해 안전하게 사용
+    this.rigidbody = { ...options.rigidbody }   // 원본 참조 대신 복사해 안전하게 사용
     this.hitbox = { ...options.hitbox }
     this.hurtbox = { ...options.hurtbox }
 
@@ -64,7 +65,7 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
     this.add(this.#hpBar)
 
     if (debugMode) {
-      this.add(new RectangleNode({ ...this.collider, stroke: 'yellow', alpha: 0.5, layer: 'hud' }))
+      this.add(new RectangleNode({ ...options.rigidbody, stroke: 'yellow', alpha: 0.5, layer: 'hud' }))
       this.#hitboxDebugNode = new RectangleNode({ ...this.hitbox, stroke: 'red', alpha: 0.5, layer: 'hud' })
       this.add(this.#hitboxDebugNode)
       this.add(new RectangleNode({ ...this.hurtbox, stroke: 'green', alpha: 0.5, layer: 'hud' }))
@@ -128,18 +129,18 @@ export abstract class Character<E extends EventMap = EventMap> extends GameObjec
     if (this.separationStrength <= 0) return
 
     // A의 월드 기준 collider 사각형
-    const aLeft = this.x + (this.collider?.x ?? 0)
-    const aTop = this.y + (this.collider?.y ?? 0)
-    const aRight = aLeft + (this.collider?.width ?? 0)
-    const aBottom = aTop + (this.collider?.height ?? 0)
+    const aLeft = this.x
+    const aTop = this.y
+    const aRight = aLeft + (this.rigidbody?.width ?? 0)
+    const aBottom = aTop + (this.rigidbody?.height ?? 0)
 
     for (const other of Character.all) {
       if (!this.canSeparateWith(other)) continue
 
-      const bLeft = other.x + (other.collider?.x ?? 0)
-      const bTop = other.y + (other.collider?.y ?? 0)
-      const bRight = bLeft + (other.collider?.width ?? 0)
-      const bBottom = bTop + (other.collider?.height ?? 0)
+      const bLeft = other.x
+      const bTop = other.y
+      const bRight = bLeft + (other.rigidbody?.width ?? 0)
+      const bBottom = bTop + (other.rigidbody?.height ?? 0)
 
       // AABB 교차 판정
       const intersect =

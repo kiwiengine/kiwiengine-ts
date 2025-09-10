@@ -150,12 +150,13 @@ export class Renderer extends RenderableNode<PixiContainer, {
   }
 
   #render(dt: number) {
-    this._isSizeDirty = false
-
-    this.update(dt)
+    this.update(dt) // 로직 업데이트
     this._updateWorldTransform()
+    this._resetWorldTransformDirty()
     this.#pixiRenderer?.render(this._pixiContainer)
     this.fpsDisplay?.update()
+
+    this._isSizeDirty = false
   }
 
   _addToLayer(node: RenderableNode<PixiContainer, EventMap>, layerName: string) {

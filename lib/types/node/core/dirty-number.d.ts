@@ -6,12 +6,4 @@ export declare class DirtyNumber {
     set v(newValue: number);
     resetDirty(): void;
 }
-export declare class DirtyRadian extends DirtyNumber {
-    #private;
-    constructor(initialValue: number);
-    get cos(): number;
-    get sin(): number;
-    set v(newValue: number);
-    get v(): number;
-}
 //# sourceMappingURL=dirty-number.d.ts.map

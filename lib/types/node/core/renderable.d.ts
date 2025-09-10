@@ -16,6 +16,7 @@ export declare abstract class RenderableNode<C extends PixiContainer, E extends 
     add(...children: GameNode<EventMap>[]): void;
     remove(): void;
     _updateWorldTransform(): void;
+    _resetWorldTransformDirty(): void;
     set tint(t: number);
     get tint(): number;
 }

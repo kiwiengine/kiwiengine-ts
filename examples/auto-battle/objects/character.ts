@@ -1,5 +1,5 @@
 import { EventMap } from '@webtaku/event-emitter'
-import { AnimatedSpriteNode, debugMode, DelayNode, PhysicsObject, PhysicsObjectOptions, RectangleCollider, RectangleNode } from '../../../src'
+import { AnimatedSpriteNode, debugMode, DelayNode, PhysicsObject, PhysicsObjectOptions, RectangleCollider, RectangleNode, RectangleRigidbody } from '../../../src'
 import { DamageText } from '../hud/damage-text'
 import { HealText } from '../hud/heal-text'
 import { HpBar } from '../hud/hp-bar'
@@ -7,7 +7,7 @@ import { HpBar } from '../hud/hp-bar'
 export type CharacterOptions = {
   maxHp: number
   hp: number
-  collider: RectangleCollider
+  rigidbody: RectangleRigidbody
   hitbox: RectangleCollider
   hurtbox: RectangleCollider
 } & PhysicsObjectOptions
@@ -39,7 +39,7 @@ export abstract class Character<E extends EventMap = EventMap> extends PhysicsOb
     this.add(this.#hpBar)
 
     if (debugMode) {
-      this.add(new RectangleNode({ ...options.collider, stroke: 'yellow', alpha: 0.5, layer: 'hud' }))
+      this.add(new RectangleNode({ ...options.rigidbody, stroke: 'yellow', alpha: 0.5, layer: 'hud' }))
       this.#hitboxDebugNode = new RectangleNode({ ...this.hitbox, stroke: 'red', alpha: 0.5, layer: 'hud' })
       this.add(this.#hitboxDebugNode)
       this.add(new RectangleNode({ ...this.hurtbox, stroke: 'green', alpha: 0.5, layer: 'hud' }))

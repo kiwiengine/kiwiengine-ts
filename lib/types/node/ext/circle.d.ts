@@ -9,11 +9,11 @@ export type CircleNodeOptions = {
 export declare class CircleNode extends TransformableNode<Graphics, EventMap> {
     #private;
     constructor(options: CircleNodeOptions);
-    get radius(): number;
     set radius(v: number);
-    get fill(): FillInput | undefined;
+    get radius(): number;
     set fill(v: FillInput | undefined);
-    get stroke(): StrokeInput | undefined;
+    get fill(): FillInput | undefined;
     set stroke(v: StrokeInput | undefined);
+    get stroke(): StrokeInput | undefined;
 }
 //# sourceMappingURL=circle.d.ts.map

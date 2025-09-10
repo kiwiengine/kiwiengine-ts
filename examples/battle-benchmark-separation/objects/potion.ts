@@ -17,8 +17,6 @@ export class Potion extends GameObject {
       src: 'assets/spritesheets/potion.png',
       atlas: potionAtlas,
       animation: 'animation',
-      fps: 10,
-      loop: true,
       scale: 2
     }))
 

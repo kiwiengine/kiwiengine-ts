@@ -1,9 +1,12 @@
 import { EventMap } from '@webtaku/event-emitter'
 import { DirtyNumber } from '../node/core/dirty-number'
 import { GameNode } from '../node/core/game-node'
-import { isRenderableNode } from '../node/core/renderable'
 import { LocalTransform, WorldTransform } from '../node/core/transform'
 import { setStyle } from './dom-utils'
+
+export function isDomGameObject(v: unknown): v is DomGameObject {
+  return (v as DomGameObject).worldTransform !== undefined
+}
 
 export type DomGameObjectOptions = {
   x?: number
@@ -68,12 +71,12 @@ export class DomGameObject<E extends EventMap = EventMap> extends GameNode<E> {
 
   render(dt: number) {
     this.update(dt)
-    this._updateWorldTransform()
+    this.#updateWorldTransform()
   }
 
-  protected _updateWorldTransform() {
+  #updateWorldTransform() {
     const parent = this.parent
-    if (parent && isRenderableNode(parent)) {
+    if (parent && isDomGameObject(parent)) {
       this.worldTransform.update(parent.worldTransform, this.#localTransform)
       this.worldAlpha.v = parent.worldAlpha.v * this.alpha
     }
@@ -93,7 +96,7 @@ export class DomGameObject<E extends EventMap = EventMap> extends GameNode<E> {
     if (this.worldAlpha.dirty) this.el.style.opacity = this.worldAlpha.v.toString()
 
     for (const child of this.children) {
-      if (isRenderableNode(child)) child._updateWorldTransform()
+      if (isDomGameObject(child)) child.#updateWorldTransform()
     }
     this.worldTransform.resetDirty()
   }
@@ -101,7 +104,7 @@ export class DomGameObject<E extends EventMap = EventMap> extends GameNode<E> {
   attachTo(target: HTMLElement) {
     target.appendChild(this.el)
     this.parent = new DomRootNode()
-    this._updateWorldTransform()
+    this.#updateWorldTransform()
     return this
   }
 

@@ -10,13 +10,13 @@ export type RectangleNodeOptions = {
 export declare class RectangleNode extends TransformableNode<Graphics, EventMap> {
     #private;
     constructor(options: RectangleNodeOptions);
-    get width(): number;
     set width(v: number);
-    get height(): number;
+    get width(): number;
     set height(v: number);
-    get fill(): FillInput | undefined;
+    get height(): number;
     set fill(v: FillInput | undefined);
-    get stroke(): StrokeInput | undefined;
+    get fill(): FillInput | undefined;
     set stroke(v: StrokeInput | undefined);
+    get stroke(): StrokeInput | undefined;
 }
 //# sourceMappingURL=rectangle.d.ts.map

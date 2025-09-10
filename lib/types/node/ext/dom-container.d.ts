@@ -6,7 +6,7 @@ export declare class DomContainerNode extends GameObject {
     constructor(el: HTMLElement, options?: DomContainerNodeOptions);
     protected set renderer(renderer: Renderer | undefined);
     protected get renderer(): Renderer | undefined;
-    protected update(dt: number): void;
+    _updateWorldTransform(): void;
     remove(): void;
 }
 //# sourceMappingURL=dom-container.d.ts.map

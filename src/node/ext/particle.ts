@@ -113,7 +113,7 @@ export class ParticleSystem extends GameObject {
     }
   }
 
-  protected update(dt: number) {
+  protected override update(dt: number) {
     super.update(dt)
 
     const ps = this.#particles

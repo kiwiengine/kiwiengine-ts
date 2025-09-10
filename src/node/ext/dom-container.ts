@@ -45,8 +45,8 @@ export class DomContainerNode extends GameObject {
     return super.renderer
   }
 
-  protected update(dt: number): void {
-    super.update(dt)
+  override _updateWorldTransform() {
+    super._updateWorldTransform()
 
     const renderer = this.renderer
     if (renderer && (renderer._isSizeDirty || this.worldTransform.dirty)) {

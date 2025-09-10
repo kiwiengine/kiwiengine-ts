@@ -2,6 +2,7 @@ import { EventMap } from '@webtaku/event-emitter';
 import { DirtyNumber } from '../node/core/dirty-number';
 import { GameNode } from '../node/core/game-node';
 import { WorldTransform } from '../node/core/transform';
+export declare function isDomGameObject(v: unknown): v is DomGameObject;
 export type DomGameObjectOptions = {
     x?: number;
     y?: number;
@@ -22,7 +23,6 @@ export declare class DomGameObject<E extends EventMap = EventMap> extends GameNo
     worldAlpha: DirtyNumber;
     constructor(options?: DomGameObjectOptions);
     render(dt: number): void;
-    protected _updateWorldTransform(): void;
     attachTo(target: HTMLElement): this;
     set x(v: number);
     get x(): number;

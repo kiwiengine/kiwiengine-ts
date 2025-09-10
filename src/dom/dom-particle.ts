@@ -120,7 +120,7 @@ export class DomParticleSystem extends DomGameObject {
     }
   }
 
-  protected update(dt: number) {
+  protected override update(dt: number) {
     super.update(dt)
 
     const ps = this.#particles

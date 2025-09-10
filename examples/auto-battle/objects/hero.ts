@@ -1,4 +1,4 @@
-import { AnimatedSpriteNode, ColliderType, DelayNode, GameObjectOptions, sfxPlayer } from '../../../src/index'
+import { AnimatedSpriteNode, ColliderType, DelayNode, GameObjectOptions, RigidbodyType, sfxPlayer } from '../../../src/index'
 import heroAtlas from '../assets/spritesheets/hero-atlas.json'
 import { Character } from './character'
 
@@ -22,7 +22,7 @@ export class Hero extends Character<{
       ...options,
       maxHp: 1000,
       hp: 1000,
-      collider: { type: ColliderType.Rectangle, width: 30, height: 30, y: 12 },
+      rigidbody: { type: RigidbodyType.Rectangle, width: 30, height: 30 },
       hitbox: { type: ColliderType.Rectangle, width: 32, height: 52, x: HERO_HITBOX_X, y: -8 },
       hurtbox: { type: ColliderType.Rectangle, width: 24, height: 40, x: 0, y: -4 },
       isStatic: true
@@ -32,8 +32,6 @@ export class Hero extends Character<{
       src: 'assets/spritesheets/hero.png',
       atlas: heroAtlas,
       animation: 'idle',
-      fps: 10,
-      loop: true,
       scale: 2
     })
     this._sprite.on('animationend', (animation) => {
@@ -112,7 +110,6 @@ export class Hero extends Character<{
 
   protected override onDie() {
     this._sprite.animation = 'die'
-    this._sprite.loop = false
     this.#cachedVelX = 0
     this.#cachedVelY = 0
     this.disableCollisions()

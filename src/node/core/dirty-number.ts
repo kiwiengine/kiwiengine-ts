@@ -19,27 +19,3 @@ export class DirtyNumber {
     this.#isDirty = false
   }
 }
-
-export class DirtyRadian extends DirtyNumber {
-  #cos: number
-  #sin: number
-
-  constructor(initialValue: number) {
-    super(initialValue)
-    this.#cos = Math.cos(initialValue)
-    this.#sin = Math.sin(initialValue)
-  }
-
-  get cos() { return this.#cos }
-  get sin() { return this.#sin }
-
-  override set v(newValue: number) {
-    if (super.v !== newValue) {
-      this.#cos = Math.cos(newValue)
-      this.#sin = Math.sin(newValue)
-    }
-    super.v = newValue
-  }
-
-  override get v() { return super.v }
-}
