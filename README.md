@@ -430,10 +430,10 @@ world.gravity = 800
 Creates a physics body from a **collider** and keeps its render transform in sync.
 
 ```ts
-import { PhysicsObject, ColliderType } from 'kiwiengine'
+import { PhysicsObject, RigidbodyType } from 'kiwiengine'
 
 const ball = new PhysicsObject({
-  collider: { type: ColliderType.Circle, radius: 20 },
+  rigidbody: { type: RigidbodyType.Circle, radius: 20 },
   x: 0, y: 200, velocityY: -600, useYSort: true,
 })
 

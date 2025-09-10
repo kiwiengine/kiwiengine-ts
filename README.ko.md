@@ -411,10 +411,10 @@ world.gravity = 800
 Collider로 물리 바디를 만들고 **렌더/좌표를 동기화**합니다.
 
 ```ts
-import { PhysicsObject, ColliderType } from 'kiwiengine'
+import { PhysicsObject, RigidbodyType } from 'kiwiengine'
 
 const ball = new PhysicsObject({
-  collider: { type: ColliderType.Circle, radius: 20 },
+  rigidbody: { type: RigidbodyType.Circle, radius: 20 },
   x: 0, y: 200, velocityY: -600, useYSort: true
 })
 // 프로퍼티 동기화
