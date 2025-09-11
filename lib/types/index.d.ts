@@ -3,6 +3,7 @@ export { Renderer, RendererOptions } from './renderer/renderer';
 export { Ticker } from './renderer/ticker';
 export { musicPlayer, sfxPlayer } from './asset/audio';
 export { AssetSource, preload } from './asset/preload';
+export { Atlas } from './types/atlas';
 export { checkCollision } from './collision/check-collision';
 export { CircleCollider, Collider, ColliderType, EllipseCollider, PolygonCollider, RectangleCollider } from './collision/colliders';
 export { AnimatedSpriteNode, AnimatedSpriteNodeOptions } from './node/ext/animated-sprite';
