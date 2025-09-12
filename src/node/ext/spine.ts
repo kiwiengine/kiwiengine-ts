@@ -19,7 +19,7 @@ export type SpineNodeOptions = {
   loop?: boolean
 } & GameObjectOptions
 
-export class SpineNode<E extends EventMap = EventMap> extends GameObject<E & {
+export class SpineNode<E extends EventMap = {}> extends GameObject<E & {
   animationend: (animation: string) => void
 }> {
   #atlas: string

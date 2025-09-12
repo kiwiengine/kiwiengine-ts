@@ -10,7 +10,7 @@ export type AnimatedSpriteNodeOptions = {
   animation: string
 } & GameObjectOptions
 
-export class AnimatedSpriteNode<E extends EventMap = EventMap> extends GameObject<E & {
+export class AnimatedSpriteNode<E extends EventMap = {}> extends GameObject<E & {
   animationend: (animation: string) => void
 }> {
   #src: string

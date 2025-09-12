@@ -6,7 +6,7 @@ export type DomAnimatedSpriteNodeOptions = {
     atlas: Atlas;
     animation: string;
 } & DomGameObjectOptions;
-export declare class DomAnimatedSpriteNode<E extends EventMap = EventMap> extends DomGameObject<E & {
+export declare class DomAnimatedSpriteNode<E extends EventMap = {}> extends DomGameObject<E & {
     animationend: (animation: string) => void;
 }> {
     #private;

@@ -18,7 +18,7 @@ export type CharacterOptions = {
   separationStrength?: number
 } & PhysicsObjectOptions
 
-export abstract class Character<E extends EventMap = EventMap> extends GameObject<E & {
+export abstract class Character<E extends EventMap = {}> extends GameObject<E & {
   changeHp: (damage: number) => void
   dead: () => void
 }> {

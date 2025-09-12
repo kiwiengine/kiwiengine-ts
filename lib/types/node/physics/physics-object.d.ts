@@ -14,7 +14,7 @@ export type PhysicsObjectOptions = {
     isStatic?: boolean;
     useYSort?: boolean;
 };
-export declare class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode<PixiContainer, E> {
+export declare class PhysicsObject<E extends EventMap = {}> extends RenderableNode<PixiContainer, E> {
     #private;
     constructor(options: PhysicsObjectOptions);
     protected set parent(parent: GameNode<EventMap> | undefined);

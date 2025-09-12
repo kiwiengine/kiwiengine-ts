@@ -10,7 +10,7 @@ export type SpineNodeOptions = {
     animation?: string;
     loop?: boolean;
 } & GameObjectOptions;
-export declare class SpineNode<E extends EventMap = EventMap> extends GameObject<E & {
+export declare class SpineNode<E extends EventMap = {}> extends GameObject<E & {
     animationend: (animation: string) => void;
 }> {
     #private;

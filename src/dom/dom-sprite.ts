@@ -7,7 +7,7 @@ export type DomSpriteNodeOptions = {
   src: string
 } & DomGameObjectOptions
 
-export class DomSpriteNode<E extends EventMap = EventMap> extends DomGameObject<E> {
+export class DomSpriteNode<E extends EventMap = {}> extends DomGameObject<E> {
   #src: string
 
   constructor(options: DomSpriteNodeOptions) {

@@ -21,7 +21,7 @@ export type PhysicsObjectOptions = {
   useYSort?: boolean
 }
 
-export class PhysicsObject<E extends EventMap = EventMap> extends RenderableNode<PixiContainer, E> {
+export class PhysicsObject<E extends EventMap = {}> extends RenderableNode<PixiContainer, E> {
   #localTransform = new LocalTransform()
   #matterBody: Matter.Body
 

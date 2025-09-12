@@ -34,7 +34,7 @@ class DomRootNode extends GameNode<EventMap> {
   }
 }
 
-export class DomGameObject<E extends EventMap = EventMap> extends GameNode<E> {
+export class DomGameObject<E extends EventMap = {}> extends GameNode<E> {
   protected el = document.createElement('div')
 
   #localTransform = new LocalTransform()

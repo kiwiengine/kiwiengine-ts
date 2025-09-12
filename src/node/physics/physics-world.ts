@@ -7,7 +7,7 @@ export type PhysicsWorldOptions = {
   gravity?: number
 }
 
-export class PhysicsWorld<E extends EventMap = EventMap> extends RenderableNode<PixiContainer, E> {
+export class PhysicsWorld<E extends EventMap = {}> extends RenderableNode<PixiContainer, E> {
   #matterEngine = Matter.Engine.create()
 
   constructor(options?: PhysicsWorldOptions) {

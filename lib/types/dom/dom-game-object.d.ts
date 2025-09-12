@@ -15,7 +15,7 @@ export type DomGameObjectOptions = {
     alpha?: number;
     useYSort?: boolean;
 };
-export declare class DomGameObject<E extends EventMap = EventMap> extends GameNode<E> {
+export declare class DomGameObject<E extends EventMap = {}> extends GameNode<E> {
     #private;
     protected el: HTMLDivElement;
     worldTransform: WorldTransform;

@@ -7,7 +7,7 @@ export type SpriteNodeOptions = {
   src: string
 } & GameObjectOptions
 
-export class SpriteNode<E extends EventMap = EventMap> extends GameObject<E> {
+export class SpriteNode<E extends EventMap = {}> extends GameObject<E> {
   #src: string
   #sprite?: PixiSprite
 

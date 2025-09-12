@@ -5,7 +5,7 @@ import { RenderableNode } from '../core/renderable';
 export type PhysicsWorldOptions = {
     gravity?: number;
 };
-export declare class PhysicsWorld<E extends EventMap = EventMap> extends RenderableNode<PixiContainer, E> {
+export declare class PhysicsWorld<E extends EventMap = {}> extends RenderableNode<PixiContainer, E> {
     #private;
     constructor(options?: PhysicsWorldOptions);
     set gravity(v: number);

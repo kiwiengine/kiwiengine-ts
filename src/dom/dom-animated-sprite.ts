@@ -10,7 +10,7 @@ export type DomAnimatedSpriteNodeOptions = {
   animation: string
 } & DomGameObjectOptions
 
-export class DomAnimatedSpriteNode<E extends EventMap = EventMap> extends DomGameObject<E & {
+export class DomAnimatedSpriteNode<E extends EventMap = {}> extends DomGameObject<E & {
   animationend: (animation: string) => void
 }> {
   #src: string
