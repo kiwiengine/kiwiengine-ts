@@ -19,5 +19,7 @@ export declare abstract class RenderableNode<C extends PixiContainer, E extends 
     _resetWorldTransformDirty(): void;
     set tint(t: number);
     get tint(): number;
+    hide(): void;
+    show(): void;
 }
 //# sourceMappingURL=renderable.d.ts.map

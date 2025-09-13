@@ -3,12 +3,14 @@ import { GameObject, GameObjectOptions } from '../core/game-object';
 export type BitmapTextNodeOptions = {
     fnt: string;
     src: string;
-    text: string;
+    text?: string;
 } & GameObjectOptions;
 export declare class BitmapTextNode<E extends EventMap = {}> extends GameObject<E> {
     #private;
     constructor(options: BitmapTextNodeOptions);
     changeFont(fnt: string, src: string): void;
+    set text(text: string | undefined);
+    get text(): string | undefined;
     remove(): void;
 }
 //# sourceMappingURL=bitmap-text.d.ts.map

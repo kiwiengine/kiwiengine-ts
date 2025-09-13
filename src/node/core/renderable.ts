@@ -69,4 +69,7 @@ export abstract class RenderableNode<C extends PixiContainer, E extends EventMap
 
   set tint(t) { this._pixiContainer.tint = t }
   get tint() { return this._pixiContainer.tint }
+
+  hide() { this._pixiContainer.visible = false }
+  show() { this._pixiContainer.visible = true }
 }

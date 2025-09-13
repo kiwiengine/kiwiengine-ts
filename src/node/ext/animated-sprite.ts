@@ -46,25 +46,26 @@ export class AnimatedSpriteNode<E extends EventMap = {}> extends GameObject<E & 
     this.#sprite?.destroy()
     this.#sprite = undefined
 
-    if (this.#sheet) {
-      if (!this.#sheet.animations[this.#animation]) {
-        console.error(`Animation not found: ${this.#animation}`)
-        return
-      }
+    if (!this.#sheet) return
 
-      const a = this.#atlas.animations[this.#animation]
-      const s = new PixiAnimatedSprite(this.#sheet.animations[this.#animation])
-
-      s.anchor.set(0.5, 0.5)
-      s.loop = a.loop
-      s.animationSpeed = a.fps / 60
-      s.play()
-      s.onLoop = () => (this as any).emit('animationend', this.#animation)
-      s.onComplete = () => (this as any).emit('animationend', this.#animation)
-
-      this._pixiContainer.addChild(s)
-      this.#sprite = s
+    if (!this.#sheet.animations[this.#animation]) {
+      console.error(`Animation not found: ${this.#animation}`)
+      return
     }
+
+    const a = this.#atlas.animations[this.#animation]
+    const s = new PixiAnimatedSprite(this.#sheet.animations[this.#animation])
+
+    s.anchor.set(0.5, 0.5)
+    s.zIndex = -999999
+    s.loop = a.loop
+    s.animationSpeed = a.fps / 60
+    s.play()
+    s.onLoop = () => (this as any).emit('animationend', this.#animation)
+    s.onComplete = () => (this as any).emit('animationend', this.#animation)
+
+    this._pixiContainer.addChild(s)
+    this.#sprite = s
   }
 
   set src(src) {

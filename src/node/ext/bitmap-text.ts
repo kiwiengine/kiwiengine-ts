@@ -1,18 +1,21 @@
 import { EventMap } from '@webtaku/event-emitter'
 import { Rectangle as PixiRectangle, Sprite as PixiSprite, Texture as PixiTexture } from 'pixi.js'
 import { bitmapFontLoader } from '../../asset/loaders/bitmap-font'
+import { BitmapFont } from '../../types/bitmap-font'
 import { GameObject, GameObjectOptions } from '../core/game-object'
 
 export type BitmapTextNodeOptions = {
   fnt: string
   src: string
-  text: string
+  text?: string
 } & GameObjectOptions
 
 export class BitmapTextNode<E extends EventMap = {}> extends GameObject<E> {
   #fnt: string
   #src: string
-  #text: string
+  #text?: string
+
+  #font?: BitmapFont
   #sprites: PixiSprite[] = []
 
   constructor(options: BitmapTextNodeOptions) {
@@ -23,20 +26,13 @@ export class BitmapTextNode<E extends EventMap = {}> extends GameObject<E> {
     this.#load()
   }
 
-  async #load() {
-    let font
-    if (bitmapFontLoader.checkCached(this.#fnt)) {
-      font = bitmapFontLoader.getCached(this.#fnt)
-    } else {
-      console.info(`Bitmap font not preloaded. Loading now: ${this.#fnt}`)
-      font = await bitmapFontLoader.load(this.#fnt, this.#src)
-    }
-    if (!font) return
-
+  #updateText() {
     for (const sprite of this.#sprites) {
       sprite.destroy()
     }
     this.#sprites = []
+
+    if (!this.#font || !this.#text) return
 
     let xPos = 0, yPos = 0
     let minX = Infinity, minY = Infinity
@@ -47,16 +43,16 @@ export class BitmapTextNode<E extends EventMap = {}> extends GameObject<E> {
 
       if (charCode === 10) {
         xPos = 0
-        yPos += font.lineHeight
+        yPos += this.#font.lineHeight
         continue
       }
 
-      const c = font.chars[charCode]
+      const c = this.#font.chars[charCode]
       if (!c) continue
 
       const frame = new PixiRectangle(c.x, c.y, c.width, c.height)
-      const texture = new PixiTexture({ source: font.texture.source, frame })
-      const sprite = new PixiSprite(texture)
+      const texture = new PixiTexture({ source: this.#font.texture.source, frame })
+      const sprite = new PixiSprite({ texture, zIndex: -999999 })
 
       const x0 = xPos + c.xoffset
       const y0 = yPos + c.yoffset
@@ -87,14 +83,25 @@ export class BitmapTextNode<E extends EventMap = {}> extends GameObject<E> {
       maxY = 0
     }
 
-    const width = maxX - minX
-    const height = maxY - minY
+    const cx = (minX + maxX) / 2
+    const cy = (minY + maxY) / 2
 
     for (const s of this.#sprites) {
-      s.x -= width / 2
-      s.y -= height / 2
+      s.x -= cx
+      s.y -= cy
       this._pixiContainer.addChild(s)
     }
+  }
+
+  async #load() {
+    if (bitmapFontLoader.checkCached(this.#fnt)) {
+      this.#font = bitmapFontLoader.getCached(this.#fnt)
+    } else {
+      console.info(`Bitmap font not preloaded. Loading now: ${this.#fnt}`)
+      this.#font = await bitmapFontLoader.load(this.#fnt, this.#src)
+    }
+
+    this.#updateText()
   }
 
   changeFont(fnt: string, src: string) {
@@ -104,6 +111,15 @@ export class BitmapTextNode<E extends EventMap = {}> extends GameObject<E> {
       this.#src = src
       this.#load()
     }
+  }
+
+  set text(text: string | undefined) {
+    this.#text = text
+    this.#updateText()
+  }
+
+  get text() {
+    return this.#text
   }
 
   override remove() {

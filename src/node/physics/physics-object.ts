@@ -26,6 +26,7 @@ export class PhysicsObject<E extends EventMap = {}> extends RenderableNode<PixiC
   #matterBody: Matter.Body
 
   #useYSort = false
+  #collisionsEnabled = true
 
   constructor(options: PhysicsObjectOptions) {
     super(new PixiContainer({ sortableChildren: true }))
@@ -65,7 +66,7 @@ export class PhysicsObject<E extends EventMap = {}> extends RenderableNode<PixiC
         : parent.constructor?.name ?? typeof parent
       throw new Error(`PhysicsObject parent must be PhysicsWorld, but got ${actual}`)
     }
-    parent.addBody(this.#matterBody)
+    if (this.#collisionsEnabled) parent.addBody(this.#matterBody)
     super.parent = parent
   }
 
@@ -122,6 +123,12 @@ export class PhysicsObject<E extends EventMap = {}> extends RenderableNode<PixiC
   get isStatic() { return this.#matterBody.isStatic }
 
   disableCollisions() {
+    this.#collisionsEnabled = false
     this.#removeFromWorld()
+  }
+
+  enableCollisions() {
+    this.#collisionsEnabled = true;
+    (this.parent as PhysicsWorld)?.addBody(this.#matterBody)
   }
 }

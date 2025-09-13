@@ -34,5 +34,6 @@ export declare class PhysicsObject<E extends EventMap = {}> extends RenderableNo
     set isStatic(v: boolean);
     get isStatic(): boolean;
     disableCollisions(): void;
+    enableCollisions(): void;
 }
 //# sourceMappingURL=physics-object.d.ts.map
