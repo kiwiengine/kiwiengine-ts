@@ -13,6 +13,7 @@ export type TransformableNodeOptions = {
   pivotX?: number
   pivotY?: number
   rotation?: number
+  drawOrder?: number
 
   alpha?: number
   layer?: string
@@ -38,6 +39,7 @@ export abstract class TransformableNode<C extends PixiContainer, E extends Event
     if (options.pivotY !== undefined) this.pivotY = options.pivotY
     if (options.rotation !== undefined) this.rotation = options.rotation
     if (options.alpha !== undefined) this.alpha = options.alpha
+    if (options.drawOrder !== undefined) this.drawOrder = options.drawOrder
 
     this.#layer = options.layer
     this.#useYSort = options.useYSort ?? false
@@ -75,7 +77,7 @@ export abstract class TransformableNode<C extends PixiContainer, E extends Event
     } else {
       const lt = this.localTransform
       pc.position.set(lt.x, lt.y)
-      if (this.#useYSort) pc.zIndex = lt.y
+      if (this.#useYSort) this.drawOrder = lt.y
       pc.pivot.set(lt.pivotX, lt.pivotY)
       pc.scale.set(lt.scaleX, lt.scaleY)
       pc.rotation = lt.rotation
@@ -108,4 +110,7 @@ export abstract class TransformableNode<C extends PixiContainer, E extends Event
 
   set rotation(v) { this.localTransform.rotation = v }
   get rotation() { return this.localTransform.rotation }
+
+  set drawOrder(v) { this._pixiContainer.zIndex = v }
+  get drawOrder() { return this._pixiContainer.zIndex }
 }
