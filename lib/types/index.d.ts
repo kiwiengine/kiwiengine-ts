@@ -2,7 +2,7 @@ export { GameObject, GameObjectOptions } from './node/core/game-object';
 export { Renderer, RendererOptions } from './renderer/renderer';
 export { Ticker } from './renderer/ticker';
 export { musicPlayer, sfxPlayer } from './asset/audio';
-export { AssetSource, preload } from './asset/preload';
+export { AssetSource, loadAsset, preload, releaseAsset } from './asset/preload';
 export { Atlas } from './types/atlas';
 export { checkCollision } from './collision/check-collision';
 export { CircleCollider, Collider, ColliderType, EllipseCollider, PolygonCollider, RectangleCollider } from './collision/colliders';

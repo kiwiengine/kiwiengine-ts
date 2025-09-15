@@ -24,7 +24,7 @@ function getLoaderForPath(path: string): Loader<any> | undefined {
   return loaderForPathMap.find(({ check }) => check(path))?.loader
 }
 
-async function loadAsset(asset: AssetSource): Promise<void> {
+export async function loadAsset(asset: AssetSource): Promise<void> {
   if (typeof asset === 'string') {
     const loader = getLoaderForPath(asset)
     if (!loader) {
@@ -42,21 +42,23 @@ async function loadAsset(asset: AssetSource): Promise<void> {
   }
 }
 
-function releaseAsset(asset: AssetSource): void {
-  if (typeof asset === 'string') {
-    const loader = getLoaderForPath(asset)
-    if (!loader) {
-      console.warn(`No loader found for asset: ${asset}`)
-      return
+export function releaseAsset(...assets: AssetSource[]): void {
+  for (const asset of assets) {
+    if (typeof asset === 'string') {
+      const loader = getLoaderForPath(asset)
+      if (!loader) {
+        console.warn(`No loader found for asset: ${asset}`)
+        return
+      }
+      loader.release(asset)
+    } else if ('atlas' in asset) {
+      const id = getCachedAtlasId(asset.src, asset.atlas)
+      spritesheetLoader.release(id)
+    } else if ('fnt' in asset) {
+      bitmapFontLoader.release(asset.fnt)
+    } else {
+      console.warn(`Unknown asset type: ${asset}`)
     }
-    loader.release(asset)
-  } else if ('atlas' in asset) {
-    const id = getCachedAtlasId(asset.src, asset.atlas)
-    spritesheetLoader.release(id)
-  } else if ('fnt' in asset) {
-    bitmapFontLoader.release(asset.fnt)
-  } else {
-    console.warn(`Unknown asset type: ${asset}`)
   }
 }
 
@@ -79,5 +81,5 @@ export async function preload(
     })
   )
 
-  return () => assets.forEach(releaseAsset)
+  return () => releaseAsset(...assets)
 }
