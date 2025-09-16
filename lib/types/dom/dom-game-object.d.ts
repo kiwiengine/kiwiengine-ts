@@ -23,6 +23,8 @@ export declare class DomGameObject<E extends EventMap = {}> extends GameNode<E> 
     alpha: number;
     worldAlpha: DirtyNumber;
     constructor(options?: DomGameObjectOptions);
+    add(...children: GameNode<EventMap>[]): void;
+    remove(): void;
     render(dt: number): void;
     attachTo(target: HTMLElement): this;
     set x(v: number);

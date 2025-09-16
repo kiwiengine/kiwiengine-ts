@@ -71,6 +71,21 @@ export class DomGameObject<E extends EventMap = {}> extends GameNode<E> {
     }
   }
 
+  override add(...children: GameNode<EventMap>[]) {
+    super.add(...children)
+
+    for (const child of children) {
+      if (isDomGameObject(child)) {
+        this.el.appendChild(child.el)
+      }
+    }
+  }
+
+  override remove() {
+    this.el.remove()
+    super.remove()
+  }
+
   render(dt: number) {
     this.update(dt)
     this.#updateWorldTransform()
