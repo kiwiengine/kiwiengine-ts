@@ -7,7 +7,9 @@ export type DomSpriteNodeOptions = {
   src: string
 } & DomGameObjectOptions
 
-export class DomSpriteNode<E extends EventMap = {}> extends DomGameObject<E> {
+export class DomSpriteNode<E extends EventMap = {}> extends DomGameObject<E & {
+  load: () => void
+}> {
   #src: string
 
   constructor(options: DomSpriteNodeOptions) {
@@ -30,7 +32,9 @@ export class DomSpriteNode<E extends EventMap = {}> extends DomGameObject<E> {
       width: `${texture.width}px`,
       height: `${texture.height}px`,
       backgroundSize: `${texture.width}px ${texture.height}px`,
-    })
+    });
+
+    (this as any).emit('load')
   }
 
   set src(src) {

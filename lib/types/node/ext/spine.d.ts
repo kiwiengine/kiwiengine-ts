@@ -11,6 +11,7 @@ export type SpineNodeOptions = {
     loop?: boolean;
 } & GameObjectOptions;
 export declare class SpineNode<E extends EventMap = {}> extends GameObject<E & {
+    load: () => void;
     animationend: (animation: string) => void;
 }> {
     #private;

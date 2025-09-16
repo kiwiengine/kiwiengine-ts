@@ -7,6 +7,7 @@ export type AnimatedSpriteNodeOptions = {
     animation: string;
 } & GameObjectOptions;
 export declare class AnimatedSpriteNode<E extends EventMap = {}> extends GameObject<E & {
+    load: () => void;
     animationend: (animation: string) => void;
 }> {
     #private;
