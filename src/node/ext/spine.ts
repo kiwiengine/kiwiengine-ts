@@ -20,7 +20,6 @@ export type SpineNodeOptions = {
 } & GameObjectOptions
 
 export class SpineNode<E extends EventMap = {}> extends GameObject<E & {
-  load: () => void
   animationend: (animation: string) => void
 }> {
   #atlas: string
@@ -216,8 +215,6 @@ export class SpineNode<E extends EventMap = {}> extends GameObject<E & {
       this.#updateSkins()
       this._pixiContainer.addChild(s)
     }
-
-    (this as any).emit('load')
   }
 
   #updateSkins() {

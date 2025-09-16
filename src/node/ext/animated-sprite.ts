@@ -11,7 +11,6 @@ export type AnimatedSpriteNodeOptions = {
 } & GameObjectOptions
 
 export class AnimatedSpriteNode<E extends EventMap = {}> extends GameObject<E & {
-  load: () => void
   animationend: (animation: string) => void
 }> {
   #src: string
@@ -40,9 +39,7 @@ export class AnimatedSpriteNode<E extends EventMap = {}> extends GameObject<E & 
       this.#sheet = await spritesheetLoader.load(this.#atlasId, this.#src, this.#atlas)
     }
 
-    this.#updateAnimation();
-
-    (this as any).emit('load')
+    this.#updateAnimation()
   }
 
   #updateAnimation() {

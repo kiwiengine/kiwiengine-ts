@@ -11,7 +11,6 @@ export type DomAnimatedSpriteNodeOptions = {
 } & DomGameObjectOptions
 
 export class DomAnimatedSpriteNode<E extends EventMap = {}> extends DomGameObject<E & {
-  load: () => void
   animationend: (animation: string) => void
 }> {
   #src: string
@@ -53,9 +52,7 @@ export class DomAnimatedSpriteNode<E extends EventMap = {}> extends DomGameObjec
       height: `${frame.h}px`,
       backgroundSize: `${texture.width}px ${texture.height}px`,
       backgroundPosition: `-${frame.x}px -${frame.y}px`
-    });
-
-    (this as any).emit('load')
+    })
   }
 
   override render(dt: number) {

@@ -3,9 +3,7 @@ import { DomGameObject, DomGameObjectOptions } from './dom-game-object';
 export type DomSpriteNodeOptions = {
     src: string;
 } & DomGameObjectOptions;
-export declare class DomSpriteNode<E extends EventMap = {}> extends DomGameObject<E & {
-    load: () => void;
-}> {
+export declare class DomSpriteNode<E extends EventMap = {}> extends DomGameObject<E> {
     #private;
     constructor(options: DomSpriteNodeOptions);
     set src(src: string);

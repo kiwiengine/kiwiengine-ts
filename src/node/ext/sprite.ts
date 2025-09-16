@@ -7,9 +7,7 @@ export type SpriteNodeOptions = {
   src: string
 } & GameObjectOptions
 
-export class SpriteNode<E extends EventMap = {}> extends GameObject<E & {
-  load: () => void
-}> {
+export class SpriteNode<E extends EventMap = {}> extends GameObject<E> {
   #src: string
   #sprite?: PixiSprite
 
@@ -36,8 +34,6 @@ export class SpriteNode<E extends EventMap = {}> extends GameObject<E & {
       this._pixiContainer.addChild(s)
       this.#sprite = s
     }
-
-    (this as any).emit('load')
   }
 
   set src(src) {
