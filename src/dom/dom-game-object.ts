@@ -17,6 +17,7 @@ export type DomGameObjectOptions = {
   pivotX?: number
   pivotY?: number
   rotation?: number
+  drawOrder?: number
 
   alpha?: number
   useYSort?: boolean
@@ -64,6 +65,7 @@ export class DomGameObject<E extends EventMap = {}> extends GameNode<E> {
       if (options.pivotY !== undefined) this.pivotY = options.pivotY
       if (options.rotation !== undefined) this.rotation = options.rotation
       if (options.alpha !== undefined) this.alpha = options.alpha
+      if (options.drawOrder !== undefined) this.drawOrder = options.drawOrder
 
       this.#useYSort = options.useYSort ?? false
     }
@@ -92,6 +94,8 @@ export class DomGameObject<E extends EventMap = {}> extends GameNode<E> {
         scale(${wt.scaleX.v}, ${wt.scaleY.v})
         rotate(${wt.rotation.v}rad)
       `
+
+      if (this.#useYSort) this.drawOrder = wt.y.v
     }
     if (this.worldAlpha.dirty) this.el.style.opacity = this.worldAlpha.v.toString()
 
@@ -131,4 +135,7 @@ export class DomGameObject<E extends EventMap = {}> extends GameNode<E> {
 
   set rotation(v) { this.#localTransform.rotation = v }
   get rotation() { return this.#localTransform.rotation }
+
+  set drawOrder(v) { this.el.style.zIndex = v.toString() }
+  get drawOrder() { return Number(this.el.style.zIndex) }
 }

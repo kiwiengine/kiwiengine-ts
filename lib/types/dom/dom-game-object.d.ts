@@ -12,6 +12,7 @@ export type DomGameObjectOptions = {
     pivotX?: number;
     pivotY?: number;
     rotation?: number;
+    drawOrder?: number;
     alpha?: number;
     useYSort?: boolean;
 };
@@ -40,5 +41,7 @@ export declare class DomGameObject<E extends EventMap = {}> extends GameNode<E> 
     get pivotY(): number;
     set rotation(v: number);
     get rotation(): number;
+    set drawOrder(v: number);
+    get drawOrder(): number;
 }
 //# sourceMappingURL=dom-game-object.d.ts.map
