@@ -20,6 +20,7 @@ export { PhysicsObject, PhysicsObjectOptions } from './node/physics/physics-obje
 export { PhysicsWorld } from './node/physics/physics-world';
 export { CircleRigidbody, PolygonRigidbody, RectangleRigidbody, Rigidbody, RigidbodyType } from './node/physics/rigidbodies';
 export { DomAnimatedSpriteNode } from './dom/dom-animated-sprite';
+export { DomGameObject, DomGameObjectOptions } from './dom/dom-game-object';
 export { DomParticleSystem, DomParticleSystemOptions } from './dom/dom-particle';
 export { domPreload } from './dom/dom-preload';
 export { DomSpriteNode, DomSpriteNodeOptions } from './dom/dom-sprite';
