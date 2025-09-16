@@ -8,7 +8,7 @@ export { Ticker } from './renderer/ticker'
 // Assets
 export { musicPlayer, sfxPlayer } from './asset/audio'
 export { AssetSource, loadAsset, preload, releaseAsset } from './asset/preload'
-export { Atlas } from './types/atlas'
+export { Animation, Atlas, Frame } from './types/atlas'
 
 // Collision
 export { checkCollision } from './collision/check-collision'
